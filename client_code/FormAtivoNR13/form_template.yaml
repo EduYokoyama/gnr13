@@ -1,0 +1,215 @@
+components:
+- components:
+  - components:
+    - layout_properties: {grid_position: 'HZHGST,JJOPCO'}
+      name: label_1
+      properties: {text: Tag do Ativo}
+      type: Label
+    - layout_properties: {grid_position: 'HZHGST,XCPLLM'}
+      name: txt_tag
+      properties: {placeholder: 'Ex: VP-001'}
+      type: TextBox
+    - layout_properties: {grid_position: 'FROVUF,PASORO'}
+      name: label_2
+      properties: {text: Nome Operacional (Amigável)}
+      type: Label
+    - layout_properties: {grid_position: 'FROVUF,UDMWJL'}
+      name: txt_nome_operacional
+      properties: {placeholder: 'Ex: Vaso Pulmão do Compressor'}
+      type: TextBox
+    - layout_properties: {grid_position: 'VPBNPA,MAXUHF'}
+      name: label_3
+      properties: {text: Unidade/Planta}
+      type: Label
+    - layout_properties: {grid_position: 'VPBNPA,OMUTNR'}
+      name: drp_unidade
+      properties: {}
+      type: DropDown
+    - layout_properties: {grid_position: 'JKKIIY,IQFIYJ'}
+      name: label_4
+      properties: {text: Tipo de Equipamento}
+      type: Label
+    - layout_properties: {grid_position: 'JKKIIY,QGDHSM'}
+      name: drp_tipo_equipamento
+      properties:
+        items: ['[''Vaso de Pressão'', ''Caldeira'', ''Sistemas de Tubulação'', ''Tanque Metálico'']']
+      type: DropDown
+    layout_properties: {grid_position: 'GEAGQP,LJJSFJ'}
+    name: card_identificacao
+    properties: {role: card}
+    type: ColumnPanel
+  - components:
+    - layout_properties: {grid_position: 'JRISBA,LWSWVV QYQHCX,NRPPGO'}
+      name: label_5
+      properties: {text: Fluido de Serviço}
+      type: Label
+    - layout_properties: {grid_position: 'JRISBA,LWSWVV OIXYFD,XODPSN'}
+      name: label_6
+      properties: {text: PMTA (kgf/cm²)}
+      type: Label
+    - layout_properties: {grid_position: 'JRISBA,LWSWVV ZOTOVX,RKGLSD'}
+      name: label_7
+      properties: {text: Volume (m³)}
+      type: Label
+    - layout_properties: {grid_position: 'JRISBA,LWSWVV HEYYTQ,JCWIGJ'}
+      name: lbl_categoria_calculada
+      properties: {background: '', foreground: 'theme:Primary 500', text: Aguardando dados...}
+      type: Label
+    - layout_properties: {grid_position: 'JRISBA,PSSCLA NKDUQB,YPACHV'}
+      name: drp_fluido_vaso
+      properties:
+        items: ['[''Grupo A'', ''Grupo B'', ''Grupo C'', ''Grupo D''']
+      type: DropDown
+    - layout_properties: {grid_position: 'JRISBA,PSSCLA EOGTGE,HPQEVO'}
+      name: num_pmta
+      properties: {type: number}
+      type: TextBox
+    - layout_properties: {grid_position: 'JRISBA,PSSCLA FLSLHS,HXEIPF'}
+      name: num_volume
+      properties: {type: number}
+      type: TextBox
+    layout_properties: {grid_position: 'DJXVQT,ROGELE'}
+    name: card_vaso
+    properties: {visible: false}
+    type: ColumnPanel
+  - components:
+    - layout_properties: {grid_position: 'RDRAYL,NXSSCR'}
+      name: label_8
+      properties: {text: Categoria da Caldeira}
+      type: Label
+    - layout_properties: {grid_position: 'RDRAYL,IHCXWQ CXKKZZ,OPIEWJ'}
+      name: rad_cat_a
+      properties: {group_name: cat_caldeira, text: Classe A}
+      type: RadioButton
+    - layout_properties: {grid_position: 'RDRAYL,IHCXWQ JVXOHL,YXYQYO'}
+      name: rad_cat_b
+      properties: {align: left, group_name: cat_caldeira, text: Classe B}
+      type: RadioButton
+    - layout_properties: {grid_position: 'FIOLSF,HMIVMU'}
+      name: label_9
+      properties: {text: Capacidade de Vapor (kg/h)}
+      type: Label
+    - layout_properties: {grid_position: 'FIOLSF,UQNVVL'}
+      name: num_cap_vapor
+      properties: {type: number}
+      type: TextBox
+    - layout_properties: {grid_position: 'LLNHKF,AMQATF'}
+      name: label_10
+      properties: {text: Superfície de Aquecimento (m²)}
+      type: Label
+    - layout_properties: {grid_position: 'LLNHKF,BGVJET'}
+      name: num_sup_aquecimento
+      properties: {type: number}
+      type: TextBox
+    layout_properties: {grid_position: 'QGTLEW,UUUXDS'}
+    name: card_caldeira
+    properties: {visible: false}
+    type: ColumnPanel
+  - components:
+    - layout_properties: {grid_position: 'ASWMPY,EUNVHR'}
+      name: label_11
+      properties: {text: Diâmetro Externo (m)}
+      type: Label
+    - layout_properties: {grid_position: 'ASWMPY,INCMSI'}
+      name: num_diametro
+      properties: {type: number}
+      type: TextBox
+    - layout_properties: {grid_position: 'CWNSWN,AQTZUZ'}
+      name: label_12
+      properties: {text: Volume Nominal (m³)}
+      type: Label
+    - layout_properties: {grid_position: 'CWNSWN,HLUGEM'}
+      name: num_volume_tanque
+      properties: {type: number}
+      type: TextBox
+    layout_properties: {grid_position: 'DUOZRL,CSDRIX'}
+    name: card_tanque
+    properties: {visible: false}
+    type: ColumnPanel
+  - components:
+    - layout_properties: {grid_position: 'AOJVLQ,EPQPIP'}
+      name: label_13
+      properties: {text: Classe de Fluido}
+      type: Label
+    - layout_properties: {grid_position: 'AOJVLQ,CFNHBP'}
+      name: txt_classe_fluido
+      properties: {}
+      type: TextBox
+    - layout_properties: {grid_position: 'YJNZHJ,MZNADY'}
+      name: label_14
+      properties: {text: Extensão Total (Metros)}
+      type: Label
+    - layout_properties: {grid_position: 'YJNZHJ,ZPJULN'}
+      name: num_extensao
+      properties: {type: number}
+      type: TextBox
+    layout_properties: {grid_position: 'PNSTBM,RKXNPM'}
+    name: card_tubulacao
+    properties: {visible: false}
+    type: ColumnPanel
+  - components:
+    - layout_properties: {grid_position: 'FEETFH,ENYDHY'}
+      name: label_15
+      properties: {bold: true, text: Dispositivos de Segurança e Instrumentação (Substituíveis)}
+      type: Label
+    - layout_properties: {grid_position: 'JRUKHC,MYXWRT'}
+      name: rp_dispositivos
+      properties: {item_template: FormAtivoNR13.ItemTemplate1}
+      type: RepeatingPanel
+    - layout_properties: {grid_position: 'ZLNZTP,BRRVTO'}
+      name: btn_add_instrumento
+      properties: {text: + Adicionar Válvula/Manômetro}
+      type: Button
+    layout_properties: {grid_position: 'KXVDDQ,VXTZGX'}
+    name: card_instrumentos
+    properties: {role: card}
+    type: ColumnPanel
+  - components:
+    - layout_properties: {grid_position: 'BIPXYL,QKKTEL'}
+      name: label_16
+      properties: {bold: true, text: Cofre de Documentos (PDF)}
+      type: Label
+    - layout_properties: {grid_position: 'MENNDV,WJQBHC'}
+      name: file_prontuario
+      properties: {file_types: .pdf, text: Upload Prontuário}
+      type: FileLoader
+    - layout_properties: {grid_position: 'MENNDV,UISUPC'}
+      name: file_ART
+      properties: {file_types: .pdf, text: Upload ART}
+      type: FileLoader
+    - layout_properties: {grid_position: 'MENNDV,PAQWSD'}
+      name: file_relatorio
+      properties: {file_types: .pdf, text: Upload Relatório de Inspeção}
+      type: FileLoader
+    - layout_properties: {grid_position: 'LCJTGK,DOVQQO'}
+      name: label_17
+      properties: {text: Próxima Inspeção}
+      type: Label
+    - layout_properties: {grid_position: 'LCJTGK,RMVXBJ'}
+      name: dt_proxima_insp
+      properties: {}
+      type: DatePicker
+    layout_properties: {grid_position: 'PCCZTD,HYJUAQ'}
+    name: panel_docs_vault
+    properties: {role: card}
+    type: ColumnPanel
+  - layout_properties: {grid_position: 'YVUMRJ,KFYPKF', row_background: ''}
+    name: btn_salvar
+    properties: {bold: true, text: SALVAR ATIVO NO BANCO DE DADOS}
+    type: Button
+  layout_properties: {slot: default}
+  name: content_panel
+  properties: {}
+  type: ColumnPanel
+- layout_properties: {slot: nav-right}
+  name: navbar_links
+  properties: {}
+  type: FlowPanel
+- layout_properties: {slot: title}
+  name: label_18
+  properties: {text: CONTROLE NR-13}
+  type: Label
+container:
+  properties: {html: '@theme:standard-page.html'}
+  type: HtmlTemplate
+is_package: true

@@ -1,10 +1,59 @@
 allow_embedding: false
-name: Material Design 2
-package_name: Material_Design_2
+db_schema:
+  clientes:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      client_hidden: false
+      name: razao_social
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      client_hidden: false
+      name: cnpj
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      client_hidden: false
+      name: plano
+      type: string
+    - admin_ui: {order: 3, width: 200}
+      client_hidden: false
+      name: admin_user
+      type: string
+    server: full
+    title: clientes
+  unidades:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      client_hidden: false
+      name: cliente
+      target: clientes
+      type: link_single
+    - admin_ui: {order: 1, width: 200}
+      client_hidden: false
+      name: nome_unidade
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      client_hidden: false
+      name: endereco
+      type: string
+    - admin_ui: {order: 3, width: 200}
+      client_hidden: false
+      name: lat_long
+      type: string
+    server: full
+    title: unidades
+metadata: {title: Controle NR-13}
+name: Controle NR-13
+package_name: Controle_NR_13
 runtime_options:
   client_version: '3'
   legacy_features: {bootstrap3: true, class_names: true}
   server_spec: {base: python310-minimal}
   version: 3
-services: []
-startup_form: Form1
+services:
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/tables.yml
+startup: {module: FormAtivoNR13, type: form}
+startup_form: null
