@@ -1,0 +1,10 @@
+allow_embedding: false
+name: Material Design 2
+package_name: Material_Design_2
+runtime_options:
+  client_version: '3'
+  legacy_features: {bootstrap3: true, class_names: true}
+  server_spec: {base: python310-minimal}
+  version: 3
+services: []
+startup_form: Form1
