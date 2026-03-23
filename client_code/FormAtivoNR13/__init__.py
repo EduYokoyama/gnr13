@@ -42,20 +42,22 @@ class FormAtivoNR13(FormAtivoNR13Template):
       self.card_tubulacao.visible = True
 
   def btn_salvar_click(self, **event_args):
-    # A. Coleta Dados Comuns (Mestre)
+    """Coleta tudo da tela e envia para o servidor"""
+
+    # 1. Dados Gerais (Mestre)
     dados_mestre = {
       'tag': self.txt_tag.text,
       'nome_operacional': self.txt_nome_operacional.text,
       'tipo': self.drp_tipo_equipamento.selected_value,
-      'unidade': self.drp_unidade.selected_value,
+      'unidade': self.drp_unidade.selected_value, # Aqui enviamos a linha da tabela Unidades
       'fabricante': self.txt_fabricante.text,
-      'ano_fabricacao': int(self.num_ano.text) if self.num_ano.text else 0,
+      'ano_fabricacao': int(self.num_ano.text or 0),
       'data_proxima': self.dt_proxima_insp.date,
-      'pdf_prontuario': self.file_prontuario.file,
+      'pdf_prontuario': self.file_prontuario.file, # O arquivo real do PDF
       'pdf_art': self.file_ART.file
     }
 
-    # B. Coleta Dados Específicos
+    # 2. Dados Técnicos (Specs)
     dados_specs = {}
     tipo = dados_mestre['tipo']
 
@@ -66,22 +68,18 @@ class FormAtivoNR13(FormAtivoNR13Template):
         'fluido_servico': self.drp_fluido_vaso.selected_value,
         'categoria': self.lbl_categoria_calculada.text
       }
-    elif tipo == 'Caldeira':
-      dados_specs = {
-        'cap_vapor': float(self.num_cap_vapor.text or 0),
-        'sup_aquecimento': float(self.num_sup_aquecimento.text or 0),
-        'combustivel': self.drp_combustivel.selected_value
-      }
+    # ... aqui você pode adicionar os elif para Caldeira e Tanque depois ...
 
-    # C. Lista de instrumentos
-    lista_inst = self.rp_dispositivos.items 
+    # 3. Chamada ao Servidor (Onde a mágica acontece)
+    if not dados_mestre['tag']:
+      Notification("Erro: O campo TAG é obrigatório!").show()
+      return
 
-    # D. Chamada Final ao Servidor
-    with Notification("Salvando Ativo e Documentos no Cofre..."):
-      sucesso = anvil.server.call('salvar_ativo_completo', dados_mestre, dados_specs, lista_inst)
+    with Notification("Hospedando documentos no cofre e salvando ativo..."):
+      sucesso = anvil.server.call('salvar_ativo_completo', dados_mestre, dados_specs)
       if sucesso:
-        Notification("✅ Sucesso! Ativo cadastrado.", style="success").show()
-
+        Notification("✅ Ativo Cadastrado com Sucesso!", style="success").show()
+        # Opcional: self.limpar_formulario()
   def calcular_categoria(self):
     """Calcula P*V e define a Categoria NR-13"""
     try:
