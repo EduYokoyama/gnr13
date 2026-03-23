@@ -39,6 +39,22 @@ components:
         items: []
         placeholder: ''
       type: DropDown
+    - layout_properties: {grid_position: 'FRGYUI,DJAZMQ'}
+      name: label_19
+      properties: {text: Fabricante}
+      type: Label
+    - layout_properties: {grid_position: 'FRGYUI,IJKELN'}
+      name: txt_fabricante
+      properties: {placeholder: 'Ex: CBC, Mausa, etc.'}
+      type: TextBox
+    - layout_properties: {grid_position: 'NNNCPP,AWAJYC'}
+      name: label_20
+      properties: {bold: false, text: Ano de Fabricação}
+      type: Label
+    - layout_properties: {grid_position: 'NNNCPP,GCGXJA'}
+      name: num_ano
+      properties: {type: number}
+      type: TextBox
     layout_properties: {grid_position: 'GEAGQP,LJJSFJ'}
     name: card_identificacao
     properties: {role: card}
@@ -67,12 +83,12 @@ components:
       properties:
         items: []
       type: DropDown
-    - event_bindings: {}
+    - event_bindings: {change: num_pmta_change}
       layout_properties: {grid_position: 'JRISBA,PSSCLA EOGTGE,HPQEVO'}
       name: num_pmta
       properties: {type: number}
       type: TextBox
-    - event_bindings: {}
+    - event_bindings: {change: num_volume_change}
       layout_properties: {grid_position: 'JRISBA,PSSCLA FLSLHS,HXEIPF'}
       name: num_volume
       properties: {type: number}
@@ -202,7 +218,7 @@ components:
     name: panel_docs_vault
     properties: {role: card}
     type: ColumnPanel
-  - event_bindings: {}
+  - event_bindings: {click: btn_salvar_click}
     layout_properties: {grid_position: 'YVUMRJ,KFYPKF', row_background: ''}
     name: btn_salvar
     properties: {bold: true, text: SALVAR ATIVO NO BANCO DE DADOS}

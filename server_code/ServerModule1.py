@@ -3,13 +3,12 @@ from anvil.tables import app_tables
 import anvil.media
 
 @anvil.server.callable
-def salvar_ativo_completo(dados_mestre, dados_specs):
+def salvar_ativo_completo(dados_mestre, dados_specs, lista_instrumentos): # <--- ADICIONADO o 3º parâmetro
   """
-    Função que organiza os dados nas tabelas e salva os arquivos no cofre.
-    """
+  Função que organiza os dados nas tabelas e salva os arquivos no cofre.
+  """
   try:
     # 1. Cria o registro na Tabela Mestra 'ativos'
-    # Importante: 'unidade' deve ser a linha da tabela de unidades
     novo_ativo_row = app_tables.ativos.add_row(
       tag=dados_mestre['tag'],
       nome_operacional=dados_mestre['nome_operacional'],
@@ -27,7 +26,7 @@ def salvar_ativo_completo(dados_mestre, dados_specs):
 
     if tipo == 'Vaso de Pressão':
       app_tables.specs_vasos.add_row(
-        ativo=novo_ativo_row, # Link para a tabela de ativos
+        ativo=novo_ativo_row,
         pmta=dados_specs['pmta'],
         volume=dados_specs['volume'],
         fluido_servico=dados_specs['fluido_servico'],
@@ -41,7 +40,16 @@ def salvar_ativo_completo(dados_mestre, dados_specs):
         combustivel=dados_specs['combustivel']
       )
 
+    # 3. NOVO: Salva os instrumentos (Válvulas) vinculados a este Ativo
+    for inst in lista_instrumentos:
+      app_tables.dispositivos_seguranca.add_row(
+        ativo=novo_ativo_row,
+        tag_instrumento=inst.get('tag_instrumento', 'S/N'),
+        status='Ativo'
+      )
+
     return True
   except Exception as e:
+    # Isso aqui vai imprimir o erro real no console do Anvil se algo falhar
     print(f"Erro no servidor ao salvar: {e}")
     return False
