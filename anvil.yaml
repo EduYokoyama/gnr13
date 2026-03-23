@@ -1,7 +1,7 @@
 allow_embedding: false
 db_schema:
   ativos:
-    client: none
+    client: full
     columns:
     - admin_ui: {order: 0, width: 200}
       client_hidden: false
@@ -43,7 +43,7 @@ db_schema:
     server: full
     title: ativos
   clientes:
-    client: none
+    client: full
     columns:
     - admin_ui: {order: 0, width: 200}
       client_hidden: false
@@ -64,7 +64,7 @@ db_schema:
     server: full
     title: clientes
   dispositivos_seguranca:
-    client: none
+    client: full
     columns:
     - admin_ui: {order: 0, width: 200}
       client_hidden: false
@@ -98,7 +98,7 @@ db_schema:
     server: full
     title: dispositivos_seguranca
   specs_caldeiras:
-    client: none
+    client: full
     columns:
     - admin_ui: {order: 0, width: 200}
       client_hidden: false
@@ -120,7 +120,7 @@ db_schema:
     server: full
     title: specs_caldeiras
   specs_tanques:
-    client: none
+    client: full
     columns:
     - admin_ui: {order: 0, width: 200}
       client_hidden: false
@@ -138,7 +138,7 @@ db_schema:
     server: full
     title: specs_tanques
   specs_tubulacoes:
-    client: none
+    client: full
     columns:
     - admin_ui: {order: 0, width: 200}
       client_hidden: false
@@ -156,7 +156,7 @@ db_schema:
     server: full
     title: specs_tubulacoes
   specs_vasos:
-    client: none
+    client: full
     columns:
     - admin_ui: {order: 0, width: 200}
       client_hidden: false
@@ -182,7 +182,7 @@ db_schema:
     server: full
     title: specs_vasos
   unidades:
-    client: none
+    client: full
     columns:
     - admin_ui: {order: 0, width: 200}
       client_hidden: false

@@ -29,10 +29,15 @@ components:
       name: label_4
       properties: {text: Tipo de Equipamento}
       type: Label
-    - layout_properties: {grid_position: 'JKKIIY,QGDHSM'}
+    - data_bindings:
+      - {code: '[''Vaso de Pressão'', ''Caldeira'', ''Sistemas de Tubulação'', ''Tanque Metálico'']', property: items, writeback: false}
+      event_bindings: {change: drp_tipo_equipamento_change}
+      layout_properties: {grid_position: 'JKKIIY,QGDHSM'}
       name: drp_tipo_equipamento
       properties:
-        items: ['[''Vaso de Pressão'', ''Caldeira'', ''Sistemas de Tubulação'', ''Tanque Metálico'']']
+        include_placeholder: true
+        items: []
+        placeholder: ''
       type: DropDown
     layout_properties: {grid_position: 'GEAGQP,LJJSFJ'}
     name: card_identificacao
@@ -55,16 +60,20 @@ components:
       name: lbl_categoria_calculada
       properties: {background: '', foreground: 'theme:Primary 500', text: Aguardando dados...}
       type: Label
-    - layout_properties: {grid_position: 'JRISBA,PSSCLA NKDUQB,YPACHV'}
+    - data_bindings:
+      - {code: '[''Grupo A'', ''Grupo B'', ''Grupo C'', ''Grupo D'']', property: items, writeback: false}
+      layout_properties: {grid_position: 'JRISBA,PSSCLA NKDUQB,YPACHV'}
       name: drp_fluido_vaso
       properties:
-        items: ['[''Grupo A'', ''Grupo B'', ''Grupo C'', ''Grupo D''']
+        items: []
       type: DropDown
-    - layout_properties: {grid_position: 'JRISBA,PSSCLA EOGTGE,HPQEVO'}
+    - event_bindings: {}
+      layout_properties: {grid_position: 'JRISBA,PSSCLA EOGTGE,HPQEVO'}
       name: num_pmta
       properties: {type: number}
       type: TextBox
-    - layout_properties: {grid_position: 'JRISBA,PSSCLA FLSLHS,HXEIPF'}
+    - event_bindings: {}
+      layout_properties: {grid_position: 'JRISBA,PSSCLA FLSLHS,HXEIPF'}
       name: num_volume
       properties: {type: number}
       type: TextBox
@@ -193,7 +202,8 @@ components:
     name: panel_docs_vault
     properties: {role: card}
     type: ColumnPanel
-  - layout_properties: {grid_position: 'YVUMRJ,KFYPKF', row_background: ''}
+  - event_bindings: {}
+    layout_properties: {grid_position: 'YVUMRJ,KFYPKF', row_background: ''}
     name: btn_salvar
     properties: {bold: true, text: SALVAR ATIVO NO BANCO DE DADOS}
     type: Button
