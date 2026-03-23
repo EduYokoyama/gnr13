@@ -1,5 +1,47 @@
 allow_embedding: false
 db_schema:
+  ativos:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      client_hidden: false
+      name: tag
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      client_hidden: false
+      name: nome_operacional
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      client_hidden: false
+      name: tipo
+      type: string
+    - admin_ui: {order: 3, width: 200}
+      client_hidden: false
+      name: unidade
+      target: unidades
+      type: link_single
+    - admin_ui: {order: 4, width: 200}
+      client_hidden: false
+      name: fabricante
+      type: string
+    - admin_ui: {order: 5, width: 200}
+      client_hidden: false
+      name: ano_fabricacao
+      type: number
+    - admin_ui: {order: 6, width: 200}
+      client_hidden: false
+      name: data_proxima_insp
+      type: date
+    - admin_ui: {order: 7, width: 200}
+      client_hidden: false
+      name: pdf_prontuario
+      type: media
+    - admin_ui: {order: 8, width: 200}
+      client_hidden: false
+      name: pdf_ultima_art
+      type: media
+    server: full
+    title: ativos
   clientes:
     client: none
     columns:
@@ -21,6 +63,124 @@ db_schema:
       type: string
     server: full
     title: clientes
+  dispositivos_seguranca:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      client_hidden: false
+      name: ativo
+      target: ativos
+      type: link_single
+    - admin_ui: {order: 1, width: 200}
+      client_hidden: false
+      name: tag_instrumento
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      client_hidden: false
+      name: num_serie
+      type: string
+    - admin_ui: {order: 3, width: 200}
+      client_hidden: false
+      name: data_calibracao
+      type: date
+    - admin_ui: {order: 4, width: 200}
+      client_hidden: false
+      name: prazo_calibracao
+      type: date
+    - admin_ui: {order: 5, width: 200}
+      client_hidden: false
+      name: certificado_pdf
+      type: media
+    - admin_ui: {order: 6, width: 200}
+      client_hidden: false
+      name: status
+      type: string
+    server: full
+    title: dispositivos_seguranca
+  specs_caldeiras:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      client_hidden: false
+      name: ativo
+      target: ativos
+      type: link_single
+    - admin_ui: {order: 1, width: 200}
+      client_hidden: false
+      name: cap_vapor
+      type: number
+    - admin_ui: {order: 2, width: 200}
+      client_hidden: false
+      name: sup_aquecimento
+      type: number
+    - admin_ui: {order: 3, width: 200}
+      client_hidden: false
+      name: combustivel
+      type: string
+    server: full
+    title: specs_caldeiras
+  specs_tanques:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      client_hidden: false
+      name: ativo
+      target: ativos
+      type: link_single
+    - admin_ui: {order: 1, width: 200}
+      client_hidden: false
+      name: diametro_ext
+      type: number
+    - admin_ui: {order: 2, width: 200}
+      client_hidden: false
+      name: volume_nominal
+      type: number
+    server: full
+    title: specs_tanques
+  specs_tubulacoes:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      client_hidden: false
+      name: ativo
+      target: ativos
+      type: link_single
+    - admin_ui: {order: 1, width: 200}
+      client_hidden: false
+      name: extensao
+      type: number
+    - admin_ui: {order: 2, width: 200}
+      client_hidden: false
+      name: classe_fluido
+      type: string
+    server: full
+    title: specs_tubulacoes
+  specs_vasos:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      client_hidden: false
+      name: ativo
+      target: ativos
+      type: link_single
+    - admin_ui: {order: 1, width: 200}
+      client_hidden: false
+      name: pmta
+      type: number
+    - admin_ui: {order: 2, width: 200}
+      client_hidden: false
+      name: volume
+      type: number
+    - admin_ui: {order: 3, width: 200}
+      client_hidden: false
+      name: fluido_servico
+      type: string
+    - admin_ui: {order: 4, width: 200}
+      client_hidden: false
+      name: categoria
+      type: string
+    server: full
+    title: specs_vasos
   unidades:
     client: none
     columns:
