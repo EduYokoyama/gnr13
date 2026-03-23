@@ -60,40 +60,55 @@ components:
     properties: {role: card}
     type: ColumnPanel
   - components:
-    - layout_properties: {grid_position: 'JRISBA,LWSWVV QYQHCX,NRPPGO'}
-      name: label_5
-      properties: {text: Fluido de Serviço}
+    - layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,LWSWVV YGFVFO,AJQYRN'}
+      name: label_21
+      properties: {text: Nome do Fluido}
       type: Label
-    - layout_properties: {grid_position: 'JRISBA,LWSWVV OIXYFD,XODPSN'}
+    - layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,LWSWVV QYQHCX,NRPPGO'}
+      name: label_5
+      properties: {text: Grupo do Fluido}
+      type: Label
+    - layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,LWSWVV OIXYFD,XODPSN'}
       name: label_6
       properties: {text: PMTA (kgf/cm²)}
       type: Label
-    - layout_properties: {grid_position: 'JRISBA,LWSWVV ZOTOVX,RKGLSD'}
+    - layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,LWSWVV ZOTOVX,RKGLSD'}
       name: label_7
       properties: {text: Volume (m³)}
       type: Label
-    - layout_properties: {grid_position: 'JRISBA,LWSWVV HEYYTQ,JCWIGJ'}
+    - layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,LWSWVV HEYYTQ,JCWIGJ'}
       name: lbl_categoria_calculada
       properties: {background: '', foreground: 'theme:Primary 500', text: Aguardando dados...}
       type: Label
+    - event_bindings: {change: drp_nome_fluido_change}
+      layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,PSSCLA QNRTMU,RBQPCC'}
+      name: drp_nome_fluido
+      properties: {}
+      type: DropDown
     - data_bindings:
       - {code: '[''Grupo A'', ''Grupo B'', ''Grupo C'', ''Grupo D'']', property: items, writeback: false}
-      layout_properties: {grid_position: 'JRISBA,PSSCLA NKDUQB,YPACHV'}
-      name: drp_fluido_vaso
+      event_bindings: {change: calcular_categoria}
+      layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,PSSCLA NKDUQB,YPACHV'}
+      name: drp_grupo_fluido
       properties:
+        enabled: false
         items: []
       type: DropDown
     - event_bindings: {change: num_pmta_change}
-      layout_properties: {grid_position: 'JRISBA,PSSCLA EOGTGE,HPQEVO'}
+      layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,PSSCLA EOGTGE,HPQEVO'}
       name: num_pmta
       properties: {type: number}
       type: TextBox
+    - layout_properties: {grid_position: 'ATGXMQ,KQZUJB'}
+      name: lbl_comentario_fluido
+      properties: {foreground: 'theme:Primary 700', text: Descrição técnica aparecerá aqui...}
+      type: Label
     - event_bindings: {change: num_volume_change}
-      layout_properties: {grid_position: 'JRISBA,PSSCLA FLSLHS,HXEIPF'}
+      layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,PSSCLA FLSLHS,HXEIPF'}
       name: num_volume
       properties: {type: number}
       type: TextBox
-    layout_properties: {grid_position: 'DJXVQT,ROGELE'}
+    layout_properties: {grid_position: 'QQBTDR,CLZJJI'}
     name: card_vaso
     properties: {visible: false}
     type: ColumnPanel

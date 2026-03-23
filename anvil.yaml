@@ -97,6 +97,23 @@ db_schema:
       type: string
     server: full
     title: dispositivos_seguranca
+  fluidos_referencia:
+    client: full
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      client_hidden: false
+      name: nome_fluido
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      client_hidden: false
+      name: grupo_nr13
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      client_hidden: false
+      name: comentario
+      type: string
+    server: full
+    title: fluidos_referencia
   specs_caldeiras:
     client: full
     columns:

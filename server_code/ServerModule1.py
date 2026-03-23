@@ -16,9 +16,9 @@ def salvar_ativo_completo(dados_mestre, dados_specs, lista_instrumentos): # <---
       unidade=dados_mestre['unidade'],
       fabricante=dados_mestre['fabricante'],
       ano_fabricacao=dados_mestre['ano_fabricacao'],
-      data_proxima_insp=dados_mestre['data_proxima'],
+      data_proxima_insp=dados_mestre['data_proxima_insp'], # <-- CORRIGIDO AQUI
       pdf_prontuario=dados_mestre['pdf_prontuario'],
-      pdf_ultima_art=dados_mestre['pdf_art']
+      pdf_ultima_art=dados_mestre['pdf_ultima_art'] # <-- CORRIGIDO AQUI PARA BATER COM O FORMULÁRIO
     )
 
     # 2. Salva os dados específicos na tabela correta
