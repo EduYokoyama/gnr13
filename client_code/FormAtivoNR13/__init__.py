@@ -8,8 +8,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
     self.init_components(**properties)
     try:
       self.drp_unidade.items = [(u['nome_unidade'], u) for u in app_tables.unidades.search() if u['nome_unidade']]
-      fluidos = app_tables.fluidos_referencia.search()
-      self.drp_nome_fluido.items = [(f['nome_fluido'], f) for f in fluidos if f['nome_fluido']]
+      self.drp_nome_fluido.items = [(f['nome_fluido'], f) for f in app_tables.fluidos_referencia.search() if f['nome_fluido']]
     except: pass
 
   def drp_tipo_equipamento_change(self, **event_args):
@@ -38,6 +37,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
   def num_volume_change(self, **event_args): self.calcular_categoria()
 
   def btn_add_instrumento_click(self, **event_args):
+    # Importação absoluta para evitar ModuleNotFoundError
     from Controle_NR_13.ItemInstrumento import ItemInstrumento
     self.card_instrumentos.add_component(ItemInstrumento())
 
@@ -57,18 +57,19 @@ class FormAtivoNR13(FormAtivoNR13Template):
         'pdf_prontuario': self.file_prontuario.file,
         'pdf_ultima_art': self.file_ART.file
       }
-      instrumentos_finais = []
+      instrumentos = []
       for row in self.card_instrumentos.get_components():
         if hasattr(row, 'txt_tag_inst') and row.txt_tag_inst.text.strip():
-          instrumentos_finais.append({
+          instrumentos.append({
             'tag_instrumento': row.txt_tag_inst.text,
             'num_serie': row.txt_serie_inst.text,
             'data_calibracao': row.dt_calib_inst.date,
             'prazo_calibracao': row.dt_prazo_inst.date,
             'certificado_pdf': row.file_cert_inst.file
           })
+
       with Notification("Salvando Ativo..."):
-        if anvil.server.call('salvar_ativo_completo', dados_mestre, {}, instrumentos_finais):
+        if anvil.server.call('salvar_ativo_completo', dados_mestre, {}, instrumentos):
           alert("✅ Cadastro realizado com sucesso!")
           self.txt_tag.text = ""
           self.card_instrumentos.clear()

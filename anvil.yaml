@@ -212,11 +212,27 @@ db_schema:
       type: string
     - admin_ui: {order: 2, width: 200}
       client_hidden: false
-      name: endereco
+      name: endereco_unidade
       type: string
     - admin_ui: {order: 3, width: 200}
       client_hidden: false
       name: lat_long
+      type: string
+    - admin_ui: {order: 4, width: 200}
+      client_hidden: false
+      name: cidade
+      type: string
+    - admin_ui: {order: 5, width: 200}
+      client_hidden: false
+      name: estado
+      type: string
+    - admin_ui: {order: 6, width: 200}
+      client_hidden: false
+      name: cep
+      type: string
+    - admin_ui: {order: 7, width: 200}
+      client_hidden: false
+      name: telefone
       type: string
     server: full
     title: unidades

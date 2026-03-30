@@ -5,19 +5,24 @@ components:
   type: Label
 - components:
   - layout_properties: {}
+    name: repeating_panel_unidades
+    properties: {item_template: GerenciarUnidades.LinhaUnidade}
+    type: RepeatingPanel
+  - event_bindings: {}
+    layout_properties: {}
     name: btn_nova_unidade
     properties: {text: Nova Unidade}
     type: Button
-  - name: LinhaUnidade
-    properties: {item_template: GerenciarUnidades.RowTemplate2}
-    type: RepeatingPanel
   layout_properties: {grid_position: 'CINIYZ,XWUATF'}
   name: data_grid_1
   properties:
+    auto_header: false
     columns:
     - {data_key: column_1, id: JKSDUP, title: Column 1}
     - {data_key: column_2, id: VJQQOR, title: Column 2}
     - {data_key: column_3, id: OJLQEN, title: Column 3}
+    show_page_controls: false
+    visible: true
   type: DataGrid
 container: {type: ColumnPanel}
 is_package: true

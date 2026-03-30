@@ -1,0 +1,31 @@
+components:
+- layout_properties: {grid_position: 'ZEPUNU,VBCKNU'}
+  name: txt_nome
+  properties: {placeholder: Nome da Unidade, text: ''}
+  type: TextBox
+- layout_properties: {grid_position: 'QXJEXQ,RBSTLA'}
+  name: drp_estado
+  properties: {}
+  type: DropDown
+- layout_properties: {grid_position: 'YXTPYU,GNYCNX'}
+  name: txt_cidade
+  properties: {placeholder: Cidade, text: ''}
+  type: TextBox
+- layout_properties: {grid_position: 'SXEKWB,LRYVPO'}
+  name: txt_endereco
+  properties: {placeholder: Endereço, text: ''}
+  type: TextBox
+- layout_properties: {grid_position: 'GHHMGD,VDCAYS'}
+  name: txt_lat_long
+  properties: {placeholder: 'Latitude/Longitude - Ex: -23.5, -46.6', text: ''}
+  type: TextBox
+- layout_properties: {grid_position: 'KVOEXV,FCSBUB'}
+  name: txt_cep
+  properties: {placeholder: CEP, text: ''}
+  type: TextBox
+- layout_properties: {grid_position: 'ALBPXE,QQJYEV'}
+  name: txt_telefone
+  properties: {placeholder: Telefone de contato, text: ''}
+  type: TextBox
+container: {type: ColumnPanel}
+is_package: true

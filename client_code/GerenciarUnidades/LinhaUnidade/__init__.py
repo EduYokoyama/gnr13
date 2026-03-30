@@ -7,15 +7,15 @@ class LinhaUnidade(LinhaUnidadeTemplate):
     self.init_components(**properties)
     if self.item:
       self.txt_nome_unidade.text = self.item['nome_unidade']
+      # Opcional: mostrar a cidade e estado na linha se você criou o label
+      # self.lbl_localizacao.text = f"{self.item['cidade']} - {self.item['estado']}"
 
   def btn_salvar_edit_click(self, **event_args):
     novo_nome = self.txt_nome_unidade.text
-    if not novo_nome.strip():
-      alert("O nome da unidade não pode estar vazio.")
-      return
     anvil.server.call('atualizar_unidade', self.item, novo_nome)
-    Notification("Unidade atualizada!").show()
+    Notification("Nome atualizado!").show()
 
+  @handle("btn_excluir", "click")
   def btn_excluir_click(self, **event_args):
     if confirm(f"Excluir unidade '{self.item['nome_unidade']}'?"):
       anvil.server.call('excluir_unidade', self.item)

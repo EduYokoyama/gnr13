@@ -4,7 +4,8 @@ components:
     name: txt_nome_unidade
     properties: {placeholder: Nome da Unidade}
     type: TextBox
-  - layout_properties: {}
+  - event_bindings: {}
+    layout_properties: {}
     name: btn_excluir
     properties: {icon: 'fa:trash', role: secondary-color, text: ''}
     type: Button

@@ -8,16 +8,42 @@ class GerenciarUnidades(GerenciarUnidadesTemplate):
     self.atualizar_lista()
 
   def atualizar_lista(self):
-    # Procura o componente independente do nome (segurança extra)
+    """Atualiza o Repeating Panel com as unidades do banco"""
     try:
-      # Tenta pelo nome padrão que você deve usar
       self.repeating_panel_unidades.items = anvil.server.call('buscar_unidades')
-    except AttributeError:
-      # Se você esqueceu de renomear no design, ele avisa mas não trava o app todo
-      alert("Atenção: Renomeie o Repeating Panel no Design para 'repeating_panel_unidades'")
+    except Exception as e:
+      print(f"Erro ao carregar unidades: {e}")
 
+  @handle("btn_nova_unidade", "click")
   def btn_nova_unidade_click(self, **event_args):
-    nome_novo = textbox_prompt("Digite o nome da nova Unidade Fabril:")
-    if nome_novo:
-      anvil.server.call('salvar_unidade', nome_novo)
-      self.atualizar_lista()
+    """Abre o formulário DialogUnidade como um pop-up"""
+    # Importação absoluta para evitar ModuleNotFoundError
+    from Controle_NR_13.DialogUnidade import DialogUnidade
+
+    edicao_form = DialogUnidade()
+
+    save_clicked = alert(
+      content=edicao_form,
+      title="Cadastrar Nova Unidade Fabril",
+      large=True,
+      buttons=[("Salvar Unidade", True), ("Cancelar", False)]
+    )
+
+    if save_clicked:
+      # Coleta os dados de todos os campos, incluindo o DropDown de estado
+      novos_dados = {
+        'nome': edicao_form.txt_nome.text,
+        'cidade': edicao_form.txt_cidade.text,
+        'estado': edicao_form.drp_estado.selected_value,
+        'endereco': edicao_form.txt_endereco.text,
+        'cep': edicao_form.txt_cep.text,
+        'telefone': edicao_form.txt_telefone.text,
+        'lat_long': edicao_form.txt_lat_long.text
+      }
+
+      if novos_dados['nome'] and novos_dados['estado']:
+        anvil.server.call('salvar_unidade', novos_dados)
+        self.atualizar_lista()
+        Notification("Unidade cadastrada com sucesso!").show()
+      else:
+        alert("Nome e Estado são obrigatórios!")
