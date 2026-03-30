@@ -1,0 +1,21 @@
+components:
+- components:
+  - layout_properties: {}
+    name: txt_nome_unidade
+    properties: {placeholder: Nome da Unidade}
+    type: TextBox
+  - layout_properties: {}
+    name: btn_excluir
+    properties: {icon: 'fa:trash', role: secondary-color, text: ''}
+    type: Button
+  - event_bindings: {click: btn_salvar_edit_click}
+    layout_properties: {}
+    name: btn_salvar_edit
+    properties: {icon: 'fa:floppy-o', text: ''}
+    type: Button
+  layout_properties: {column: 'null'}
+  name: flow_panel_1
+  properties: {}
+  type: FlowPanel
+container: {type: DataRowPanel}
+is_package: true

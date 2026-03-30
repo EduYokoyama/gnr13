@@ -26,3 +26,21 @@ def salvar_ativo_completo(dados_mestre, dados_specs, lista_instrumentos):
   except Exception as e:
     print(f"Erro no servidor: {e}")
     return False
+
+@anvil.server.callable
+def buscar_unidades():
+  # No futuro, filtraremos aqui pelo ID da empresa do usuário logado
+  return app_tables.unidades.search()
+
+@anvil.server.callable
+def salvar_unidade(nome):
+  app_tables.unidades.add_row(nome_unidade=nome)
+
+@anvil.server.callable
+def excluir_unidade(unidade_row):
+  unidade_row.delete()
+
+@anvil.server.callable
+def atualizar_unidade(unidade_row, novo_nome):
+  # Atualiza a coluna 'nome_unidade' da linha específica
+  unidade_row['nome_unidade'] = novo_nome
