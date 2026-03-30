@@ -10,6 +10,7 @@ class GerenciarUnidades(GerenciarUnidadesTemplate):
   def atualizar_lista(self):
     self.repeating_panel_unidades.items = anvil.server.call('buscar_unidades')
 
+  @handle("btn_nova_unidade", "click")
   def btn_nova_unidade_click(self, **event_args):
     from Controle_NR_13.DialogUnidade import DialogUnidade
     edicao_form = DialogUnidade()
@@ -18,11 +19,10 @@ class GerenciarUnidades(GerenciarUnidadesTemplate):
       content=edicao_form,
       title="Cadastrar Nova Unidade Fabril",
       large=True,
-      buttons=[("Salvar Unidade", True), ("Cancelar", False)]
+      buttons=[("Salvar", True), ("Cancelar", False)]
     )
 
     if save_clicked:
-      # O campo lat_long agora vem da variável que o mapa atualizou
       novos_dados = {
         'nome': edicao_form.txt_nome.text,
         'cidade': edicao_form.txt_cidade.text,
@@ -30,7 +30,7 @@ class GerenciarUnidades(GerenciarUnidadesTemplate):
         'endereco': edicao_form.txt_endereco.text,
         'cep': edicao_form.txt_cep.text,
         'telefone': edicao_form.txt_telefone.text,
-        'lat_long': edicao_form.lat_long_final # Capturado do mapa
+        'lat_long': edicao_form.txt_lat_long.text
       }
 
       if novos_dados['nome'] and novos_dados['estado']:

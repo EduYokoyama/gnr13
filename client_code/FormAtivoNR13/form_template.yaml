@@ -21,7 +21,8 @@ components:
       name: label_3
       properties: {text: Unidade/Planta}
       type: Label
-    - layout_properties: {grid_position: 'VPBNPA,OMUTNR'}
+    - event_bindings: {}
+      layout_properties: {grid_position: 'VPBNPA,OMUTNR'}
       name: drp_unidade
       properties: {}
       type: DropDown

@@ -3,6 +3,11 @@ components:
   name: txt_nome
   properties: {placeholder: Nome da Unidade, text: ''}
   type: TextBox
+- event_bindings: {}
+  layout_properties: {grid_position: 'WFWMQQ,JCNAGD'}
+  name: txt_cep
+  properties: {placeholder: CEP, text: ''}
+  type: TextBox
 - layout_properties: {grid_position: 'QXJEXQ,RBSTLA'}
   name: drp_estado
   properties: {}
@@ -15,14 +20,10 @@ components:
   name: txt_endereco
   properties: {placeholder: Endereço, text: ''}
   type: TextBox
-- layout_properties: {grid_position: 'KVOEXV,FCSBUB'}
-  name: txt_cep
-  properties: {placeholder: CEP, text: ''}
+- layout_properties: {grid_position: 'AWIHEA,MSPWLK'}
+  name: txt_lat_long
+  properties: {}
   type: TextBox
-- layout_properties: {grid_position: 'MKPFTI,QBCTPO'}
-  name: mapa_unidade
-  properties: {height: 300px}
-  type: GoogleMap
 - layout_properties: {grid_position: 'ALBPXE,QQJYEV'}
   name: txt_telefone
   properties: {placeholder: Telefone de contato, text: ''}

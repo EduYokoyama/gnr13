@@ -4,6 +4,14 @@ components:
     name: txt_nome_unidade
     properties: {placeholder: Nome da Unidade}
     type: TextBox
+  - layout_properties: {}
+    name: lbl_localizacao
+    properties: {}
+    type: Label
+  - layout_properties: {}
+    name: lbl_total_ativos
+    properties: {}
+    type: Label
   - event_bindings: {}
     layout_properties: {}
     name: btn_excluir
@@ -12,7 +20,7 @@ components:
   - event_bindings: {click: btn_salvar_edit_click}
     layout_properties: {}
     name: btn_salvar_edit
-    properties: {icon: 'fa:floppy-o', text: ''}
+    properties: {icon: 'fa:pencil-square-o', role: primary-color, text: ''}
     type: Button
   layout_properties: {column: 'null'}
   name: flow_panel_1
