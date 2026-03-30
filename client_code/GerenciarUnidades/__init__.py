@@ -8,18 +8,10 @@ class GerenciarUnidades(GerenciarUnidadesTemplate):
     self.atualizar_lista()
 
   def atualizar_lista(self):
-    """Atualiza o Repeating Panel com as unidades do banco"""
-    try:
-      self.repeating_panel_unidades.items = anvil.server.call('buscar_unidades')
-    except Exception as e:
-      print(f"Erro ao carregar unidades: {e}")
+    self.repeating_panel_unidades.items = anvil.server.call('buscar_unidades')
 
-  @handle("btn_nova_unidade", "click")
   def btn_nova_unidade_click(self, **event_args):
-    """Abre o formulário DialogUnidade como um pop-up"""
-    # Importação absoluta para evitar ModuleNotFoundError
     from Controle_NR_13.DialogUnidade import DialogUnidade
-
     edicao_form = DialogUnidade()
 
     save_clicked = alert(
@@ -30,7 +22,7 @@ class GerenciarUnidades(GerenciarUnidadesTemplate):
     )
 
     if save_clicked:
-      # Coleta os dados de todos os campos, incluindo o DropDown de estado
+      # O campo lat_long agora vem da variável que o mapa atualizou
       novos_dados = {
         'nome': edicao_form.txt_nome.text,
         'cidade': edicao_form.txt_cidade.text,
@@ -38,12 +30,12 @@ class GerenciarUnidades(GerenciarUnidadesTemplate):
         'endereco': edicao_form.txt_endereco.text,
         'cep': edicao_form.txt_cep.text,
         'telefone': edicao_form.txt_telefone.text,
-        'lat_long': edicao_form.txt_lat_long.text
+        'lat_long': edicao_form.lat_long_final # Capturado do mapa
       }
 
       if novos_dados['nome'] and novos_dados['estado']:
         anvil.server.call('salvar_unidade', novos_dados)
         self.atualizar_lista()
-        Notification("Unidade cadastrada com sucesso!").show()
+        Notification("Unidade salva com sucesso!").show()
       else:
         alert("Nome e Estado são obrigatórios!")
