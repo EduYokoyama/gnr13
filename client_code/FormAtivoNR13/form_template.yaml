@@ -26,10 +26,6 @@ components:
       name: drp_unidade
       properties: {}
       type: DropDown
-    - layout_properties: {grid_position: 'JKKIIY,IQFIYJ'}
-      name: label_4
-      properties: {text: Tipo de Equipamento}
-      type: Label
     - data_bindings:
       - {code: '[''Vaso de Pressão'', ''Caldeira'', ''Sistemas de Tubulação'', ''Tanque Metálico'']', property: items, writeback: false}
       event_bindings: {change: drp_tipo_equipamento_change}
@@ -48,10 +44,6 @@ components:
       name: txt_fabricante
       properties: {placeholder: 'Ex: CBC, Mausa, etc.'}
       type: TextBox
-    - layout_properties: {grid_position: 'NNNCPP,AWAJYC'}
-      name: label_20
-      properties: {bold: false, text: Ano de Fabricação}
-      type: Label
     - layout_properties: {grid_position: 'NNNCPP,GCGXJA'}
       name: num_ano
       properties: {type: number}
@@ -206,6 +198,14 @@ components:
       name: btn_add_instrumento
       properties: {text: + Adicionar Válvula/Manômetro}
       type: Button
+    - layout_properties: {grid_position: 'NPZDTE,KPWNJX'}
+      name: label_4
+      properties: {text: Tipo de Equipamento}
+      type: Label
+    - layout_properties: {grid_position: 'FSMWPP,EAKWJY'}
+      name: label_20
+      properties: {bold: false, text: Ano de Fabricação}
+      type: Label
     layout_properties: {grid_position: 'KXVDDQ,VXTZGX'}
     name: card_instrumentos
     properties: {role: card}

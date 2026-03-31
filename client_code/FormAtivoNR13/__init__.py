@@ -97,3 +97,8 @@ class FormAtivoNR13(FormAtivoNR13Template):
   def btn_salvar_click(self, **event_args):
     # Lógica de salvar...
     pass
+
+  @handle("btn_add_instrumento", "click")
+  def btn_add_instrumento_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    pass
