@@ -61,57 +61,61 @@ components:
     properties: {role: card}
     type: ColumnPanel
   - components:
-    - layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,LWSWVV YGFVFO,AJQYRN'}
+    - layout_properties: {full_width_row: false, grid_position: 'JRISBA,LWSWVV YGFVFO,AJQYRN'}
       name: label_21
-      properties: {text: Nome do Fluido}
+      properties:
+        role: label_tecnica
+        spacing:
+          padding: [null, 49, null, null]
+        text: Nome do Fluido
       type: Label
-    - layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,LWSWVV QYQHCX,NRPPGO'}
+    - layout_properties: {grid_position: 'JRISBA,LWSWVV QYQHCX,NRPPGO'}
       name: label_5
-      properties: {text: Grupo do Fluido}
+      properties: {role: label_tecnica, text: Grupo do Fluido}
       type: Label
-    - layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,LWSWVV OIXYFD,XODPSN'}
+    - layout_properties: {grid_position: 'JRISBA,LWSWVV OIXYFD,XODPSN'}
       name: label_6
-      properties: {text: PMTA (kgf/cm²)}
+      properties: {role: label_tecnica, text: PMTA (kgf/cm²)}
       type: Label
-    - layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,LWSWVV ZOTOVX,RKGLSD'}
+    - layout_properties: {grid_position: 'JRISBA,LWSWVV ZOTOVX,RKGLSD'}
       name: label_7
-      properties: {text: Volume (m³)}
+      properties: {role: label_tecnica, text: Volume (m³)}
       type: Label
-    - layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,LWSWVV HEYYTQ,JCWIGJ'}
+    - layout_properties: {grid_position: 'JRISBA,LWSWVV UDSWLP,VTDRUB'}
+      name: lbl_comentario_fluido
+      properties: {foreground: 'theme:Primary 700', role: label_tecnica, text: Descrição técnica aparecerá aqui...}
+      type: Label
+    - layout_properties: {grid_position: 'JRISBA,LWSWVV OAQSBD,ZWTMMM'}
       name: lbl_categoria_calculada
-      properties: {background: '', foreground: 'theme:Primary 500', text: Aguardando dados...}
+      properties: {background: '', foreground: 'theme:Primary 500', role: label_tecnica, text: Aguardando dados...}
       type: Label
     - event_bindings: {change: drp_nome_fluido_change}
-      layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,PSSCLA QNRTMU,RBQPCC'}
+      layout_properties: {grid_position: 'JRISBA,PSSCLA QNRTMU,RBQPCC'}
       name: drp_nome_fluido
       properties: {}
       type: DropDown
     - data_bindings:
       - {code: '[''Grupo A'', ''Grupo B'', ''Grupo C'', ''Grupo D'']', property: items, writeback: false}
       event_bindings: {change: calcular_categoria}
-      layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,PSSCLA NKDUQB,YPACHV'}
+      layout_properties: {grid_position: 'JRISBA,PSSCLA MVSVCO,NVEXWL'}
       name: drp_grupo_fluido
       properties:
         enabled: false
         items: []
       type: DropDown
     - event_bindings: {change: num_pmta_change}
-      layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,PSSCLA EOGTGE,HPQEVO'}
+      layout_properties: {grid_position: 'JRISBA,PSSCLA EOGTGE,HPQEVO'}
       name: num_pmta
       properties: {type: number}
       type: TextBox
-    - layout_properties: {grid_position: 'ATGXMQ,KQZUJB'}
-      name: lbl_comentario_fluido
-      properties: {foreground: 'theme:Primary 700', text: Descrição técnica aparecerá aqui...}
-      type: Label
     - event_bindings: {change: num_volume_change}
-      layout_properties: {grid_position: 'ATGXMQ,BPFHTV JRISBA,PSSCLA FLSLHS,HXEIPF'}
+      layout_properties: {grid_position: 'JRISBA,PSSCLA KJRTLY,PWTGAQ'}
       name: num_volume
       properties: {type: number}
       type: TextBox
     layout_properties: {grid_position: 'QQBTDR,CLZJJI'}
     name: card_vaso
-    properties: {visible: false}
+    properties: {col_widths: '{"XODPSN":60,"LWSWVV":30,"PSSCLA":30}', visible: false}
     type: ColumnPanel
   - components:
     - layout_properties: {grid_position: 'RDRAYL,NXSSCR'}
@@ -242,7 +246,7 @@ components:
     type: Button
   layout_properties: {slot: default}
   name: content_panel
-  properties: {}
+  properties: {col_spacing: small, wrap_on: never}
   type: ColumnPanel
 - layout_properties: {slot: nav-right}
   name: navbar_links

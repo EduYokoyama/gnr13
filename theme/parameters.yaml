@@ -177,3 +177,6 @@ roles:
   name: dense
 - components: [Link]
   name: selected
+- components: [Label]
+  display_in_toolbox: true
+  name: label_tecnica
