@@ -1,0 +1,36 @@
+components:
+- components:
+  - event_bindings: {change: drp_filtros_change}
+    layout_properties: {}
+    name: drp_filtro_unidade
+    properties: {}
+    type: DropDown
+  - event_bindings: {change: drp_filtros_change}
+    layout_properties: {}
+    name: drp_filtro_tipo
+    properties: {}
+    type: DropDown
+  - event_bindings: {change: drp_filtros_change}
+    layout_properties: {}
+    name: drp_filtro_status
+    properties: {}
+    type: DropDown
+  layout_properties: {grid_position: 'MOWAEO,GMSGGZ'}
+  name: flow_panel_1
+  properties: {}
+  type: FlowPanel
+- components:
+  - name: repeating_panel_ativos
+    properties: {item_template: GerenciarAtivos.LinhaAtivo}
+    type: RepeatingPanel
+  layout_properties: {grid_position: 'SRNCZV,OHVPOT'}
+  name: data_grid_1
+  properties:
+    columns:
+    - {data_key: column_1, id: JKSDUP, title: TAG}
+    - {data_key: column_2, id: VJQQOR, title: Tipo}
+    - {data_key: column_3, id: OJLQEN, title: 'Status '}
+    - {data_key: column_1, id: JONRLZ, title: Ações}
+  type: DataGrid
+container: {type: ColumnPanel}
+is_package: true
