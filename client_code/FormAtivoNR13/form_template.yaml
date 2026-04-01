@@ -61,61 +61,81 @@ components:
     properties: {role: card}
     type: ColumnPanel
   - components:
-    - layout_properties: {full_width_row: false, grid_position: 'JRISBA,LWSWVV YGFVFO,AJQYRN'}
-      name: label_21
-      properties:
-        role: label_tecnica
-        spacing:
-          padding: [null, 49, null, null]
-        text: Nome do Fluido
-      type: Label
-    - layout_properties: {grid_position: 'JRISBA,LWSWVV QYQHCX,NRPPGO'}
-      name: label_5
-      properties: {role: label_tecnica, text: Grupo do Fluido}
-      type: Label
-    - layout_properties: {grid_position: 'JRISBA,LWSWVV OIXYFD,XODPSN'}
-      name: label_6
-      properties: {role: label_tecnica, text: PMTA (kgf/cm²)}
-      type: Label
-    - layout_properties: {grid_position: 'JRISBA,LWSWVV ZOTOVX,RKGLSD'}
-      name: label_7
-      properties: {role: label_tecnica, text: Volume (m³)}
-      type: Label
-    - layout_properties: {grid_position: 'JRISBA,LWSWVV UDSWLP,VTDRUB'}
+    - components:
+      - layout_properties: {}
+        name: label_21
+        properties:
+          role: label_tecnica
+          spacing:
+            padding: [null, 49, null, null]
+          text: Nome do Fluido
+        type: Label
+      - event_bindings: {change: drp_nome_fluido_change}
+        layout_properties: {}
+        name: drp_nome_fluido
+        properties: {}
+        type: DropDown
+      layout_properties: {grid_position: 'OGHPNQ,SIOTKZ'}
+      name: flow_panel_1
+      properties: {}
+      type: FlowPanel
+    - components:
+      - layout_properties: {}
+        name: label_5
+        properties: {role: label_tecnica, text: Grupo do Fluido}
+        type: Label
+      - data_bindings:
+        - {code: '[''Grupo A'', ''Grupo B'', ''Grupo C'', ''Grupo D'']', property: items, writeback: false}
+        event_bindings: {change: calcular_categoria}
+        layout_properties: {}
+        name: drp_grupo_fluido
+        properties:
+          enabled: false
+          items: []
+        type: DropDown
+      layout_properties: {grid_position: 'HWDHWF,LUNSHR'}
+      name: flow_panel_2
+      properties: {}
+      type: FlowPanel
+    - components:
+      - layout_properties: {}
+        name: label_6
+        properties: {role: label_tecnica, text: PMTA (kgf/cm²)}
+        type: Label
+      - event_bindings: {change: num_pmta_change}
+        layout_properties: {}
+        name: num_pmta
+        properties: {type: number}
+        type: TextBox
+      layout_properties: {grid_position: 'OKKMGU,NNIVJT'}
+      name: flow_panel_3
+      properties: {}
+      type: FlowPanel
+    - components:
+      - layout_properties: {}
+        name: label_7
+        properties: {role: label_tecnica, text: Volume (m³)}
+        type: Label
+      - event_bindings: {change: num_volume_change}
+        layout_properties: {}
+        name: num_volume
+        properties: {type: number}
+        type: TextBox
+      layout_properties: {grid_position: 'REWXES,MRWHRT'}
+      name: flow_panel_4
+      properties: {}
+      type: FlowPanel
+    - layout_properties: {grid_position: 'UDSWLP,VTDRUB'}
       name: lbl_comentario_fluido
       properties: {foreground: 'theme:Primary 700', role: label_tecnica, text: Descrição técnica aparecerá aqui...}
       type: Label
-    - layout_properties: {grid_position: 'JRISBA,LWSWVV OAQSBD,ZWTMMM'}
+    - layout_properties: {grid_position: 'OAQSBD,ZWTMMM'}
       name: lbl_categoria_calculada
       properties: {background: '', foreground: 'theme:Primary 500', role: label_tecnica, text: Aguardando dados...}
       type: Label
-    - event_bindings: {change: drp_nome_fluido_change}
-      layout_properties: {grid_position: 'JRISBA,PSSCLA QNRTMU,RBQPCC'}
-      name: drp_nome_fluido
-      properties: {}
-      type: DropDown
-    - data_bindings:
-      - {code: '[''Grupo A'', ''Grupo B'', ''Grupo C'', ''Grupo D'']', property: items, writeback: false}
-      event_bindings: {change: calcular_categoria}
-      layout_properties: {grid_position: 'JRISBA,PSSCLA MVSVCO,NVEXWL'}
-      name: drp_grupo_fluido
-      properties:
-        enabled: false
-        items: []
-      type: DropDown
-    - event_bindings: {change: num_pmta_change}
-      layout_properties: {grid_position: 'JRISBA,PSSCLA EOGTGE,HPQEVO'}
-      name: num_pmta
-      properties: {type: number}
-      type: TextBox
-    - event_bindings: {change: num_volume_change}
-      layout_properties: {grid_position: 'JRISBA,PSSCLA KJRTLY,PWTGAQ'}
-      name: num_volume
-      properties: {type: number}
-      type: TextBox
     layout_properties: {grid_position: 'QQBTDR,CLZJJI'}
     name: card_vaso
-    properties: {col_widths: '{"XODPSN":60,"LWSWVV":30,"PSSCLA":30}', visible: false}
+    properties: {col_widths: '{"LWSWVV":30}', visible: false}
     type: ColumnPanel
   - components:
     - layout_properties: {grid_position: 'RDRAYL,NXSSCR'}
@@ -172,14 +192,28 @@ components:
     properties: {visible: false}
     type: ColumnPanel
   - components:
-    - layout_properties: {grid_position: 'AOJVLQ,EPQPIP'}
-      name: label_13
+    - components:
+      - layout_properties: {}
+        name: label_4
+        properties: {text: Nome do Fluido}
+        type: Label
+      - event_bindings: {change: drp_fluido_tubo_change}
+        layout_properties: {}
+        name: drp_fluido_tubo
+        properties: {}
+        type: DropDown
+      layout_properties: {grid_position: 'BMQYLX,BFAIIE'}
+      name: flow_panel_5
+      properties: {}
+      type: FlowPanel
+    - layout_properties: {grid_position: 'AOJVLQ,NIWFZY'}
+      name: lbl_grupo_tubo
       properties: {text: Classe de Fluido}
       type: Label
-    - layout_properties: {grid_position: 'AOJVLQ,CFNHBP'}
-      name: txt_classe_fluido
+    - layout_properties: {grid_position: 'AOJVLQ,INICNP'}
+      name: lbl_desc_fluido_tubo
       properties: {}
-      type: TextBox
+      type: Label
     - layout_properties: {grid_position: 'YJNZHJ,MZNADY'}
       name: label_14
       properties: {text: Extensão Total (Metros)}
@@ -204,7 +238,7 @@ components:
     - event_bindings: {click: btn_adicionar_instrumento_click}
       layout_properties: {grid_position: 'ZLNZTP,BRRVTO'}
       name: btn_add_instrumento
-      properties: {text: + Adicionar Válvula/Manômetro}
+      properties: {text: + Adicionar Instrumento}
       type: Button
     layout_properties: {grid_position: 'KXVDDQ,VXTZGX'}
     name: fp_instrumentos

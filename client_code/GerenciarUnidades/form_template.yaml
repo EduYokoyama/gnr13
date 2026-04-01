@@ -8,7 +8,7 @@ components:
     name: repeating_panel_unidades
     properties: {item_template: GerenciarUnidades.LinhaUnidade}
     type: RepeatingPanel
-  - event_bindings: {}
+  - event_bindings: {click: btn_nova_unidade_click}
     layout_properties: {}
     name: btn_nova_unidade
     properties: {text: + Nova Unidade}

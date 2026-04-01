@@ -12,17 +12,21 @@ components:
       type: TextBox
     - layout_properties: {}
       name: txt_ano_fab_inst
-      properties: {}
+      properties: {placeholder: ano de fabricação}
       type: TextBox
     layout_properties: {grid_position: 'WQZEVV,XXOIUO'}
     name: flow_panel_2
     properties: {}
     type: FlowPanel
+  - layout_properties: {grid_position: 'JNQJYU,SRLNSH'}
+    name: label_1
+    properties: {text: Tipo de instrumento}
+    type: Label
   - components:
     - event_bindings: {change: txt_tipo_manual_change}
       layout_properties: {}
       name: txt_tipo_manual
-      properties: {}
+      properties: {placeholder: entrada manual do tipo}
       type: TextBox
     - event_bindings: {change: drp_tipo_inst_change}
       layout_properties: {}
@@ -33,14 +37,18 @@ components:
     name: flow_panel_1
     properties: {}
     type: FlowPanel
+  - layout_properties: {grid_position: 'CYOZJY,RIXLAN'}
+    name: label_2
+    properties: {bold: false, text: Última calibração e próxima calibração}
+    type: Label
   - components:
     - layout_properties: {}
       name: dt_calib_inst
-      properties: {placeholder: Formato DD/MM/YYYY}
+      properties: {placeholder: Calibrado DD/MM/YYYY}
       type: DatePicker
     - layout_properties: {}
       name: dt_prazo_inst
-      properties: {placeholder: Formato DD/MM/YYYY}
+      properties: {placeholder: Vencimento DD/MM/YYYY}
       type: DatePicker
     layout_properties: {grid_position: 'JSRSNM,FOZZQE'}
     name: flow_panel_4

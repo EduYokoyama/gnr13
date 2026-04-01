@@ -15,21 +15,21 @@ class LinhaUnidade(LinhaUnidadeTemplate):
       estado = self.item.get('estado') or "UF"
       self.lbl_localizacao.text = f"📍 {cidade} - {estado}"
 
-      # Exibe a contagem
+      # Exibe a contagem vinda do servidor
       total = self.item.get('contagem_ativos', 0)
       self.lbl_total_ativos.text = f"📦 {total} ativos"
 
-      # CORREÇÃO DA LINHA 25: Usando .bold em vez de .font_weight
+      # Estilização baseada na contagem
       if total > 0:
-        self.lbl_total_ativos.foreground = "#2196F3" # Azul
+        self.lbl_total_ativos.foreground = "#2196F3" # Azul Anvil
         self.lbl_total_ativos.bold = True
       else:
         self.lbl_total_ativos.foreground = "gray"
         self.lbl_total_ativos.bold = False
 
   def btn_salvar_edit_click(self, **event_args):
-    """Edição reusando o objeto original da linha"""
-    from Controle_NR_13.DialogUnidade import DialogUnidade
+    """Abre o diálogo de edição preenchido com os dados atuais"""
+    from ..DialogUnidade import DialogUnidade
     form_edicao = DialogUnidade()
 
     form_edicao.txt_nome.text = self.item.get('nome_unidade', '')
@@ -51,11 +51,15 @@ class LinhaUnidade(LinhaUnidadeTemplate):
         'lat_long': form_edicao.txt_lat_long.text
       }
       anvil.server.call('editar_unidade', self.item['row_objeto'], novos_dados)
+
+      # Atualiza visualmente a linha sem precisar recarregar tudo
       self.txt_nome_unidade.text = novos_dados['nome']
       self.lbl_localizacao.text = f"📍 {novos_dados['cidade']} - {novos_dados['estado']}"
-      Notification("Atualizado!").show()
+      Notification("Unidade atualizada!", style="success").show()
 
   def btn_excluir_click(self, **event_args):
-    if confirm("Excluir esta unidade permanentemente?"):
+    """Remove a unidade após confirmação"""
+    if confirm(f"Deseja excluir a unidade '{self.item.get('nome_unidade')}' permanentemente?"):
       anvil.server.call('excluir_unidade', self.item['row_objeto'])
       self.remove_from_parent()
+      Notification("Unidade excluída.").show()

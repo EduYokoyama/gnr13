@@ -8,11 +8,12 @@ class GerenciarUnidades(GerenciarUnidadesTemplate):
     self.atualizar_lista()
 
   def atualizar_lista(self):
+    """Chama o servidor para pegar a lista com as contagens atualizadas"""
     self.repeating_panel_unidades.items = anvil.server.call('buscar_unidades')
 
-  @handle("btn_nova_unidade", "click")
   def btn_nova_unidade_click(self, **event_args):
-    from Controle_NR_13.DialogUnidade import DialogUnidade
+    """Abre o diálogo de cadastro de unidade"""
+    from ..DialogUnidade import DialogUnidade
     edicao_form = DialogUnidade()
 
     save_clicked = alert(
@@ -36,6 +37,6 @@ class GerenciarUnidades(GerenciarUnidadesTemplate):
       if novos_dados['nome'] and novos_dados['estado']:
         anvil.server.call('salvar_unidade', novos_dados)
         self.atualizar_lista()
-        Notification("Unidade salva com sucesso!").show()
+        Notification("Unidade salva com sucesso!", style="success").show()
       else:
         alert("Nome e Estado são obrigatórios!")

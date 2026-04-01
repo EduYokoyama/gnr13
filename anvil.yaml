@@ -176,7 +176,11 @@ db_schema:
       type: number
     - admin_ui: {order: 2, width: 200}
       client_hidden: false
-      name: classe_fluido
+      name: grupo_fluido
+      type: string
+    - admin_ui: {order: 3, width: 200}
+      client_hidden: false
+      name: fluido
       type: string
     server: full
     title: specs_tubulacoes
