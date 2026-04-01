@@ -4,54 +4,57 @@ from anvil.tables import app_tables
 import anvil.server
 import datetime
 
-# --- GESTÃO DE UNIDADES ---
 @anvil.server.callable
 def buscar_unidades():
   unidades = app_tables.unidades.search()
-  lista_processada = []
+  lista = []
   for u in unidades:
     try:
-      total_ativos = len(app_tables.ativos.search(unidade=u))
+      total = len(app_tables.ativos.search(unidade=u))
     except:
-      total_ativos = 0
+      total = 0
     item = dict(u)
-    item['contagem_ativos'] = total_ativos
+    item['contagem_ativos'] = total
     item['row_objeto'] = u 
-    lista_processada.append(item)
-  return lista_processada
+    lista.append(item)
+  return lista
 
-# --- GESTÃO DE ATIVOS E FLUIDOS ---
 @anvil.server.callable
 def buscar_fluidos_lista():
   try:
-    nomes = [str(r['nome_fluido']) for r in app_tables.fluidos_referencia.search() if r['nome_fluido']]
-    return nomes if nomes else ["Ar Comprimido", "Vapor", "Água"]
+    return [str(r['nome_fluido']) for r in app_tables.fluidos_referencia.search()]
   except:
     return ["Ar Comprimido", "Vapor", "Água"]
 
 @anvil.server.callable
 def obter_detalhes_fluido(nome_fluido):
-  """Busca detalhes usando os nomes reais das colunas: grupo_nr13 e comentario"""
   row = app_tables.fluidos_referencia.get(nome_fluido=nome_fluido)
   if row:
-    return {
-      'grupo': row['grupo_nr13'], 
-      'descricao': row['comentario']
-    }
+    return {'grupo': row['grupo_nr13'], 'descricao': row['comentario']}
   return None
 
 @anvil.server.callable
-def salvar_ativo_completo(dados_mestre, especificacoes):
-  return app_tables.ativos.add_row(**dados_mestre, **especificacoes)
+def salvar_ativo_completo(dados_mestre, especificacoes, lista_instrumentos=None):
+  # 1. Salva Ativo
+  novo_ativo = app_tables.ativos.add_row(**dados_mestre, **especificacoes)
+  # 2. Salva Dispositivos na tabela correta
+  if lista_instrumentos:
+    for inst in lista_instrumentos:
+      app_tables.dispositivos_seguranca.add_row(
+        ativo=novo_ativo,
+        tag_instrumento=inst.get('tag'),
+        tipo=inst.get('tipo'),
+        num_serie=inst.get('serie'),
+        ano_fabricacao=inst.get('ano_fab'),
+        data_calibracao=inst.get('data_cal'),
+        prazo_calibracao=inst.get('prazo'),
+        status=inst.get('status')
+      )
+  return novo_ativo
 
-# --- DASHBOARD ---
 @anvil.server.callable
 def obter_resumo_dashboard():
   hoje = datetime.date.today()
   ativos = app_tables.ativos.search()
   vencidos = sum(1 for a in ativos if a['data_proxima_insp'] and a['data_proxima_insp'] < hoje)
-  em_dia = len(ativos) - vencidos
-  return {
-    'vencidos': vencidos, 'em_dia': em_dia, 
-    'total': len(ativos), 'total_unidades': len(app_tables.unidades.search())
-  }
+  return {'vencidos': vencidos, 'em_dia': len(ativos) - vencidos, 'total': len(ativos), 'total_unidades': len(app_tables.unidades.search())}
