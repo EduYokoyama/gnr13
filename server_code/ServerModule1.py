@@ -53,7 +53,7 @@ def excluir_unidade(row_unidade):
     row_unidade.delete()
 
 # ==============================================================================
-# GESTÃO DE FLUIDOS E BUSCA FILTRADA DE ATIVOS
+# GESTÃO DE FLUIDOS E BUSCA FILTRADA
 # ==============================================================================
 @anvil.server.callable
 def buscar_fluidos_lista():
@@ -98,14 +98,13 @@ def buscar_ativos_filtrados(unidade=None, tipo=None, status_filtro=None):
   return lista_final
 
 # ==============================================================================
-# SALVAMENTO E ATUALIZAÇÃO DE ATIVOS
+# SALVAMENTO E ATUALIZAÇÃO (COLUNAS ATUALIZADAS: fluido_vaso e fluido_tub)
 # ==============================================================================
 @anvil.server.callable
 def salvar_ativo_completo(dados_mestre, especificacoes, lista_instrumentos=None, row_existente=None):
   if row_existente:
     row_existente.update(**dados_mestre)
     ativo_ref = row_existente
-    # Limpa dependências para regravar na edição
     for r in app_tables.dispositivos_seguranca.search(ativo=ativo_ref): r.delete()
     for r in app_tables.specs_vasos.search(ativo=ativo_ref): r.delete()
     for r in app_tables.specs_tubulacoes.search(ativo=ativo_ref): r.delete()
@@ -113,10 +112,21 @@ def salvar_ativo_completo(dados_mestre, especificacoes, lista_instrumentos=None,
     ativo_ref = app_tables.ativos.add_row(**dados_mestre)
 
   tipo_eq = dados_mestre['tipo']
+
   if tipo_eq == "Vaso de Pressão":
-    app_tables.specs_vasos.add_row(ativo=ativo_ref, **especificacoes)
-  elif any(x in tipo_eq for x in ["Tubulação", "Sistemas de Tubulação"]):
-    app_tables.specs_tubulacoes.add_row(ativo=ativo_ref, **especificacoes)
+    app_tables.specs_vasos.add_row(
+      ativo=ativo_ref, 
+      pmta=especificacoes.get('pmta'),
+      volume=especificacoes.get('volume'),
+      fluido_vaso=especificacoes.get('fluido_vaso'), # Nome Coluna Atualizado
+      categoria=especificacoes.get('categoria')
+    )
+  elif any(x in tipo_eq for x in ["Tubulação", "Sistemas de Tubulação", "Sistema de Tubulação"]):
+    app_tables.specs_tubulacoes.add_row(
+      ativo=ativo_ref, 
+      fluido_tub=especificacoes.get('fluido_tub'), # Nome Coluna Atualizado
+      extensao=especificacoes.get('extensao')
+    )
 
   if lista_instrumentos:
     for inst in lista_instrumentos:

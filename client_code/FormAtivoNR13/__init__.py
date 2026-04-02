@@ -9,7 +9,6 @@ except ImportError:
 
 class FormAtivoNR13(FormAtivoNR13Template):
   def __init__(self, **properties):
-    # Detecta se é edição
     self.item_edicao = properties.get('item_edicao')
     self.init_components(**properties)
 
@@ -24,7 +23,6 @@ class FormAtivoNR13(FormAtivoNR13Template):
 
     self.alternar_campos_equipamento()
 
-    # Preenchimento automático se for edição
     if self.item_edicao:
       self.txt_tag.text = self.item_edicao.get('tag', '')
       self.txt_nome_operacional.text = self.item_edicao.get('nome_operacional', '')
@@ -61,9 +59,11 @@ class FormAtivoNR13(FormAtivoNR13Template):
       if detalhes:
         if contexto == "vaso":
           self.drp_grupo_fluido.selected_value = detalhes['grupo']
+          self.lbl_comentario_fluido.text = detalhes['descricao']
           self.calcular_categoria_vaso()
         else:
           self.lbl_grupo_tubo.text = detalhes['grupo']
+          self.lbl_desc_fluido_tubo.text = detalhes['descricao']
 
   def calcular_categoria_vaso(self, **event_args):
     try:
@@ -97,13 +97,17 @@ class FormAtivoNR13(FormAtivoNR13Template):
     if tipo_eq == "Vaso de Pressão":
       especificacoes = {
         'pmta': self.num_pmta.text, 'volume': self.num_volume.text, 
-        'fluido': self.drp_nome_fluido.selected_value, 'categoria': self.lbl_categoria_calculada.text
+        'fluido_vaso': self.drp_nome_fluido.selected_value, # Chave Atualizada
+        'categoria': self.lbl_categoria_calculada.text
       }
-    elif any(x in tipo_eq for x in ["Tubulação", "Sistemas de Tubulação"]):
+    elif any(x in tipo_eq for x in ["Tubulação", "Sistemas de Tubulação", "Sistema de Tubulação"]):
       try:
         ext = int(self.num_extensao.text) if self.num_extensao.text else 0
       except: ext = 0
-      especificacoes = {'classe_fluido': self.drp_fluido_tubo.selected_value, 'extensao': ext}
+      especificacoes = {
+        'fluido_tub': self.drp_fluido_tubo.selected_value, # Chave Atualizada
+        'extensao': ext
+      }
 
     lista_instrumentos = []
     painel = getattr(self, 'painel_instrumentos', None) or getattr(self, 'fp_instrumentos', None)
@@ -121,11 +125,9 @@ class FormAtivoNR13(FormAtivoNR13Template):
 
     if dados_mestre['tag'] and dados_mestre['unidade']:
       try:
-        # Se for edição, envia o row_objeto original
         row_ref = self.item_edicao['row_objeto'] if self.item_edicao else None
         anvil.server.call('salvar_ativo_completo', dados_mestre, especificacoes, lista_instrumentos, row_ref)
         Notification("Salvo com sucesso!", style="success").show()
-        # Se estiver em um alert (edição), fecha o alert
         if self.item_edicao: self.raise_event("x-close-alert", value=True)
         self.limpar_tela()
       except Exception as e:
