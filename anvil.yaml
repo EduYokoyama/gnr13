@@ -253,8 +253,10 @@ name: GNR13
 package_name: GNR13
 runtime_options:
   client_version: '3'
-  legacy_features: {bootstrap3: true, class_names: true}
+  legacy_features: {__dict__: true, bootstrap3: true, class_names: true, root_container: true}
   server_spec: {base: python310-standard}
+  server_spec_disabled: {base: python310-standard, requirements: ''}
+  server_version: python3-sandbox
   version: 3
 services:
 - client_config: {}
