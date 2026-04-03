@@ -152,3 +152,8 @@ class FormAtivoNR13(FormAtivoNR13Template):
 
   def num_pmta_change(self, **event_args): self.calcular_categoria()
   def num_volume_change(self, **event_args): self.calcular_categoria()
+
+  @handle("file_prontuario", "change")
+  def file_prontuario_change(self, file, **event_args):
+    """This method is called when a new file is loaded into this FileLoader"""
+    pass
