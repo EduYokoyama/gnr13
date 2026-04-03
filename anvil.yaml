@@ -249,8 +249,8 @@ db_schema:
     server: full
     title: unidades
 metadata: {logo_img: 'asset:Webapp logo 512x512.png', title: GNR-13 - Gestão de Conformidade NR-13}
-name: GNR-13 - Gestão de Conformidade NR-13
-package_name: GNR_13___Gest_o_de_Conformidade_NR_13
+name: GNR13
+package_name: GNR13
 runtime_options:
   client_version: '3'
   legacy_features: {bootstrap3: true, class_names: true}
