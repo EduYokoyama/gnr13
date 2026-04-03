@@ -1,0 +1,65 @@
+components:
+- components:
+  - components:
+    - layout_properties: {}
+      name: label_1
+      properties: {text: Data da inspeção em campo}
+      type: Label
+    - layout_properties: {width: 154.4}
+      name: dt_data_inspecao
+      properties: {}
+      type: DatePicker
+    - layout_properties: {}
+      name: label_2
+      properties: {text: Tipo}
+      type: Label
+    - layout_properties: {width: 166.4000244140625}
+      name: drp_tipo_inspecao
+      properties:
+        items: ['["Inicial", "Periódica", "Extraordinária"]']
+      type: DropDown
+    layout_properties: {grid_position: 'CGZGFF,UJIZKE'}
+    name: flow_panel_1
+    properties: {}
+    type: FlowPanel
+  - components:
+    - layout_properties: {}
+      name: label_3
+      properties: {text: Escopo}
+      type: Label
+    - layout_properties: {width: 196.79998779296875}
+      name: drp_escopo
+      properties:
+        items: ['["Exame Interno", "Exame Externo", "Ambos"]']
+      type: DropDown
+    - layout_properties: {}
+      name: chk_apto
+      properties: {text: 'Equipamento Apto para Operação?'}
+      type: CheckBox
+    layout_properties: {grid_position: 'AQDUIV,NFMKWT'}
+    name: flow_panel_2
+    properties: {}
+    type: FlowPanel
+  - components:
+    - layout_properties: {}
+      name: txt_num_art
+      properties: {placeholder: Número da ART}
+      type: TextBox
+    - layout_properties: {}
+      name: file_art
+      properties: {text: PDF ART}
+      type: FileLoader
+    - layout_properties: {}
+      name: file_relatorio
+      properties: {text: 'PDF Relatório '}
+      type: FileLoader
+    layout_properties: {grid_position: 'VKTMDI,FLTQMQ'}
+    name: flow_panel_3
+    properties: {}
+    type: FlowPanel
+  layout_properties: {grid_position: 'JODILQ,WZKXXI'}
+  name: card_1
+  properties: {role: card}
+  type: ColumnPanel
+container: {type: ColumnPanel}
+is_package: true
