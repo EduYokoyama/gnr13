@@ -15,12 +15,11 @@ class ItemTemplate2(ItemTemplate2Template):
       self.lbl_status.bold = True
 
   def btn_editar_click(self, **event_args):
-    # Importação blindada para evitar o ModuleNotFoundError
+    # ItemTemplate2 está dentro de ItemInstrumento, volta para a raiz para buscar o form
     try:
+      from ..FormAtivoNR13 import FormAtivoNR13
+    except ImportError:
       from .FormAtivoNR13 import FormAtivoNR13
-    except:
-      import FormAtivoNR13 as _f
-      FormAtivoNR13 = _f.FormAtivoNR13
 
     form_edicao = FormAtivoNR13(item_edicao=self.item)
     if alert(content=form_edicao, title=f"Editar Ativo: {self.item['tag']}", large=True, buttons=[]):

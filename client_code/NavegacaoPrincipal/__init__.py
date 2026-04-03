@@ -5,7 +5,7 @@ import anvil.server
 class NavegacaoPrincipal(NavegacaoPrincipalTemplate):
   def __init__(self, **properties):
     self.init_components(**properties)
-    # Abre a tela inicial (agora o Dashboard não vai mais quebrar)
+    # Abre o Dashboard automaticamente
     self.lnk_dashboard_click()
 
   def abrir_tela(self, novo_form):

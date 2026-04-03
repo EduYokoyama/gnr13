@@ -23,11 +23,5 @@ class LinhaAtivo(LinhaAtivoTemplate):
       self.lbl_status.bold = True
 
   def btn_editar_click(self, **event_args):
-    from .FormAtivoNR13 import FormAtivoNR13
-    form_edicao = FormAtivoNR13(item_edicao=self.item)
-
-    if alert(content=form_edicao, title=f"Editando: {self.item.get('tag', '')}", large=True, buttons=[]):
-      try:
-        self.parent.parent.parent.atualizar_lista()
-      except:
-        pass
+    # Removida a tentativa de abrir o FormAtivoNR13 aqui para quebrar o Circular Import
+    pass

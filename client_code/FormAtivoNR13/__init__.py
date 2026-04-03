@@ -4,7 +4,6 @@ import anvil.server
 
 class FormAtivoNR13(FormAtivoNR13Template):
   def __init__(self, **properties):
-    self.item_edicao = properties.get('item_edicao')
     self.init_components(**properties)
 
     # 1. Carregamento de DropDowns do Servidor
@@ -17,55 +16,9 @@ class FormAtivoNR13(FormAtivoNR13Template):
       self.drp_fluido_tubo.items = fluidos      
       self.drp_grupo_fluido.items = ["Grupo A", "Grupo B", "Grupo C"]
     except Exception as e:
-      print(f"Erro no carregamento inicial: {e}")
-
-    # 2. Inicialização: Modo Edição ou Novo
-    if self.item_edicao:
-      self.preencher_dados_edicao()
-    else:
-      self.alternar_campos_equipamento()
-
-  def preencher_dados_edicao(self):
-    """Reconstrói o formulário com os dados que já existem no Banco"""
-    from .ItemInstrumento import ItemInstrumento
-
-    item = self.item_edicao
-    self.txt_tag.text = item.get('tag', '')
-    self.txt_nome_operacional.text = item.get('nome_operacional', '')
-    self.drp_unidade.selected_value = item.get('unidade')
-    self.drp_tipo_equipamento.selected_value = item.get('tipo')
-    self.txt_fabricante.text = item.get('fabricante', '')
+      pass
 
     self.alternar_campos_equipamento()
-
-    # Busca especificações e instrumentos vinculados
-    extras = anvil.server.call('obter_ativo_completo', item['row_objeto'])
-
-    if item['tipo'] == "Vaso de Pressão":
-      specs = extras.get('specs', {})
-      self.num_pmta.text = specs.get('pmta', '')
-      self.num_volume.text = specs.get('volume', '')
-      self.drp_nome_fluido.selected_value = specs.get('fluido_vaso')
-      self.lbl_categoria_calculada.text = specs.get('categoria', 'Cat -')
-
-    elif any(x in item['tipo'] for x in ["Tubulação", "Sistema"]):
-      specs = extras.get('specs', {})
-      self.drp_fluido_tubo.selected_value = specs.get('fluido_tub')
-      self.num_extensao.text = specs.get('extensao', '')
-
-    # Reconstrói a lista de instrumentos
-    painel = getattr(self, 'painel_instrumentos', None) or getattr(self, 'fp_instrumentos', None)
-    if painel:
-      painel.clear()
-      for inst in extras.get('instrumentos', []):
-        novo_comp = ItemInstrumento()
-        novo_comp.txt_tag_inst.text = inst.get('tag_instrumento', '')
-        novo_comp.txt_tipo_manual.text = inst.get('tipo', '')
-        novo_comp.txt_serie_inst.text = inst.get('num_serie', '')
-        novo_comp.txt_ano_fab_inst.text = str(inst.get('ano_fabricacao', ''))
-        novo_comp.dt_calib_inst.date = inst.get('data_calibracao')
-        novo_comp.dt_prazo_inst.date = inst.get('prazo_calibracao')
-        painel.add_component(novo_comp)
 
   def drp_tipo_equipamento_change(self, **event_args):
     self.alternar_campos_equipamento()
@@ -163,11 +116,10 @@ class FormAtivoNR13(FormAtivoNR13Template):
 
     if dados_mestre['tag'] and dados_mestre['unidade']:
       try:
-        row_ref = self.item_edicao['row_objeto'] if self.item_edicao else None
-        anvil.server.call('salvar_ativo_completo', dados_mestre, especificacoes, lista_instrumentos, row_ref)
+        # Removido o item_edicao, envia None
+        anvil.server.call('salvar_ativo_completo', dados_mestre, especificacoes, lista_instrumentos, None)
         Notification("Ativo salvo com sucesso!", style="success").show()
-        if self.item_edicao: self.raise_event("x-close-alert", value=True)
-        else: self.limpar_tela()
+        self.limpar_tela()
       except Exception as e: alert(f"Erro ao salvar: {e}")
     else: alert("TAG e Unidade são obrigatórios!")
 

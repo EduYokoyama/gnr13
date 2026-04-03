@@ -1,7 +1,6 @@
 from ._anvil_designer import DashboardTemplate
 from anvil import *
 import anvil.server
-import plotly.graph_objects as go
 
 class Dashboard(DashboardTemplate):
   def __init__(self, **properties):
@@ -11,17 +10,15 @@ class Dashboard(DashboardTemplate):
   def renderizar_resumo(self):
     resumo = anvil.server.call('obter_resumo_dashboard')
 
-    # Atualiza gráfico
+    # Desenhando o gráfico com formato de dicionário para evitar o erro de importação
     self.grafico_status.data = [
-      go.Pie(
-        labels=['Em Dia', 'Vencidos/Pendentes'],
-        values=[resumo['em_dia'], resumo['vencidos']],
-        hole=.4,
-        marker=dict(colors=['#2ecc71', '#e74c3c'])
-      )
+      {
+        'type': 'pie',
+        'labels': ['Em Dia', 'Vencidos/Pendentes'],
+        'values': [resumo['em_dia'], resumo['vencidos']],
+        'hole': 0.4,
+        'marker': {'colors': ['#2ecc71', '#e74c3c']}
+      }
     ]
 
-    # Título dinâmico com total de unidades
-    self.grafico_status.layout.title = (
-      f"Resumo: {resumo['total']} Ativos em {resumo['total_unidades']} Unidades"
-    )
+    self.grafico_status.layout.title = f"Resumo: {resumo['total']} Ativos em {resumo['total_unidades']} Unidades"
