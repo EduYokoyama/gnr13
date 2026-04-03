@@ -24,10 +24,6 @@ db_schema:
       client_hidden: false
       name: fabricante
       type: string
-    - admin_ui: {order: 5, width: 200}
-      client_hidden: false
-      name: ano_fabricacao
-      type: number
     - admin_ui: {order: 6, width: 200}
       client_hidden: false
       name: data_proxima_insp
@@ -38,8 +34,12 @@ db_schema:
       type: media
     - admin_ui: {order: 8, width: 200}
       client_hidden: false
-      name: pdf_ultima_art
-      type: media
+      name: status_prontuario
+      type: string
+    - admin_ui: {order: 9, width: 200}
+      client_hidden: false
+      name: 'ano_prontuario '
+      type: number
     server: full
     title: ativos
   clientes:
@@ -122,6 +122,44 @@ db_schema:
       type: string
     server: full
     title: fluidos_referencia
+  historico_inspecoes:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      client_hidden: false
+      name: ativo_ref
+      target: ativos
+      type: link_single
+    - admin_ui: {order: 1, width: 200}
+      client_hidden: false
+      name: data_inspecao
+      type: date
+    - admin_ui: {order: 2, width: 200}
+      client_hidden: false
+      name: tipo_inspecao
+      type: string
+    - admin_ui: {order: 3, width: 200}
+      client_hidden: false
+      name: 'escopo '
+      type: string
+    - admin_ui: {order: 4, width: 200}
+      client_hidden: false
+      name: parecer_conclusivo
+      type: bool
+    - admin_ui: {order: 5, width: 200}
+      client_hidden: false
+      name: pdf_relatorio
+      type: media
+    - admin_ui: {order: 6, width: 200}
+      client_hidden: false
+      name: 'pdf_art '
+      type: media
+    - admin_ui: {order: 7, width: 200}
+      client_hidden: false
+      name: 'num_art '
+      type: string
+    server: full
+    title: historico_inspecoes
   specs_caldeiras:
     client: full
     columns:
@@ -142,6 +180,18 @@ db_schema:
       client_hidden: false
       name: combustivel
       type: string
+    - admin_ui: {order: 4, width: 200}
+      client_hidden: false
+      name: 'ano_fabricacao '
+      type: number
+    - admin_ui: {order: 5, width: 200}
+      client_hidden: false
+      name: 'codigo_construcao '
+      type: string
+    - admin_ui: {order: 6, width: 200}
+      client_hidden: false
+      name: 'ano_edicao_codigo '
+      type: number
     server: full
     title: specs_caldeiras
   specs_tanques:
@@ -160,6 +210,22 @@ db_schema:
       client_hidden: false
       name: volume_nominal
       type: number
+    - admin_ui: {order: 3, width: 200}
+      client_hidden: false
+      name: 'ano_fabricacao '
+      type: number
+    - admin_ui: {order: 4, width: 200}
+      client_hidden: false
+      name: 'codigo_construcao '
+      type: string
+    - admin_ui: {order: 5, width: 200}
+      client_hidden: false
+      name: 'ano_edicao_codigo '
+      type: number
+    - admin_ui: {order: 6, width: 200}
+      client_hidden: false
+      name: 'pdf_plano_inspecao '
+      type: media
     server: full
     title: specs_tanques
   specs_tubulacoes:
@@ -181,6 +247,22 @@ db_schema:
     - admin_ui: {order: 3, width: 200}
       client_hidden: false
       name: fluido_tub
+      type: string
+    - admin_ui: {order: 4, width: 200}
+      client_hidden: false
+      name: 'ano_fabricacao '
+      type: number
+    - admin_ui: {order: 5, width: 200}
+      client_hidden: false
+      name: 'codigo_construcao '
+      type: string
+    - admin_ui: {order: 6, width: 200}
+      client_hidden: false
+      name: 'ano_edicao_codigo '
+      type: number
+    - admin_ui: {order: 7, width: 200}
+      client_hidden: false
+      name: 'tag_ativo_critico '
       type: string
     server: full
     title: specs_tubulacoes
@@ -208,6 +290,18 @@ db_schema:
       client_hidden: false
       name: categoria
       type: string
+    - admin_ui: {order: 5, width: 200}
+      client_hidden: false
+      name: 'ano_fabricacao '
+      type: number
+    - admin_ui: {order: 6, width: 200}
+      client_hidden: false
+      name: 'codigo_construcao '
+      type: string
+    - admin_ui: {order: 7, width: 200}
+      client_hidden: false
+      name: 'ano_edicao_codigo '
+      type: number
     server: full
     title: specs_vasos
   unidades:
