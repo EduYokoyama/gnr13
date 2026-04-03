@@ -158,13 +158,21 @@ components:
       name: num_cap_vapor
       properties: {type: number}
       type: TextBox
-    - layout_properties: {grid_position: 'LLNHKF,AMQATF'}
+    - layout_properties: {grid_position: 'LLNHKF,AMQATF UISIKP,JUWBJI'}
       name: label_10
       properties: {text: Superfície de Aquecimento (m²)}
       type: Label
-    - layout_properties: {grid_position: 'LLNHKF,BGVJET'}
+    - layout_properties: {grid_position: 'LLNHKF,AMQATF NHUDWR,GLIIJO'}
+      name: label_tecnica_1
+      properties: {role: label_tecnica, text: 'Combustível '}
+      type: Label
+    - layout_properties: {grid_position: 'LLNHKF,BGVJET AIKNIF,MKBSPV'}
       name: num_sup_aquecimento
       properties: {type: number}
+      type: TextBox
+    - layout_properties: {grid_position: 'LLNHKF,BGVJET DXITGO,YQFTOB'}
+      name: txt_combustivel
+      properties: {placeholder: 'Ex: Biomassa, Gás Natural, Óleo BPF'}
       type: TextBox
     layout_properties: {grid_position: 'QGTLEW,UUUXDS'}
     name: card_caldeira

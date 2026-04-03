@@ -10,8 +10,8 @@ class Dashboard(DashboardTemplate):
   def renderizar_resumo(self):
     resumo = anvil.server.call('obter_resumo_dashboard')
 
-    # Desenhando o gráfico com formato de dicionário para evitar o erro de importação
-    self.grafico_status.data = [
+    # Dicionário puro - o Python básico do Anvil lê sem problemas
+    dados_grafico = [
       {
         'type': 'pie',
         'labels': ['Em Dia', 'Vencidos/Pendentes'],
@@ -20,5 +20,12 @@ class Dashboard(DashboardTemplate):
         'marker': {'colors': ['#2ecc71', '#e74c3c']}
       }
     ]
+    titulo = f"Resumo: {resumo['total']} Ativos em {resumo['total_unidades']} Unidades"
 
-    self.grafico_status.layout.title = f"Resumo: {resumo['total']} Ativos em {resumo['total_unidades']} Unidades"
+    # Envia para o gráfico, não importa o nome que ele tenha ficado no seu Design
+    if hasattr(self, 'plot_1'):
+      self.plot_1.data = dados_grafico
+      self.plot_1.layout.title = titulo
+    elif hasattr(self, 'grafico_status'):
+      self.grafico_status.data = dados_grafico
+      self.grafico_status.layout.title = titulo

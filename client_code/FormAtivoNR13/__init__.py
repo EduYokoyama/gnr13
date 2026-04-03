@@ -6,7 +6,6 @@ class FormAtivoNR13(FormAtivoNR13Template):
   def __init__(self, **properties):
     self.init_components(**properties)
 
-    # 1. Carregamento de DropDowns do Servidor
     try:
       unidades = anvil.server.call('buscar_unidades')
       self.drp_unidade.items = [(u['nome_unidade'], u['row_objeto']) for u in unidades]
@@ -44,7 +43,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
         if contexto == "vaso":
           self.drp_grupo_fluido.selected_value = detalhes['grupo']
           self.lbl_comentario_fluido.text = detalhes['descricao']
-          self.calcular_categoria_vaso()
+          self.calcular_categoria() 
         else:
           self.lbl_grupo_tubo.text = detalhes['grupo']
           self.lbl_desc_fluido_tubo.text = detalhes['descricao']
@@ -55,7 +54,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
   def drp_fluido_tubo_change(self, **event_args):
     self._atualizar_dados_fluido(self.drp_fluido_tubo.selected_value, "tubo")
 
-  def calcular_categoria_vaso(self, **event_args):
+  def calcular_categoria(self, **event_args):
     try:
       p = float(self.num_pmta.text or 0)
       v = float(self.num_volume.text or 0)
@@ -74,14 +73,16 @@ class FormAtivoNR13(FormAtivoNR13Template):
     except: pass
 
   def btn_adicionar_instrumento_click(self, **event_args):
-    from .ItemInstrumento import ItemInstrumento
+    # CORREÇÃO: Rota absoluta para adicionar instrumento
+    from GNR13.ItemInstrumento import ItemInstrumento
     painel = getattr(self, 'painel_instrumentos', None) or getattr(self, 'fp_instrumentos', None)
     if painel: painel.add_component(ItemInstrumento())
 
   def btn_salvar_click(self, **event_args):
-    from .ItemInstrumento import ItemInstrumento
+    from GNR13.ItemInstrumento import ItemInstrumento
     tipo_eq = self.drp_tipo_equipamento.selected_value
 
+    # 1. Dados Básicos (Tabela ativos)
     dados_mestre = {
       'tag': self.txt_tag.text, 
       'nome_operacional': self.txt_nome_operacional.text, 
@@ -90,17 +91,32 @@ class FormAtivoNR13(FormAtivoNR13Template):
       'fabricante': self.txt_fabricante.text
     }
 
+    # 2. Especificações Técnicas (Direcionamento por tabela)
     especificacoes = {}
+
     if tipo_eq == "Vaso de Pressão":
       especificacoes = {
-        'pmta': self.num_pmta.text, 'volume': self.num_volume.text, 
-        'fluido_vaso': self.drp_nome_fluido.selected_value, 'categoria': self.lbl_categoria_calculada.text
+        'pmta': getattr(self.num_pmta, 'text', None), 
+        'volume': getattr(self.num_volume, 'text', None), 
+        'fluido_vaso': getattr(self.drp_nome_fluido, 'selected_value', None), 
+        'categoria': getattr(self.lbl_categoria_calculada, 'text', "Não Calculada")
       }
-    elif any(x in tipo_eq for x in ["Tubulação", "Sistemas"]):
+    elif tipo_eq == "Caldeira":
+      # Agora que você criou o txt_combustivel, o sistema vai ler corretamente
       especificacoes = {
-        'fluido_tub': self.drp_fluido_tubo.selected_value, 'extensao': int(self.num_extensao.text or 0)
+        'cap_vapor': getattr(self.num_cap_vapor, 'text', None),
+        'sup_aquecimento': getattr(self.num_sup_aquecimento, 'text', None),
+        'combustivel': getattr(self.txt_combustivel, 'text', None)
       }
+    elif "Tubulação" in tipo_eq:
+      especificacoes = {
+        'fluido_tub': getattr(self.drp_fluido_tubo, 'selected_value', None), 
+        'extensao': int(getattr(self.num_extensao, 'text', 0) or 0)
+      }
+    # Se for Tanque, ele simplesmente enviará um dicionário vazio {} 
+    # e não dará erro de "AttributeError"
 
+    # 3. Coleta de Instrumentos
     lista_instrumentos = []
     painel = getattr(self, 'painel_instrumentos', None) or getattr(self, 'fp_instrumentos', None)
     if painel:
@@ -109,20 +125,25 @@ class FormAtivoNR13(FormAtivoNR13Template):
           try: ano = int(row.txt_ano_fab_inst.text) if row.txt_ano_fab_inst.text else None
           except: ano = None
           lista_instrumentos.append({
-            'tag_instrumento': row.txt_tag_inst.text, 'tipo': row.txt_tipo_manual.text, 
-            'num_serie': row.txt_serie_inst.text, 'ano_fabricacao': ano, 
-            'data_calibracao': row.dt_calib_inst.date, 'prazo_calibracao': row.dt_prazo_inst.date, 'status': "Ativo"
+            'tag_instrumento': row.txt_tag_inst.text, 
+            'tipo': row.txt_tipo_manual.text, 
+            'num_serie': row.txt_serie_inst.text, 
+            'ano_fabricacao': ano, 
+            'data_calibracao': row.dt_calib_inst.date, 
+            'prazo_calibracao': row.dt_prazo_inst.date, 
+            'status': "Ativo"
           })
 
+    # 4. Chamada ao Servidor
     if dados_mestre['tag'] and dados_mestre['unidade']:
       try:
-        # Removido o item_edicao, envia None
-        anvil.server.call('salvar_ativo_completo', dados_mestre, especificacoes, lista_instrumentos, None)
-        Notification("Ativo salvo com sucesso!", style="success").show()
+        anvil.server.call('salvar_ativo_completo', dados_mestre, especificacoes, lista_instrumentos)
+        Notification("Equipamento e instrumentos salvos com sucesso!", style="success").show()
         self.limpar_tela()
-      except Exception as e: alert(f"Erro ao salvar: {e}")
-    else: alert("TAG e Unidade são obrigatórios!")
-
+      except Exception as e: 
+        alert(f"Erro ao salvar: {e}")
+    else: 
+      alert("TAG e Unidade são obrigatórios!")
   def limpar_tela(self):
     self.txt_tag.text = ""
     self.txt_nome_operacional.text = ""
@@ -130,5 +151,5 @@ class FormAtivoNR13(FormAtivoNR13Template):
     painel = getattr(self, 'painel_instrumentos', None) or getattr(self, 'fp_instrumentos', None)
     if painel: painel.clear()
 
-  def num_pmta_change(self, **event_args): self.calcular_categoria_vaso()
-  def num_volume_change(self, **event_args): self.calcular_categoria_vaso()
+  def num_pmta_change(self, **event_args): self.calcular_categoria() 
+  def num_volume_change(self, **event_args): self.calcular_categoria()

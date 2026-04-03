@@ -3,6 +3,10 @@ components:
   name: label_1
   properties: {role: headline, text: Indicadores de Conformidade NR-13}
   type: Label
+- layout_properties: {grid_position: 'LEEFWC,EXFZLV'}
+  name: plot_1
+  properties: {}
+  type: Plot
 - components:
   - layout_properties: {}
     name: grafico_status

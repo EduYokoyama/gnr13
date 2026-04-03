@@ -13,12 +13,12 @@ components:
   properties: {}
   type: FlowPanel
 - components:
-  - event_bindings: {}
+  - event_bindings: {click: lnk_cadastro_click}
     layout_properties: {grid_position: 'CFZCRW,GZEHGN'}
     name: lnk_cadastro
     properties: {align: center, icon: 'fa:plus-circle', icon_align: right, text: Ativos}
     type: Link
-  - event_bindings: {}
+  - event_bindings: {click: lnk_unidades_click}
     layout_properties: {grid_position: 'ISEXCS,CJLGPO'}
     name: lnk_unidades
     properties: {align: center, icon: 'fa:industry', icon_align: right, text: Unidades}
@@ -28,7 +28,7 @@ components:
     name: lnk_sair
     properties: {align: center, icon: 'fa:sign-out', icon_align: right, text: Sair}
     type: Link
-  event_bindings: {}
+  event_bindings: {click: lnk_dashboard_click}
   layout_properties: {slot: left-nav}
   name: lnk_dashboard
   properties: {align: center, col_spacing: medium, icon: 'fa:dashboard', icon_align: right, text: DashBoard}

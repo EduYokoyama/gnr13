@@ -45,7 +45,8 @@ def buscar_ativos_filtrados(unidade=None, tipo=None, status_filtro=None):
   hoje = datetime.date.today()
   lista = []
   for a in ativos:
-    dt = a.get('data_proxima_insp')
+    # CORREÇÃO: Lendo a coluna do jeito que o Anvil exige (com colchetes)
+    dt = a['data_proxima_insp']
     st = "Sem Data"
     if dt:
       st = "Vencido" if dt < hoje else ("A Vencer (30 dias)" if dt <= hoje + datetime.timedelta(days=30) else "No Prazo")
@@ -54,18 +55,32 @@ def buscar_ativos_filtrados(unidade=None, tipo=None, status_filtro=None):
   return lista
 
 @anvil.server.callable
-def salvar_ativo_completo(dados_mestre, especificacoes, lista_instrumentos, row_existente=None):
+def salvar_ativo_completo(dados_mestre, especificacoes, lista_instrumentos):
+  # Salva na tabela principal
   ativo_ref = app_tables.ativos.add_row(**dados_mestre)
   tipo = dados_mestre['tipo']
-  if tipo == "Vaso de Pressão": app_tables.specs_vasos.add_row(ativo=ativo_ref, **especificacoes)
-  elif "Tubulação" in tipo: app_tables.specs_tubulacoes.add_row(ativo=ativo_ref, **especificacoes)
+
+  # Direciona para as tabelas filhas baseadas no tipo
+  if tipo == "Vaso de Pressão":
+    app_tables.specs_vasos.add_row(ativo=ativo_ref, **especificacoes)
+  elif tipo == "Caldeira":
+    app_tables.specs_caldeiras.add_row(ativo=ativo_ref, **especificacoes)
+  elif tipo == "Tanque Metálico":
+    app_tables.specs_tanques.add_row(ativo=ativo_ref, **especificacoes)
+  elif "Tubulação" in tipo or "Sistemas" in tipo:
+    app_tables.specs_tubulacoes.add_row(ativo=ativo_ref, **especificacoes)
+
+  # Salva os instrumentos na tabela dispositivos_seguranca
   if lista_instrumentos:
-    for i in lista_instrumentos: app_tables.dispositivos_seguranca.add_row(ativo=ativo_ref, **i)
+    for i in lista_instrumentos:
+      app_tables.dispositivos_seguranca.add_row(ativo=ativo_ref, **i)
+
   return ativo_ref
 
 @anvil.server.callable
 def obter_resumo_dashboard():
   ativos = app_tables.ativos.search()
   hoje = datetime.date.today()
-  vencidos = sum(1 for a in ativos if a.get('data_proxima_insp') and a['data_proxima_insp'] < hoje)
+  # CORREÇÃO: Removido o .get() e substituído por uma checagem direta
+  vencidos = sum(1 for a in ativos if a['data_proxima_insp'] is not None and a['data_proxima_insp'] < hoje)
   return {'vencidos': vencidos, 'em_dia': len(ativos) - vencidos, 'total': len(ativos), 'total_unidades': len(app_tables.unidades.search())}
