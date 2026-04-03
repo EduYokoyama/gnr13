@@ -48,14 +48,6 @@ components:
       name: txt_fabricante
       properties: {placeholder: 'Ex: CBC, Mausa, etc.'}
       type: TextBox
-    - layout_properties: {grid_position: 'NNNCPP,ZKMYVT'}
-      name: label_23
-      properties: {bold: false, text: Ano de fabricação}
-      type: Label
-    - layout_properties: {grid_position: 'NNNCPP,GCGXJA'}
-      name: num_ano
-      properties: {type: number}
-      type: TextBox
     layout_properties: {grid_position: 'GEAGQP,LJJSFJ'}
     name: card_identificacao
     properties: {role: card}
@@ -269,14 +261,6 @@ components:
       name: file_relatorio
       properties: {file_types: .pdf, text: Upload Relatório de Inspeção}
       type: FileLoader
-    - layout_properties: {grid_position: 'LCJTGK,DOVQQO'}
-      name: label_17
-      properties: {text: Próxima Inspeção}
-      type: Label
-    - layout_properties: {grid_position: 'LCJTGK,RMVXBJ'}
-      name: dt_proxima_insp
-      properties: {}
-      type: DatePicker
     layout_properties: {grid_position: 'PCCZTD,HYJUAQ'}
     name: panel_docs_vault
     properties: {role: card}
