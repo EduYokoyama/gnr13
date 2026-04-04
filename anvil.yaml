@@ -38,7 +38,7 @@ db_schema:
       type: string
     - admin_ui: {order: 9, width: 200}
       client_hidden: false
-      name: 'ano_prontuario '
+      name: ano_prontuario
       type: number
     server: full
     title: ativos
@@ -123,7 +123,7 @@ db_schema:
     server: full
     title: fluidos_referencia
   historico_inspecoes:
-    client: none
+    client: full
     columns:
     - admin_ui: {order: 0, width: 200}
       client_hidden: false
@@ -140,7 +140,7 @@ db_schema:
       type: string
     - admin_ui: {order: 3, width: 200}
       client_hidden: false
-      name: 'escopo '
+      name: escopo
       type: string
     - admin_ui: {order: 4, width: 200}
       client_hidden: false
@@ -152,11 +152,11 @@ db_schema:
       type: media
     - admin_ui: {order: 6, width: 200}
       client_hidden: false
-      name: 'pdf_art '
+      name: pdf_art
       type: media
     - admin_ui: {order: 7, width: 200}
       client_hidden: false
-      name: 'num_art '
+      name: num_art
       type: string
     server: full
     title: historico_inspecoes
@@ -182,15 +182,15 @@ db_schema:
       type: string
     - admin_ui: {order: 4, width: 200}
       client_hidden: false
-      name: 'ano_fabricacao '
+      name: ano_fabricacao
       type: number
     - admin_ui: {order: 5, width: 200}
       client_hidden: false
-      name: 'codigo_construcao '
+      name: codigo_construcao
       type: string
     - admin_ui: {order: 6, width: 200}
       client_hidden: false
-      name: 'ano_edicao_codigo '
+      name: ano_edicao_codigo
       type: number
     server: full
     title: specs_caldeiras
@@ -212,19 +212,19 @@ db_schema:
       type: number
     - admin_ui: {order: 3, width: 200}
       client_hidden: false
-      name: 'ano_fabricacao '
+      name: ano_fabricacao
       type: number
     - admin_ui: {order: 4, width: 200}
       client_hidden: false
-      name: 'codigo_construcao '
+      name: codigo_construcao
       type: string
     - admin_ui: {order: 5, width: 200}
       client_hidden: false
-      name: 'ano_edicao_codigo '
+      name: ano_edicao_codigo
       type: number
     - admin_ui: {order: 6, width: 200}
       client_hidden: false
-      name: 'pdf_plano_inspecao '
+      name: pdf_plano_inspecao
       type: media
     server: full
     title: specs_tanques
@@ -250,19 +250,19 @@ db_schema:
       type: string
     - admin_ui: {order: 4, width: 200}
       client_hidden: false
-      name: 'ano_fabricacao '
+      name: ano_fabricacao
       type: number
     - admin_ui: {order: 5, width: 200}
       client_hidden: false
-      name: 'codigo_construcao '
+      name: codigo_construcao
       type: string
     - admin_ui: {order: 6, width: 200}
       client_hidden: false
-      name: 'ano_edicao_codigo '
+      name: ano_edicao_codigo
       type: number
     - admin_ui: {order: 7, width: 200}
       client_hidden: false
-      name: 'tag_ativo_critico '
+      name: tag_ativo_critico
       type: string
     server: full
     title: specs_tubulacoes
@@ -292,15 +292,15 @@ db_schema:
       type: string
     - admin_ui: {order: 5, width: 200}
       client_hidden: false
-      name: 'ano_fabricacao '
+      name: ano_fabricacao
       type: number
     - admin_ui: {order: 6, width: 200}
       client_hidden: false
-      name: 'codigo_construcao '
+      name: codigo_construcao
       type: string
     - admin_ui: {order: 7, width: 200}
       client_hidden: false
-      name: 'ano_edicao_codigo '
+      name: ano_edicao_codigo
       type: number
     server: full
     title: specs_vasos

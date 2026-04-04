@@ -98,15 +98,10 @@ components:
         name: label_5
         properties: {role: label_tecnica, text: Grupo do Fluido}
         type: Label
-      - data_bindings:
-        - {code: '[''Grupo A'', ''Grupo B'', ''Grupo C'', ''Grupo D'']', property: items, writeback: false}
-        event_bindings: {change: calcular_categoria}
-        layout_properties: {width: 47.5999755859375}
-        name: drp_grupo_fluido
-        properties:
-          enabled: false
-          items: []
-        type: DropDown
+      - layout_properties: {width: 59.999975585937506}
+        name: txt_grupo_fluido
+        properties: {enabled: false}
+        type: TextBox
       - layout_properties: {}
         name: lbl_comentario_fluido
         properties: {foreground: 'theme:Primary 700', role: label_tecnica, text: Descrição técnica aparecerá aqui...}
@@ -267,7 +262,7 @@ components:
         properties: {text: Diâmetro Externo (m)}
         type: Label
       - layout_properties: {width: 65.60001220703126}
-        name: num_diametro
+        name: num_diametro_tanque
         properties: {type: number}
         type: TextBox
       - layout_properties: {}
@@ -288,7 +283,7 @@ components:
         properties: {text: 'Ano Fabricação '}
         type: Label
       - layout_properties: {width: 65.98751220703124}
-        name: text_box_1
+        name: num_ano_tanque
         properties: {}
         type: TextBox
       - layout_properties: {}
@@ -296,7 +291,7 @@ components:
         properties: {text: 'Código '}
         type: Label
       - layout_properties: {width: 183.788}
-        name: text_box_2
+        name: txt_cod_tanque
         properties: {}
         type: TextBox
       - layout_properties: {}
@@ -304,7 +299,7 @@ components:
         properties: {text: Ano}
         type: Label
       - layout_properties: {width: 90.60001220703126}
-        name: text_box_3
+        name: num_edicao_tanque
         properties: {}
         type: TextBox
       - layout_properties: {}

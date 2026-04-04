@@ -1,32 +1,38 @@
 from ._anvil_designer import FormAtivoNR13Template
 from anvil import *
 import anvil.server
+import anvil.tables as tables
+import anvil.tables.query as q
+from anvil.tables import app_tables
 
 class FormAtivoNR13(FormAtivoNR13Template):
   def __init__(self, item_edicao=None, **properties):
     self.init_components(**properties)
     self.item_edicao = item_edicao
 
-    # 1. Carregamento de Dropdowns e Dados Iniciais
+    # --- CARREGAMENTO INICIAL DE DADOS ---
     try:
       unidades = anvil.server.call('buscar_unidades')
       self.drp_unidade.items = [(u['nome_unidade'], u['row_objeto']) for u in unidades]
 
       fluidos = anvil.server.call('buscar_fluidos_lista')
-      self.drp_nome_fluido.items = fluidos
-      self.drp_fluido_tubo.items = fluidos
+      self.drp_nome_fluido.items = ["Selecione..."] + fluidos
+      self.drp_fluido_tubo.items = ["Selecione..."] + fluidos
 
-      self.drp_status_prontuario.items = ["Original", "Reconstituído"]
+      if hasattr(self, 'drp_status_prontuario'):
+        self.drp_status_prontuario.items = ["Original", "Reconstituído"]
+
       self.drp_tipo_equipamento.items = ["Vaso de Pressão", "Caldeira", "Tanque Metálico", "Sistemas de Tubulação"]
     except Exception as e:
-      print(f"Erro no carregamento inicial: {e}")
+      print(f"Erro ao inicializar formulário e buscar dados: {e}")
 
-    # 2. Direcionamento de Fluxo (Edição vs Novo)
+    # --- FLUXO DE NAVEGAÇÃO ---
     if self.item_edicao:
       self.preencher_dados_edicao()
     else:
       self.alternar_campos_equipamento()
 
+  # --- FUNÇÕES DE PREENCHIMENTO E INTERFACE ---
   def preencher_dados_edicao(self):
     it = self.item_edicao
     self.txt_tag.text = it.get('tag')
@@ -34,73 +40,91 @@ class FormAtivoNR13(FormAtivoNR13Template):
     self.txt_fabricante.text = it.get('fabricante')
     self.drp_unidade.selected_value = it.get('unidade')
     self.drp_tipo_equipamento.selected_value = it.get('tipo')
-    self.drp_status_prontuario.selected_value = it.get('status_prontuario', "Original")
-    self.num_ano_prontuario.text = it.get('ano_prontuario')
+
+    if hasattr(self, 'drp_status_prontuario'):
+      self.drp_status_prontuario.selected_value = it.get('status_prontuario', "Original")
+    if hasattr(self, 'num_ano_prontuario'):
+      self.num_ano_prontuario.text = it.get('ano_prontuario')
 
     specs = anvil.server.call('obter_specs_ativo', it['row_objeto'])
     if specs:
-      tipo = it['tipo']
+      tipo = it.get('tipo')
       if tipo == "Vaso de Pressão":
-        self.num_ano_vaso.text = specs.get('ano_fabricacao')
-        self.txt_cod_vaso.text = specs.get('codigo_construcao')
-        self.num_pmta.text = specs.get('pmta')
-        self.num_volume.text = specs.get('volume')
+        if hasattr(self, 'num_ano_vaso'): self.num_ano_vaso.text = specs.get('ano_fabricacao')
+        if hasattr(self, 'txt_cod_vaso'): self.txt_cod_vaso.text = specs.get('codigo_construcao')
+        if hasattr(self, 'num_pmta'): self.num_pmta.text = specs.get('pmta')
+        if hasattr(self, 'num_volume'): self.num_volume.text = specs.get('volume')
         self.drp_nome_fluido.selected_value = specs.get('fluido_vaso')
+        self.drp_nome_fluido_change() 
       elif tipo == "Caldeira":
-        self.num_ano_caldeira.text = specs.get('ano_fabricacao')
-        self.txt_cod_caldeira.text = specs.get('codigo_construcao')
-      elif "Tubulação" in tipo:
+        if hasattr(self, 'num_ano_caldeira'): self.num_ano_caldeira.text = specs.get('ano_fabricacao')
+        if hasattr(self, 'txt_cod_caldeira'): self.txt_cod_caldeira.text = specs.get('codigo_construcao')
+        if hasattr(self, 'num_cap_vapor'): self.num_cap_vapor.text = specs.get('cap_vapor')
+        if hasattr(self, 'txt_combustivel'): self.txt_combustivel.text = specs.get('combustivel')
+      elif tipo == "Tanque Metálico":
+        if hasattr(self, 'num_diametro_tanque'): self.num_diametro_tanque.text = specs.get('diametro_ext')
+        # CORREÇÃO: Puxando o volume na hora de editar
+        if hasattr(self, 'num_volume_tanque'): self.num_volume_tanque.text = specs.get('volume_nominal')
+        if hasattr(self, 'num_ano_tanque'): self.num_ano_tanque.text = specs.get('ano_fabricacao')
+        if hasattr(self, 'txt_cod_tanque'): self.txt_cod_tanque.text = specs.get('codigo_construcao')
+        if hasattr(self, 'num_edicao_tanque'): self.num_edicao_tanque.text = specs.get('ano_edicao_codigo')
+      elif "Tubulação" in tipo or "Sistemas" in tipo:
         self.drp_fluido_tubo.selected_value = specs.get('fluido_tub')
-        self.num_extensao.text = specs.get('extensao')
+        if hasattr(self, 'num_extensao'): self.num_extensao.text = specs.get('extensao')
+
     self.alternar_campos_equipamento()
 
   def drp_tipo_equipamento_change(self, **event_args):
     self.alternar_campos_equipamento()
 
   def alternar_campos_equipamento(self):
-    """Exibe o card técnico correto de acordo com a norma aplicável."""
     tipo = self.drp_tipo_equipamento.selected_value
     cards = {
-      "Vaso de Pressão": self.card_vaso,
-      "Caldeira": self.card_caldeira,
-      "Tanque Metálico": self.card_tanque,
-      "Sistemas de Tubulação": self.card_tubulacao
+      "Vaso de Pressão": getattr(self, 'card_vaso', None),
+      "Caldeira": getattr(self, 'card_caldeira', None),
+      "Tanque Metálico": getattr(self, 'card_tanque', None),
+      "Sistemas de Tubulação": getattr(self, 'card_tubulacao', None),
+      "Tubulação": getattr(self, 'card_tubulacao', None)
     }
-    for c in cards.values(): 
+    for c in cards.values():
       if c: c.visible = False
-    if tipo in cards and cards[tipo]: 
+    if tipo in cards and cards[tipo]:
       cards[tipo].visible = True
 
-  # --- EVENTOS DE FLUIDO E CATEGORIZAÇÃO ---
-
+  # --- EVENTOS DE FLUIDO E CÁLCULOS ---
   def drp_nome_fluido_change(self, **event_args):
-    """Atualiza dados do fluido para Vasos de Pressão."""
     nome = self.drp_nome_fluido.selected_value
-    if nome:
+    if nome and nome != "Selecione...":
       det = anvil.server.call('obter_detalhes_fluido', nome)
-      self.drp_grupo_fluido.selected_value = det['grupo']
-      self.lbl_comentario_fluido.text = det['descricao']
-      self.calcular_categoria()
+      if det:
+        if hasattr(self, 'txt_grupo_fluido'):
+          self.txt_grupo_fluido.text = det.get('grupo', '')
+        if hasattr(self, 'lbl_comentario_fluido'):
+          self.lbl_comentario_fluido.text = det.get('descricao', '')
+        self.calcular_categoria()
 
   def drp_fluido_tubo_change(self, **event_args):
-    """CORREÇÃO: Atualiza dados do fluido para Sistemas de Tubulação."""
     nome = self.drp_fluido_tubo.selected_value
-    if nome:
+    if nome and nome != "Selecione...":
       det = anvil.server.call('obter_detalhes_fluido', nome)
-      if hasattr(self, 'lbl_grupo_tubo'):
-        self.lbl_grupo_tubo.text = det['grupo']
-        self.lbl_desc_fluido_tubo.text = det['descricao']
+      if det:
+        if hasattr(self, 'lbl_grupo_tubo'):
+          self.lbl_grupo_tubo.text = det.get('grupo', '')
+        if hasattr(self, 'lbl_desc_fluido_tubo'):
+          self.lbl_desc_fluido_tubo.text = det.get('descricao', '')
 
   def calcular_categoria(self, **event_args):
-    """Cérebro NR-13: Categorização baseada em P.V e Classe de Fluido."""
     try:
-      p = float(self.num_pmta.text or 0)
-      v = float(self.num_volume.text or 0)
+      p = float(getattr(self, 'num_pmta', self).text or 0) if hasattr(self, 'num_pmta') else 0
+      v = float(getattr(self, 'num_volume', self).text or 0) if hasattr(self, 'num_volume') else 0
       pv = p * v
-      grupo = self.drp_grupo_fluido.selected_value
-      if pv <= 0 or not grupo: return
 
-      if "Grupo A" in grupo or "Grupo B" in grupo:
+      grupo = getattr(self, 'txt_grupo_fluido', None)
+      grupo_str = grupo.text if grupo else None
+
+      if pv <= 0 or not grupo_str: return
+
+      if "Grupo A" in grupo_str or "Grupo B" in grupo_str:
         cat = "Categoria I" if pv >= 100 else ("Categoria II" if pv >= 30 else "Categoria III")
       else:
         if pv >= 100: cat = "Categoria I"
@@ -108,91 +132,119 @@ class FormAtivoNR13(FormAtivoNR13Template):
         elif pv >= 2.5: cat = "Categoria III"
         elif pv >= 1: cat = "Categoria IV"
         else: cat = "Categoria V"
-      self.lbl_categoria_calculada.text = cat
+
+      if hasattr(self, 'lbl_categoria_calculada'):
+        self.lbl_categoria_calculada.text = f"{cat} (P.V: {pv:.2f})"
     except: pass
 
-  # --- GESTÃO DE INSTRUMENTOS ---
+  def num_pmta_change(self, **event_args): self.calcular_categoria()
+  def num_volume_change(self, **event_args): self.calcular_categoria()
 
+  # --- EVENTOS DE INSTRUMENTAÇÃO ---
   def btn_adicionar_instrumento_click(self, **event_args):
-    """CORREÇÃO: Adiciona um novo ItemInstrumento ao painel dinâmico."""
     from GNR13.ItemInstrumento import ItemInstrumento
     painel = getattr(self, 'painel_instrumentos', None) or getattr(self, 'fp_instrumentos', None)
     if painel:
       painel.add_component(ItemInstrumento())
 
-  # --- SALVAMENTO E LIMPEZA ---
+  # --- FUNÇÕES DE VALIDAÇÃO E SALVAMENTO ---
+  def _parse_numero(self, texto, tipo='float'):
+    try:
+      if texto is None or str(texto).strip() == "": return None
+      return float(texto) if tipo == 'float' else int(texto)
+    except: return None
 
   def btn_salvar_click(self, **event_args):
     from GNR13.ItemInstrumento import ItemInstrumento
     tipo_eq = self.drp_tipo_equipamento.selected_value
 
+    if not self.txt_tag.text or not self.drp_unidade.selected_value:
+      alert("Os campos TAG e Unidade são obrigatórios para o cadastro de qualquer ativo!")
+      return
+
+    # DADOS MESTRE (Tabela Principal)
     dados_mestre = {
       'tag': self.txt_tag.text,
       'nome_operacional': self.txt_nome_operacional.text,
       'unidade': self.drp_unidade.selected_value,
       'tipo': tipo_eq,
       'fabricante': self.txt_fabricante.text,
-      'pdf_prontuario': self.file_prontuario.file,
-      'status_prontuario': self.drp_status_prontuario.selected_value,
-      'ano_prontuario': self.num_ano_prontuario.text
+      'pdf_prontuario': getattr(self, 'file_prontuario', self).file if hasattr(self, 'file_prontuario') else None,
+      'status_prontuario': getattr(self.drp_status_prontuario, 'selected_value', None)
     }
 
+    if hasattr(self, 'num_ano_prontuario'):
+      dados_mestre['ano_prontuario'] = self._parse_numero(self.num_ano_prontuario.text, 'int')
+
+    # ESPECIFICAÇÕES (Tabelas Relacionais)
     especificacoes = {}
     if tipo_eq == "Vaso de Pressão":
       especificacoes = {
-        'ano_fabricacao': self.num_ano_vaso.text,
-        'codigo_construcao': self.txt_cod_vaso.text,
-        'ano_edicao_codigo': self.num_edicao_vaso.text,
-        'pmta': self.num_pmta.text,
-        'volume': self.num_volume.text,
         'fluido_vaso': self.drp_nome_fluido.selected_value,
-        'categoria': self.lbl_categoria_calculada.text
+        'ano_fabricacao': self._parse_numero(getattr(self, 'num_ano_vaso', None).text if hasattr(self, 'num_ano_vaso') else None, 'int'),
+        'codigo_construcao': getattr(self, 'txt_cod_vaso', None).text if hasattr(self, 'txt_cod_vaso') else None,
+        'pmta': self._parse_numero(getattr(self, 'num_pmta', None).text if hasattr(self, 'num_pmta') else None, 'float'),
+        'volume': self._parse_numero(getattr(self, 'num_volume', None).text if hasattr(self, 'num_volume') else None, 'float'),
+        'categoria': getattr(self, 'lbl_categoria_calculada', None).text if hasattr(self, 'lbl_categoria_calculada') else None
       }
     elif tipo_eq == "Caldeira":
       especificacoes = {
-        'ano_fabricacao': self.num_ano_caldeira.text,
-        'codigo_construcao': self.txt_cod_caldeira.text,
-        'ano_edicao_codigo': self.num_edicao_caldeira.text,
-        'combustivel': getattr(self, 'txt_combustivel', self).text if hasattr(self, 'txt_combustivel') else ""
+        'ano_fabricacao': self._parse_numero(getattr(self, 'num_ano_caldeira', None).text if hasattr(self, 'num_ano_caldeira') else None, 'int'),
+        'codigo_construcao': getattr(self, 'txt_cod_caldeira', None).text if hasattr(self, 'txt_cod_caldeira') else None,
+        'cap_vapor': self._parse_numero(getattr(self, 'num_cap_vapor', None).text if hasattr(self, 'num_cap_vapor') else None, 'float'),
+        'combustivel': getattr(self, 'txt_combustivel', None).text if hasattr(self, 'txt_combustivel') else ""
       }
     elif tipo_eq == "Tanque Metálico":
+      # CORREÇÃO: Adicionado o volume_nominal!
       especificacoes = {
-        'ano_fabricacao': self.num_ano_tanque.text,
-        'codigo_construcao': self.txt_cod_tanque.text,
-        'ano_edicao_codigo': self.num_edicao_tanque.text,
-        'pdf_plano_inspecao': self.file_plano_tanque.file
+        'diametro_ext': self._parse_numero(getattr(self, 'num_diametro_tanque', None).text if hasattr(self, 'num_diametro_tanque') else None, 'float'),
+        'volume_nominal': self._parse_numero(getattr(self, 'num_volume_tanque', None).text if hasattr(self, 'num_volume_tanque') else None, 'float'),
+        'ano_fabricacao': self._parse_numero(getattr(self, 'num_ano_tanque', None).text if hasattr(self, 'num_ano_tanque') else None, 'int'),
+        'codigo_construcao': getattr(self, 'txt_cod_tanque', None).text if hasattr(self, 'txt_cod_tanque') else None,
+        'ano_edicao_codigo': self._parse_numero(getattr(self, 'num_edicao_tanque', None).text if hasattr(self, 'num_edicao_tanque') else None, 'int'),
+        'pdf_plano_inspecao': getattr(self, 'file_plano_tanque', None).file if hasattr(self, 'file_plano_tanque') else None
       }
-    elif "Tubulação" in tipo_eq:
+    elif "Tubulação" in tipo_eq or "Sistemas" in tipo_eq:
       especificacoes = {
         'fluido_tub': self.drp_fluido_tubo.selected_value,
-        'extensao': int(getattr(self, 'num_extensao', self).text or 0)
+        'extensao': self._parse_numero(getattr(self, 'num_extensao', None).text if hasattr(self, 'num_extensao') else None, 'int')
       }
 
+    # INSTRUMENTOS SEGURANÇA
     lista_instrumentos = []
     painel = getattr(self, 'painel_instrumentos', None) or getattr(self, 'fp_instrumentos', None)
     if painel:
       for row in painel.get_components():
         if isinstance(row, ItemInstrumento):
-          lista_instrumentos.append({
-            'tag_instrumento': row.txt_tag_inst.text,
-            'tipo': row.txt_tipo_manual.text,
-            'data_calibracao': row.dt_calib_inst.date,
-            'prazo_calibracao': row.dt_prazo_inst.date,
+          inst_dict = {
+            'tag_instrumento': getattr(row.txt_tag_inst, 'text', None) if hasattr(row, 'txt_tag_inst') else None,
+            'tipo': getattr(row.txt_tipo_manual, 'text', None) if hasattr(row, 'txt_tipo_manual') else None,
+            'data_calibracao': getattr(row.dt_calib_inst, 'date', None) if hasattr(row, 'dt_calib_inst') else None,
+            'prazo_calibracao': getattr(row.dt_prazo_inst, 'date', None) if hasattr(row, 'dt_prazo_inst') else None,
+            'num_serie': getattr(row.txt_serie_inst, 'text', None) if hasattr(row, 'txt_serie_inst') else None,
+            'ano_fabricacao': self._parse_numero(getattr(row.txt_ano_fab_inst, 'text', None) if hasattr(row, 'txt_ano_fab_inst') else None, 'int'),
+            'certificado_pdf': getattr(row.file_cert_inst, 'file', None) if hasattr(row, 'file_cert_inst') else None,
             'status': "Ativo"
-          })
+          }
+          lista_instrumentos.append(inst_dict)
 
-    if dados_mestre['tag'] and dados_mestre['unidade']:
+    # EXECUÇÃO NO SERVIDOR
+    try:
       anvil.server.call('salvar_ativo_completo', dados_mestre, especificacoes, lista_instrumentos, self.item_edicao)
-      Notification("Ativo salvo e indexado com sucesso!", style="success").show()
-      if not self.item_edicao: self.limpar_tela()
-    else:
-      alert("Os campos TAG e Unidade são obrigatórios!")
+      Notification("Dados do Ativo salvos e sincronizados com o banco de dados!", style="success").show()
+      if not self.item_edicao: 
+        self.limpar_tela()
+    except Exception as e:
+      alert(f"Ocorreu um erro ao comunicar com o servidor: {e}")
 
   def limpar_tela(self):
     self.txt_tag.text = ""
     self.txt_nome_operacional.text = ""
+    if hasattr(self, 'txt_fabricante'): self.txt_fabricante.text = ""
+    if hasattr(self, 'file_prontuario'): self.file_prontuario.clear()
+    if hasattr(self, 'file_plano_tanque'): self.file_plano_tanque.clear()
     painel = getattr(self, 'painel_instrumentos', None) or getattr(self, 'fp_instrumentos', None)
     if painel: painel.clear()
 
-  def num_pmta_change(self, **event_args): self.calcular_categoria()
-  def num_volume_change(self, **event_args): self.calcular_categoria()
+  def btn_cancelar_click(self, **event_args):
+    self.limpar_tela()
