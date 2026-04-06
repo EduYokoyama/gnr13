@@ -327,7 +327,7 @@ components:
         type: DropDown
       - layout_properties: {}
         name: lbl_grupo_tubo
-        properties: {text: Classe de Fluido}
+        properties: {text: Grupo Fluido}
         type: Label
       - layout_properties: {}
         name: lbl_desc_fluido_tubo
@@ -416,7 +416,7 @@ components:
         name: label_32
         properties: {text: Ativos Interligados}
         type: Label
-      - layout_properties: {expand: false, width: 372.7777099609375}
+      - layout_properties: {expand: false, width: 385.4163359375}
         name: multi_ativos_ligados
         properties: {placeholder: 'Selecione os ativos (ex: Caldeira 01)'}
         type: form:dep_0qsu4i49c0sddc:MultiSelectDropDown

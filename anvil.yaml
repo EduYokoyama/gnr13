@@ -233,7 +233,7 @@ db_schema:
     columns:
     - admin_ui: {order: 0, width: 200}
       client_hidden: false
-      name: ativo
+      name: ativo_mestre
       target: ativos
       type: link_single
     - admin_ui: {order: 1, width: 200}
@@ -262,8 +262,29 @@ db_schema:
       type: number
     - admin_ui: {order: 7, width: 200}
       client_hidden: false
-      name: tag_ativo_critico
+      name: diametro_nominal
       type: string
+    - admin_ui: {order: 8, width: 200}
+      client_hidden: false
+      name: pmta
+      type: number
+    - admin_ui: {order: 9, width: 200}
+      client_hidden: false
+      name: pressao_operacao
+      type: number
+    - admin_ui: {order: 10, width: 200}
+      client_hidden: false
+      name: temp_projeto
+      type: number
+    - admin_ui: {order: 11, width: 200}
+      client_hidden: false
+      name: espessura_minima
+      type: number
+    - admin_ui: {order: 0.5, width: 200}
+      client_hidden: false
+      name: ativos_conectados
+      target: ativos
+      type: link_multiple
     server: full
     title: specs_tubulacoes
   specs_vasos:
