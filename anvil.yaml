@@ -285,6 +285,14 @@ db_schema:
       name: ativos_conectados
       target: ativos
       type: link_multiple
+    - admin_ui: {order: 12, width: 200}
+      client_hidden: false
+      name: pdf_pid
+      type: media
+    - admin_ui: {order: 13, width: 200}
+      client_hidden: false
+      name: pdf_plano_insp
+      type: media
     server: full
     title: specs_tubulacoes
   specs_vasos:

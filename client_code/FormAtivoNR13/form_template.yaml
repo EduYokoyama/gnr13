@@ -407,6 +407,14 @@ components:
         name: txt_cod_tubo
         properties: {}
         type: TextBox
+      - layout_properties: {}
+        name: label_38
+        properties: {text: Ano}
+        type: Label
+      - layout_properties: {width: 61.7461}
+        name: num_ano_edicao_tubo
+        properties: {}
+        type: TextBox
       layout_properties: {grid_position: 'YGFBRW,FHFGTH'}
       name: flow_panel_13
       properties: {}
@@ -420,6 +428,14 @@ components:
         name: multi_ativos_ligados
         properties: {placeholder: 'Selecione os ativos (ex: Caldeira 01)'}
         type: form:dep_0qsu4i49c0sddc:MultiSelectDropDown
+      - layout_properties: {}
+        name: file_pid_tubo
+        properties: {text: P&ID}
+        type: FileLoader
+      - layout_properties: {}
+        name: file_plano_tubo
+        properties: {text: Plano de Inspeção}
+        type: FileLoader
       layout_properties: {grid_position: 'VGSAVU,UZXTZK'}
       name: flow_panel_14
       properties: {}
