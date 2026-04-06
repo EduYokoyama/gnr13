@@ -333,6 +333,14 @@ components:
         name: lbl_desc_fluido_tubo
         properties: {}
         type: Label
+      - layout_properties: {}
+        name: label_33
+        properties: {text: 'Diâmetro Nom.:'}
+        type: Label
+      - layout_properties: {width: 110.444083984375}
+        name: txt_diametro_tubo
+        properties: {}
+        type: TextBox
       layout_properties: {grid_position: 'BMQYLX,BFAIIE'}
       name: flow_panel_5
       properties: {}
@@ -342,23 +350,47 @@ components:
         name: label_14
         properties: {text: Extensão Total (Metros)}
         type: Label
-      - layout_properties: {width: 69.3874755859375}
+      - layout_properties: {width: 61.26385498046875}
         name: num_extensao
         properties: {type: number}
         type: TextBox
       - layout_properties: {}
-        name: label_32
-        properties: {text: 'Tag Crítico '}
+        name: label_34
+        properties: {text: PMTA (kgf/cm²)}
         type: Label
-      - layout_properties: {width: 341.788}
-        name: txt_tag_critico_tubo
-        properties: {placeholder: TAG do vaso/caldeira que dita o prazo da linha}
+      - layout_properties: {width: 55.07286796875}
+        name: num_pmta_tubo
+        properties: {type: number}
+        type: TextBox
+      - layout_properties: {}
+        name: label_35
+        properties: {text: Pressão de Operação (kgf/cm²)}
+        type: Label
+      - layout_properties: {width: 62.2187419921875}
+        name: num_pressao_op_tubo
+        properties: {type: number}
+        type: TextBox
+      - layout_properties: {}
+        name: label_36
+        properties: {text: Temperatura de Projeto (°C)}
+        type: Label
+      - layout_properties: {width: 42.9996259765625}
+        name: num_temp_proj_tubo
+        properties: {type: number}
         type: TextBox
       layout_properties: {grid_position: 'VJAZWH,NMZUMU'}
       name: flow_panel_12
       properties: {}
       type: FlowPanel
     - components:
+      - layout_properties: {}
+        name: label_37
+        properties: {text: Espessura Mín. (tmin) (mm)}
+        type: Label
+      - layout_properties: {width: 82.666251953125}
+        name: num_espessura_min
+        properties: {type: number}
+        type: TextBox
       - layout_properties: {}
         name: label_30
         properties: {text: 'Ano Instalado '}
@@ -379,9 +411,22 @@ components:
       name: flow_panel_13
       properties: {}
       type: FlowPanel
+    - components:
+      - layout_properties: {}
+        name: label_32
+        properties: {text: Ativos Interligados}
+        type: Label
+      - layout_properties: {}
+        name: drp_ativos_ligados
+        properties: {}
+        type: DropDown
+      layout_properties: {grid_position: 'VGSAVU,UZXTZK'}
+      name: flow_panel_14
+      properties: {}
+      type: FlowPanel
     layout_properties: {grid_position: 'PNSTBM,RKXNPM'}
     name: card_tubulacao
-    properties: {visible: false}
+    properties: {visible: true}
     type: ColumnPanel
   - components:
     - layout_properties: {grid_position: 'FEETFH,ENYDHY'}

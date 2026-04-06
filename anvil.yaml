@@ -342,6 +342,10 @@ db_schema:
       type: string
     server: full
     title: unidades
+dependencies:
+- dep_id: dep_0qsu4i49c0sddc
+  resolution_hints: {app_id: C6ZZPAPN4YYF5NVJ, name: Anvil Extras, package_name: anvil_extras}
+  version: {version_tag: v3.6.2}
 metadata: {logo_img: 'asset:Webapp logo 512x512.png', title: GNR-13 - Gestão de Conformidade NR-13}
 name: GNR13
 package_name: GNR13
