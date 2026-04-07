@@ -142,3 +142,9 @@ def obter_resumo_dashboard():
   hoje = datetime.date.today()
   vencidos = sum(1 for a in ativos if a['data_proxima_insp'] is not None and a['data_proxima_insp'] < hoje)
   return {'vencidos': vencidos, 'em_dia': len(ativos) - vencidos, 'total': len(ativos), 'total_unidades': len(app_tables.unidades.search())}
+
+@anvil.server.callable
+def buscar_ativos_pais():
+  """Retorna os ativos principais que podem ser interligados a uma tubulação"""
+  # Buscamos apenas os equipamentos que geram ou acumulam pressão
+  return app_tables.ativos.search(tipo=q.any_of("Vaso de Pressão", "Caldeira", "Tanque Metálico"))

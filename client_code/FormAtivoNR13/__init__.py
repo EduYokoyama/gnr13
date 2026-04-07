@@ -72,7 +72,25 @@ class FormAtivoNR13(FormAtivoNR13Template):
         if hasattr(self, 'num_edicao_tanque'): self.num_edicao_tanque.text = specs.get('ano_edicao_codigo')
       elif "Tubulação" in tipo or "Sistemas" in tipo:
         self.drp_fluido_tubo.selected_value = specs.get('fluido_tub')
+        self.drp_fluido_tubo_change() # Aciona o evento para atualizar a label do Grupo
+
         if hasattr(self, 'num_extensao'): self.num_extensao.text = specs.get('extensao')
+        if hasattr(self, 'txt_diametro_tubo'): self.txt_diametro_tubo.text = specs.get('diametro_nominal')
+        if hasattr(self, 'num_ano_tubo'): self.num_ano_tubo.text = specs.get('ano_fabricacao')
+        if hasattr(self, 'txt_cod_tubo'): self.txt_cod_tubo.text = specs.get('codigo_construcao')
+        if hasattr(self, 'num_ano_edicao_tubo'): self.num_ano_edicao_tubo.text = specs.get('ano_edicao_codigo')
+
+        if hasattr(self, 'num_pmta_tubo'): self.num_pmta_tubo.text = specs.get('pmta')
+        if hasattr(self, 'num_pressao_op_tubo'): self.num_pressao_op_tubo.text = specs.get('pressao_operacao')
+        if hasattr(self, 'num_temp_proj_tubo'): self.num_temp_proj_tubo.text = specs.get('temp_projeto')
+        if hasattr(self, 'num_espessura_min'): self.num_espessura_min.text = specs.get('espessura_minima')
+
+          # Recarregando o DropDown Múltiplo
+        if hasattr(self, 'multi_ativos_ligados'):
+          ativos_salvos = specs.get('ativos_conectados')
+          if ativos_salvos:
+            # No Anvil Extras, basta definir selected_items com a lista de objetos Row
+            self.multi_ativos_ligados.selected_items = list(ativos_salvos)
 
     self.alternar_campos_equipamento()
 
