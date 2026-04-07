@@ -11,9 +11,13 @@ components:
   name: grid_ativos
   properties:
     columns:
-    - {data_key: column_1, id: JKSDUP, title: Column 1}
-    - {data_key: column_2, id: VJQQOR, title: Column 2}
-    - {data_key: column_3, id: OJLQEN, title: Column 3}
+    - {data_key: column_1, id: JKSDUP, title: Selecionar}
+    - {data_key: column_2, id: VJQQOR, title: TAG}
+    - {data_key: column_3, id: OJLQEN, title: Tipo do Equipamento}
   type: DataGrid
+- layout_properties: {grid_position: 'YLHQYX,KVNYLH'}
+  name: btn_confirmar
+  properties: {text: Confirmar Seleção}
+  type: Button
 container: {type: ColumnPanel}
 is_package: true

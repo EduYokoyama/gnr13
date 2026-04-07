@@ -1,3 +1,19 @@
-components: []
+components:
+- layout_properties: {column: JKSDUP}
+  name: chk_selecionado
+  properties: {text: ''}
+  type: CheckBox
+- data_bindings:
+  - {code: 'self.item[''tag'']', property: text, writeback: false}
+  layout_properties: {column: VJQQOR}
+  name: lbl_tag
+  properties: {text: ''}
+  type: Label
+- data_bindings:
+  - {code: 'self.item[''tipo_equipamento'']', property: text, writeback: false}
+  layout_properties: {column: OJLQEN}
+  name: lbl_tipo
+  properties: {}
+  type: Label
 container: {type: DataRowPanel}
 is_package: true
