@@ -18,9 +18,11 @@ class FormAtivoNR13(FormAtivoNR13Template):
       fluidos = anvil.server.call('buscar_fluidos_lista')
       self.drp_nome_fluido.items = ["Selecione..."] + fluidos
       self.drp_fluido_tubo.items = ["Selecione..."] + fluidos
-
-      if hasattr(self, 'drp_status_prontuario'):
-        self.drp_status_prontuario.items = ["Original", "Reconstituído"]
+      
+      # Busca vasos, caldeiras e tanques para o dropdown múltiplo da Tubulação
+      ativos_pais = anvil.server.call('buscar_ativos_pais') 
+      if hasattr(self, 'multi_ativos_ligados'):
+        self.multi_ativos_ligados.items = [(f"{a['tag']} ({a['tipo']})", a) for a in ativos_pais]
 
       self.drp_tipo_equipamento.items = ["Vaso de Pressão", "Caldeira", "Tanque Metálico", "Sistemas de Tubulação"]
     except Exception as e:
@@ -207,7 +209,27 @@ class FormAtivoNR13(FormAtivoNR13Template):
     elif "Tubulação" in tipo_eq or "Sistemas" in tipo_eq:
       especificacoes = {
         'fluido_tub': self.drp_fluido_tubo.selected_value,
-        'extensao': self._parse_numero(getattr(self, 'num_extensao', None).text if hasattr(self, 'num_extensao') else None, 'int')
+        # Salva o grupo do fluido que apareceu na Label
+        'grupo_fluido': getattr(self, 'lbl_grupo_tubo', None).text if hasattr(self, 'lbl_grupo_tubo') else None,
+
+        'diametro_nominal': getattr(self, 'txt_diametro_tubo', None).text if hasattr(self, 'txt_diametro_tubo') else None,
+        'extensao': self._parse_numero(getattr(self, 'num_extensao', None).text if hasattr(self, 'num_extensao') else None, 'float'),
+        'ano_fabricacao': self._parse_numero(getattr(self, 'num_ano_tubo', None).text if hasattr(self, 'num_ano_tubo') else None, 'int'),
+
+        'codigo_construcao': getattr(self, 'txt_cod_tubo', None).text if hasattr(self, 'txt_cod_tubo') else None,
+        'ano_edicao_codigo': self._parse_numero(getattr(self, 'num_ano_edicao_tubo', None).text if hasattr(self, 'num_ano_edicao_tubo') else None, 'int'),
+
+        'pmta': self._parse_numero(getattr(self, 'num_pmta_tubo', None).text if hasattr(self, 'num_pmta_tubo') else None, 'float'),
+        'pressao_operacao': self._parse_numero(getattr(self, 'num_pressao_op_tubo', None).text if hasattr(self, 'num_pressao_op_tubo') else None, 'float'),
+        'temp_projeto': self._parse_numero(getattr(self, 'num_temp_proj_tubo', None).text if hasattr(self, 'num_temp_proj_tubo') else None, 'float'),
+        'espessura_minima': self._parse_numero(getattr(self, 'num_espessura_min', None).text if hasattr(self, 'num_espessura_min') else None, 'float'),
+
+        # ---> O Pulo do Gato: Capturando a lista de múltiplos ativos <---
+        'ativos_conectados': self.multi_ativos_ligados.selected_items if hasattr(self, 'multi_ativos_ligados') and self.multi_ativos_ligados.selected_items else [],
+
+        # Uploads de Arquivos
+        'pdf_pid': getattr(self, 'file_pid_tubo', None).file if hasattr(self, 'file_pid_tubo') else None,
+        'pdf_plano_insp': getattr(self, 'file_plano_tubo', None).file if hasattr(self, 'file_plano_tubo') else None
       }
 
     # INSTRUMENTOS SEGURANÇA
