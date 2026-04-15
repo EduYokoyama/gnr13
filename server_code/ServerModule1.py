@@ -148,3 +148,16 @@ def buscar_ativos_pais():
   """Retorna os ativos principais que podem ser interligados a uma tubulação"""
   # Buscamos apenas os equipamentos que geram ou acumulam pressão
   return app_tables.ativos.search(tipo=q.any_of("Vaso de Pressão", "Caldeira", "Tanque Metálico"))
+
+@anvil.server.callable
+def buscar_ativos_grid(texto_busca=""):
+  """Filtra os ativos no banco de dados para a tela de Pop-up de seleção"""
+  if texto_busca:
+    # Busca por TAGs que contenham o texto digitado (ilike ignora maiúsculas/minúsculas)
+    return app_tables.ativos.search(
+      tipo=q.any_of("Vaso de Pressão", "Caldeira", "Tanque Metálico"),
+      tag=q.ilike(f"%{texto_busca}%")
+    )
+  else:
+    # Se não digitou nada, retorna todos os pais possíveis
+    return app_tables.ativos.search(tipo=q.any_of("Vaso de Pressão", "Caldeira", "Tanque Metálico"))

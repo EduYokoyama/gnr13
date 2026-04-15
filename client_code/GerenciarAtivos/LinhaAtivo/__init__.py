@@ -1,4 +1,4 @@
-from GNR13.LinhaAtivoTemplate import LinhaAtivoTemplate
+from ._anvil_designer import LinhaAtivoTemplate
 from GNR13.DialogInspecao import DialogInspecao # Importação absoluta
 from anvil import *
 import anvil.server
@@ -25,6 +25,7 @@ class LinhaAtivo(LinhaAtivoTemplate):
       self.lbl_status.foreground = cores.get(st, "gray")
       self.lbl_status.bold = True
 
+  @handle("btn_registrar_inspecao", "click")
   def btn_registrar_inspecao_click(self, **event_args):
     """Abre o diálogo para subir novo relatório de inspeção (Gatilho de Regularização)"""
     form_inspeção = DialogInspecao()
@@ -54,6 +55,7 @@ class LinhaAtivo(LinhaAtivoTemplate):
       # Atualiza a lista pai para refletir a nova cor/status imediatamente
       self.parent.parent.parent.atualizar_lista()
 
+  @handle("btn_editar", "click")
   def btn_editar_click(self, **event_args):
     """Abre o FormAtivoNR13 para edição. Importação local para evitar Circular Import."""
     from GNR13.FormAtivoNR13 import FormAtivoNR13

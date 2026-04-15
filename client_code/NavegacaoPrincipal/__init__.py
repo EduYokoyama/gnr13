@@ -32,3 +32,13 @@ class NavegacaoPrincipal(NavegacaoPrincipalTemplate):
   def lnk_sair_click(self, **event_args):
     if confirm("Deseja sair do sistema?"):
       pass
+
+  @handle("lnk_gerenciar_ativos", "click")
+  def lnk_gerenciar_ativos_click(self, **event_args):
+    """Abre a tela de listagem e edição de ativos"""
+    # Importação local para evitar lentidão no carregamento inicial do app
+    from GNR13.GerenciarAtivos import GerenciarAtivos 
+
+    # Limpa o painel principal e injeta a tela de gerenciamento
+    self.content_panel.clear()
+    self.content_panel.add_component(GerenciarAtivos())

@@ -428,7 +428,8 @@ components:
         name: file_plano_tubo
         properties: {text: Plano de Inspeção}
         type: FileLoader
-      - layout_properties: {}
+      - event_bindings: {click: btn_buscar_ativos_click}
+        layout_properties: {}
         name: btn_buscar_ativos
         properties: {icon: 'fa:edit', role: primary-color, text: vincular ativos}
         type: Button

@@ -10,7 +10,7 @@ components:
   properties: {text: ''}
   type: Label
 - data_bindings:
-  - {code: 'self.item[''tipo_equipamento'']', property: text, writeback: false}
+  - {code: 'self.item[''tipo'']', property: text, writeback: false}
   layout_properties: {column: OJLQEN}
   name: lbl_tipo
   properties: {}

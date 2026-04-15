@@ -4,11 +4,13 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from GNR13.Form_BuscaAtivos import Form_BuscaAtivos
 
 class FormAtivoNR13(FormAtivoNR13Template):
   def __init__(self, item_edicao=None, **properties):
     self.init_components(**properties)
     self.item_edicao = item_edicao
+    self.lista_ativos_conectados = [] # Inicializa a lista vazia
 
     # --- CARREGAMENTO INICIAL DE DADOS ---
     try:
@@ -18,7 +20,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
       fluidos = anvil.server.call('buscar_fluidos_lista')
       self.drp_nome_fluido.items = ["Selecione..."] + fluidos
       self.drp_fluido_tubo.items = ["Selecione..."] + fluidos
-      
+      self.drp_status_prontuario.items = ["Original", "Reconstituído", "Inexistente"]
       # Busca vasos, caldeiras e tanques para o dropdown múltiplo da Tubulação
       ativos_pais = anvil.server.call('buscar_ativos_pais') 
       if hasattr(self, 'multi_ativos_ligados'):
@@ -84,6 +86,15 @@ class FormAtivoNR13(FormAtivoNR13Template):
         if hasattr(self, 'num_pressao_op_tubo'): self.num_pressao_op_tubo.text = specs.get('pressao_operacao')
         if hasattr(self, 'num_temp_proj_tubo'): self.num_temp_proj_tubo.text = specs.get('temp_projeto')
         if hasattr(self, 'num_espessura_min'): self.num_espessura_min.text = specs.get('espessura_minima')
+        # ---> NOVO: Lógica para os Chips na Edição <---
+        ativos_salvos = specs.get('ativos_conectados')
+        if ativos_salvos:
+          # Converte a lista do banco para a variável local e desenha
+          self.lista_ativos_conectados = list(ativos_salvos)
+          self.desenhar_chips()
+        else:
+          self.lista_ativos_conectados = []
+          if hasattr(self, 'panel_chips_ativos'): self.panel_chips_ativos.clear()
 
           # Recarregando o DropDown Múltiplo
         if hasattr(self, 'multi_ativos_ligados'):
@@ -243,9 +254,8 @@ class FormAtivoNR13(FormAtivoNR13Template):
         'espessura_minima': self._parse_numero(getattr(self, 'num_espessura_min', None).text if hasattr(self, 'num_espessura_min') else None, 'float'),
 
         # ---> O Pulo do Gato: Capturando a lista de múltiplos ativos <---
-        'ativos_conectados': self.multi_ativos_ligados.selected_items if hasattr(self, 'multi_ativos_ligados') and self.multi_ativos_ligados.selected_items else [],
+        'ativos_conectados': self.lista_ativos_conectados,
 
-        # Uploads de Arquivos
         'pdf_pid': getattr(self, 'file_pid_tubo', None).file if hasattr(self, 'file_pid_tubo') else None,
         'pdf_plano_insp': getattr(self, 'file_plano_tubo', None).file if hasattr(self, 'file_plano_tubo') else None
       }
@@ -288,3 +298,42 @@ class FormAtivoNR13(FormAtivoNR13Template):
 
   def btn_cancelar_click(self, **event_args):
     self.limpar_tela()
+    
+  def btn_buscar_ativos_click(self, **event_args):
+    """Abre o modal de busca"""
+    # Instanciamos a tela passando o que já está selecionado
+    form_busca = Form_BuscaAtivos(ativos_ja_selecionados=self.lista_ativos_conectados)
+
+    # O alert trava a tela até o usuário clicar em Confirmar (que dispara o x-close-alert)
+    resultado = alert(content=form_busca, large=True, buttons=[])
+
+    if resultado is not None:
+      self.lista_ativos_conectados = resultado
+      self.desenhar_chips()
+
+  def desenhar_chips(self):
+    """Limpa o FlowPanel e cria um botãozinho (Chip) para cada ativo"""
+    self.panel_chips_ativos.clear()
+
+    for ativo in self.lista_ativos_conectados:
+      # Cria um botão para atuar como uma 'Tag' visual
+      chip = Button(
+        text=f"{ativo['tag']} ✖", 
+        role="primary-color", 
+        tooltip="Clique para remover",
+        spacing_above="small", 
+        spacing_below="small"
+      )
+      # Guardamos a referência da linha do banco no próprio botão para saber quem remover depois
+      chip.tag = ativo 
+      chip.add_event_handler('click', self.remover_chip)
+
+      self.panel_chips_ativos.add_component(chip)
+
+  def remover_chip(self, **event_args):
+    """Remove o ativo da lista se o usuário clicar no 'X' do chip"""
+    botao_clicado = event_args['sender']
+    ativo_para_remover = botao_clicado.tag
+
+    self.lista_ativos_conectados.remove(ativo_para_remover)
+    self.desenhar_chips() # Redesenha a tela

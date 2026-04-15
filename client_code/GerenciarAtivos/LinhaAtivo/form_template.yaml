@@ -1,3 +1,25 @@
-components: []
+components:
+- layout_properties: {column: JKSDUP}
+  name: lbl_tag
+  properties: {}
+  type: Label
+- layout_properties: {column: VJQQOR}
+  name: lbl_tipo
+  properties: {}
+  type: Label
+- layout_properties: {column: OJLQEN}
+  name: lbl_status
+  properties: {}
+  type: Label
+- event_bindings: {}
+  layout_properties: {column: JONRLZ}
+  name: btn_editar
+  properties: {icon: 'fa:pencil-square', text: editar}
+  type: Button
+- event_bindings: {}
+  layout_properties: {column: JONRLZ}
+  name: btn_registrar_inspecao
+  properties: {align: center, text: + INSPECIONAR}
+  type: Button
 container: {type: DataRowPanel}
 is_package: true

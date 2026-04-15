@@ -27,9 +27,9 @@ components:
   name: data_grid_1
   properties:
     columns:
-    - {data_key: column_1, id: JKSDUP, title: TAG}
-    - {data_key: column_2, id: VJQQOR, title: Tipo}
-    - {data_key: column_3, id: OJLQEN, title: 'Status '}
+    - {data_key: column_1, expand: false, id: JKSDUP, title: TAG, width: 145}
+    - {data_key: column_2, expand: false, id: VJQQOR, title: Tipo, width: 135}
+    - {data_key: column_3, expand: false, id: OJLQEN, title: 'Status ', width: 104}
     - {data_key: column_1, id: JONRLZ, title: Ações}
   type: DataGrid
 container: {type: ColumnPanel}

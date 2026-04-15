@@ -1,4 +1,4 @@
-from GNR13.GerenciarAtivosTemplate import GerenciarAtivosTemplate
+from ._anvil_designer import GerenciarAtivosTemplate
 from anvil import *
 import anvil.server
 
