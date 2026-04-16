@@ -46,7 +46,12 @@ class FormAtivoNR13(FormAtivoNR13Template):
     self.drp_tipo_equipamento.selected_value = it.get('tipo')
 
     if hasattr(self, 'drp_status_prontuario'):
-      self.drp_status_prontuario.selected_value = it.get('status_prontuario', "Original")
+      status_banco = it.get('status_prontuario')
+      # Só preenche se o que veio do banco estiver na lista permitida, senão deixa em branco ou "Original"
+      if status_banco in self.drp_status_prontuario.items:
+        self.drp_status_prontuario.selected_value = status_banco
+      else:
+        self.drp_status_prontuario.selected_value = "Original" # Força um padrão válido
     if hasattr(self, 'num_ano_prontuario'):
       self.num_ano_prontuario.text = it.get('ano_prontuario')
 
@@ -58,6 +63,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
         if hasattr(self, 'txt_cod_vaso'): self.txt_cod_vaso.text = specs.get('codigo_construcao')
         if hasattr(self, 'num_pmta'): self.num_pmta.text = specs.get('pmta')
         if hasattr(self, 'num_volume'): self.num_volume.text = specs.get('volume')
+        if hasattr(self, 'num_edicao_vaso'): self.num_edicao_vaso.text = specs.get('ano_edicao_codigo')
         self.drp_nome_fluido.selected_value = specs.get('fluido_vaso')
         self.drp_nome_fluido_change() 
       elif tipo == "Caldeira":
@@ -65,6 +71,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
         if hasattr(self, 'txt_cod_caldeira'): self.txt_cod_caldeira.text = specs.get('codigo_construcao')
         if hasattr(self, 'num_cap_vapor'): self.num_cap_vapor.text = specs.get('cap_vapor')
         if hasattr(self, 'txt_combustivel'): self.txt_combustivel.text = specs.get('combustivel')
+        if hasattr(self, 'num_edicao_caldeira'): self.num_edicao_caldeira.text = specs.get('ano_edicao_codigo')
       elif tipo == "Tanque Metálico":
         if hasattr(self, 'num_diametro_tanque'): self.num_diametro_tanque.text = specs.get('diametro_ext')
         # CORREÇÃO: Puxando o volume na hora de editar
@@ -214,6 +221,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
         'fluido_vaso': self.drp_nome_fluido.selected_value,
         'ano_fabricacao': self._parse_numero(getattr(self, 'num_ano_vaso', None).text if hasattr(self, 'num_ano_vaso') else None, 'int'),
         'codigo_construcao': getattr(self, 'txt_cod_vaso', None).text if hasattr(self, 'txt_cod_vaso') else None,
+        'ano_edicao_codigo': self._parse_numero(getattr(self, 'num_edicao_vaso', None).text if hasattr(self, 'num_edicao_vaso') else None, 'int'),
         'pmta': self._parse_numero(getattr(self, 'num_pmta', None).text if hasattr(self, 'num_pmta') else None, 'float'),
         'volume': self._parse_numero(getattr(self, 'num_volume', None).text if hasattr(self, 'num_volume') else None, 'float'),
         'categoria': getattr(self, 'lbl_categoria_calculada', None).text if hasattr(self, 'lbl_categoria_calculada') else None
@@ -222,6 +230,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
       especificacoes = {
         'ano_fabricacao': self._parse_numero(getattr(self, 'num_ano_caldeira', None).text if hasattr(self, 'num_ano_caldeira') else None, 'int'),
         'codigo_construcao': getattr(self, 'txt_cod_caldeira', None).text if hasattr(self, 'txt_cod_caldeira') else None,
+        'ano_edicao_codigo': self._parse_numero(getattr(self, 'num_edicao_caldeira', None).text if hasattr(self, 'num_edicao_caldeira') else None, 'int'),
         'cap_vapor': self._parse_numero(getattr(self, 'num_cap_vapor', None).text if hasattr(self, 'num_cap_vapor') else None, 'float'),
         'combustivel': getattr(self, 'txt_combustivel', None).text if hasattr(self, 'txt_combustivel') else ""
       }
@@ -280,10 +289,18 @@ class FormAtivoNR13(FormAtivoNR13Template):
 
     # EXECUÇÃO NO SERVIDOR
     try:
-      anvil.server.call('salvar_ativo_completo', dados_mestre, especificacoes, lista_instrumentos, self.item_edicao)
+      # Pega a linha real do banco de dados (se estivermos editando)
+      row_real = self.item_edicao.get('row_objeto') if self.item_edicao else None
+
+      # Envia a linha real em vez do dicionário inteiro
+      anvil.server.call('salvar_ativo_completo', dados_mestre, especificacoes, lista_instrumentos, row_real)
+
       Notification("Dados do Ativo salvos e sincronizados com o banco de dados!", style="success").show()
       if not self.item_edicao: 
-        self.limpar_tela()
+        self.limpar_tela() # Se for cadastro novo, só limpa a tela
+      else:
+        self.raise_event("x-close-alert") # Se for edição, fecha a janela modal automaticamente!
+
     except Exception as e:
       alert(f"Ocorreu um erro ao comunicar com o servidor: {e}")
 

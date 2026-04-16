@@ -63,5 +63,8 @@ class LinhaAtivo(LinhaAtivoTemplate):
     # Passa o item atual para o formulário de cadastro em modo edição
     form_edicao = FormAtivoNR13(item_edicao=self.item)
 
-    if alert(content=form_edicao, title=f"Editar Ativo: {self.item['tag']}", large=True, buttons=[]):
-      self.parent.parent.parent.atualizar_lista()
+    # 1. Abre a janela (o código 'pausa' aqui até a janela ser fechada)
+    alert(content=form_edicao, title=f"Editar Ativo: {self.item['tag']}", large=True, buttons=[])
+
+    # 2. Assim que fechar, atualiza a lista OBRIGATORIAMENTE
+    self.parent.parent.parent.atualizar_lista()

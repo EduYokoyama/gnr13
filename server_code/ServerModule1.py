@@ -161,3 +161,57 @@ def buscar_ativos_grid(texto_busca=""):
   else:
     # Se não digitou nada, retorna todos os pais possíveis
     return app_tables.ativos.search(tipo=q.any_of("Vaso de Pressão", "Caldeira", "Tanque Metálico"))
+
+@anvil.server.callable
+def processar_novo_relatorio(row_ativo, dados_relatorio):
+  """
+    Salva o novo relatório no histórico e atualiza as datas de vencimento no ativo mestre.
+    """
+
+  # 1. Salva o registro na tabela de histórico
+  # Nota: Usando 'ativo=' conforme nossa padronização recente!
+  app_tables.historico_inspecoes.add_row(
+    ativo=row_ativo,
+    data_inspecao=dados_relatorio.get('data_inspecao'),
+    tipo_inspecao=dados_relatorio.get('tipo_inspecao'),
+    escopo=dados_relatorio.get('escopo'),
+    parecer_conclusivo=dados_relatorio.get('parecer_conclusivo'),
+    num_art=dados_relatorio.get('num_art'),
+    pdf_relatorio=dados_relatorio.get('pdf_relatorio'),
+    pdf_art=dados_relatorio.get('pdf_art')
+  )
+
+  # 2. Calcula a PRÓXIMA data de inspeção com base no tipo
+  data_insp = dados_relatorio.get('data_inspecao')
+
+  if data_insp:
+    tipo = row_ativo['tipo']
+    meses_validade = 12 # Prazo padrão de segurança (1 ano)
+
+    # Regras de periodicidade simplificadas (NR-13)
+    # Você pode refinar isso depois buscando a categoria exata nas tabelas 'specs'
+    if tipo == "Caldeira":
+      meses_validade = 12
+    elif tipo == "Vaso de Pressão":
+      meses_validade = 36 # Ex: 3 anos
+    elif tipo == "Tanque Metálico":
+      meses_validade = 60 # Ex: 5 anos
+    elif "Tubulação" in tipo or "Sistemas" in tipo:
+      meses_validade = 60 # Ex: 5 anos ou o do ativo ligado
+
+      # Lógica matemática nativa do Python para somar meses a uma data
+    ano_novo = data_insp.year + (data_insp.month + meses_validade - 1) // 12
+    mes_novo = (data_insp.month + meses_validade - 1) % 12 + 1
+
+    # Garante que o dia não passe do limite do mês (ex: 31 de Fevereiro)
+    dias_no_mes = [31, 29 if ano_novo%4==0 and not ano_novo%100==0 or ano_novo%400==0 else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    dia_novo = min(data_insp.day, dias_no_mes[mes_novo - 1])
+
+    proxima_data = datetime.date(ano_novo, mes_novo, dia_novo)
+
+    # 3. Atualiza o cadastro Mestre do Ativo
+    # É isso que faz as cores mudarem na sua lista de ativos!
+    row_ativo.update(
+      data_ultima_insp=data_insp,
+      data_proxima_insp=proxima_data
+    )
