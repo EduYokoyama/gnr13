@@ -22,7 +22,7 @@ components:
   - event_bindings: {}
     layout_properties: {grid_position: 'WLNRUC,BNKVRL'}
     name: lnk_gerenciar_ativos
-    properties: {icon: 'fa:list-alt', icon_align: right, text: Gerenciar Ativos}
+    properties: {align: center, icon: 'fa:list-alt', icon_align: right, text: Gerenciar Ativos}
     type: Link
   - event_bindings: {click: lnk_unidades_click}
     layout_properties: {grid_position: 'ISEXCS,CJLGPO'}
