@@ -140,9 +140,22 @@ def excluir_ativo_completo(row_ativo):
 def obter_resumo_dashboard():
   ativos = app_tables.ativos.search()
   hoje = datetime.date.today()
+  # Resumo de Equipamentos Principais
   vencidos = sum(1 for a in ativos if a['data_proxima_insp'] is not None and a['data_proxima_insp'] < hoje)
-  return {'vencidos': vencidos, 'em_dia': len(ativos) - vencidos, 'total': len(ativos), 'total_unidades': len(app_tables.unidades.search())}
 
+  # Resumo Exclusivo de Instrumentos (Ignora os "Substituídos")
+  instrumentos_ativos = app_tables.dispositivos_seguranca.search(status="Ativo")
+  inst_vencidos = sum(1 for i in instrumentos_ativos if i['prazo_calibracao'] is not None and i['prazo_calibracao'] < hoje)
+
+  return {
+    'vencidos': vencidos, 
+    'em_dia': len(ativos) - vencidos, 
+    'total': len(ativos), 
+    'total_unidades': len(app_tables.unidades.search()),
+    'inst_vencidos': inst_vencidos,
+    'inst_em_dia': len(instrumentos_ativos) - inst_vencidos,
+    'inst_total': len(instrumentos_ativos)
+  }
 @anvil.server.callable
 def buscar_ativos_pais():
   """Retorna os ativos principais que podem ser interligados a uma tubulação"""
@@ -215,3 +228,53 @@ def processar_novo_relatorio(row_ativo, dados_relatorio):
       data_ultima_insp=data_insp,
       data_proxima_insp=proxima_data
     )
+
+# --- GESTÃO INDEPENDENTE DE INSTRUMENTOS ---
+@anvil.server.callable
+def buscar_instrumentos_filtrados(tipo="Todos", exibir_historico=False):
+  """Busca os instrumentos para a nova tela de gestão separada"""
+  query = {}
+
+  # Se NÃO marcou para exibir histórico, busca apenas os Ativos
+  if not exibir_historico:
+    query['status'] = "Ativo"
+
+  if tipo and tipo != "Todos":
+    query['tipo'] = tipo
+
+  instrumentos = app_tables.dispositivos_seguranca.search(**query)
+  hoje = datetime.date.today()
+  lista = []
+
+  for inst in instrumentos:
+    st_calib = "Sem Data"
+    if inst['prazo_calibracao']:
+      st_calib = "Vencido" if inst['prazo_calibracao'] < hoje else "No Prazo"
+
+    # Sobrepõe o status visual se a peça já foi trocada
+    if inst['status'] == "Substituído" or inst['status'] == "Inativo":
+      st_calib = "Arquivado"
+
+    lista.append(dict(inst, status_calibracao=st_calib, row_objeto=inst))
+
+  return lista
+
+@anvil.server.callable
+def executar_substituicao_instrumento(row_antigo, dados_novo):
+  """Desativa o antigo (Soft Delete) e cadastra o novo no mesmo equipamento"""
+  # 1. Arquiva o antigo
+  motivo = dados_novo.pop('motivo_troca', 'Substituição de rotina')
+  row_antigo.update(
+    status="Substituído",
+    data_substituicao=datetime.date.today(),
+    motivo_troca=motivo
+  )
+
+  # 2. Cria o novo vinculado ao mesmo ativo pai
+  ativo_pai = row_antigo['ativo'] 
+  novo_inst = app_tables.dispositivos_seguranca.add_row(
+    ativo=ativo_pai,
+    status="Ativo",
+    **dados_novo
+  )
+  return novo_inst
