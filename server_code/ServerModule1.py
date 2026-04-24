@@ -74,7 +74,7 @@ def obter_specs_ativo(row_ativo):
   return {}
 
 @anvil.server.callable
-def salvar_ativo_completo(dados_mestre, especificacoes, lista_instrumentos, row_existente=None):
+def salvar_ativo_completo(dados_mestre, especificacoes, lista_instrumentos=None, row_existente=None):
   # 1. Atualização Tabela Ativos (Mestre) com proteção
   try:
     if row_existente:
@@ -113,15 +113,12 @@ def salvar_ativo_completo(dados_mestre, especificacoes, lista_instrumentos, row_
     else:
       tabela.add_row(ativo=ativo_ref, **especificacoes)
 
-  # 3. Atualização de Instrumentos de Segurança
-  if row_existente:
-    for r in app_tables.dispositivos_seguranca.search(ativo=ativo_ref):
-      r.delete()
+  # --- O QUE MUDOU: ---
+  # Removemos completamente o bloco 3 (Atualização de Instrumentos).
+  # Agora os instrumentos são salvos/editados nas suas próprias funções exclusivas, 
+  # evitando que o histórico seja apagado por engano ao editar um ativo mestre.
 
-  if lista_instrumentos:
-    for i in lista_instrumentos:
-      app_tables.dispositivos_seguranca.add_row(ativo=ativo_ref, **i)
-
+  # O retorno da linha (row) é vital para o pop-up abrir corretamente
   return ativo_ref
 
 @anvil.server.callable
@@ -278,3 +275,17 @@ def executar_substituicao_instrumento(row_antigo, dados_novo):
     **dados_novo
   )
   return novo_inst
+
+@anvil.server.callable
+def buscar_instrumentos_por_ativo(ativo_pai):
+  """
+    Busca na base de dados todos os instrumentos que pertencem ao ativo selecionado.
+    """
+  # NOTA: Se os seus instrumentos estiverem na tabela genérica 'ativos', 
+  # substitua 'app_tables.instrumentos' por 'app_tables.ativos' e adicione 
+  # o filtro de tipo (ex: tipo='Instrumento') se necessário.
+
+  return app_tables.instrumentos.search(
+    ativo_pai=ativo_pai,
+    removido=q.not_(True) # Garante que não trazemos instrumentos que sofreram "Soft Delete"
+  )

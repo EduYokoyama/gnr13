@@ -1,0 +1,28 @@
+components:
+- layout_properties: {grid_position: 'ABGTCG,KHPECU'}
+  name: chk_historico
+  properties: {text: Exibir histórico de peças substituídas}
+  type: CheckBox
+- layout_properties: {grid_position: 'OZPPHJ,SBMIKI'}
+  name: btn_novo
+  properties: {role: primary-color, text: Adicionar Novo Instrumento}
+  type: Button
+- components:
+  - layout_properties: {}
+    name: rp_lista
+    properties: {item_template: LinhaInstrumentoModal}
+    type: RepeatingPanel
+  - name: repeating_panel_1
+    properties: {item_template: GerenciarInstrumentos.RowTemplate2}
+    type: RepeatingPanel
+  layout_properties: {grid_position: 'UXDYNG,NJPXEX'}
+  name: data_grid_1
+  properties:
+    columns:
+    - {data_key: TAG, id: JKSDUP, title: TAG}
+    - {data_key: Tipo, id: VJQQOR, title: Tipo}
+    - {data_key: Estado/Calibração, id: OJLQEN, title: Estado/Calibração}
+    - {data_key: Ações, id: VLAORF, title: Ações}
+  type: DataGrid
+container: {type: ColumnPanel}
+is_package: true

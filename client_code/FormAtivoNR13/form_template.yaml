@@ -447,24 +447,11 @@ components:
     properties: {visible: true}
     type: ColumnPanel
   - components:
-    - layout_properties: {grid_position: 'FEETFH,ENYDHY'}
-      name: label_15
-      properties: {bold: true, text: Dispositivos de Segurança e Instrumentação (Substituíveis)}
-      type: Label
-    - layout_properties: {grid_position: 'BZLFOF,UNROLT'}
-      name: painel_instrumentos
-      properties: {}
-      type: ColumnPanel
-    - event_bindings: {click: btn_adicionar_instrumento_click}
-      layout_properties: {grid_position: 'ZLNZTP,BRRVTO'}
-      name: btn_add_instrumento
-      properties: {text: + Adicionar Instrumento}
+    - event_bindings: {click: btn_gerenciar_instrumentos_click}
+      layout_properties: {grid_position: 'BUXILW,VHUGQR'}
+      name: btn_gerenciar_instrumentos
+      properties: {role: primary-color, text: ⚙️ Gerenciar Instrumentos de Segurança}
       type: Button
-    layout_properties: {grid_position: 'KXVDDQ,VXTZGX'}
-    name: fp_instrumentos
-    properties: {role: card}
-    type: ColumnPanel
-  - components:
     - event_bindings: {click: btn_salvar_click}
       layout_properties: {grid_position: 'VEMPGJ,NLIWSB'}
       name: btn_salvar

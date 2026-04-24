@@ -179,11 +179,6 @@ class FormAtivoNR13(FormAtivoNR13Template):
   def num_volume_change(self, **event_args): self.calcular_categoria()
 
   # --- EVENTOS DE INSTRUMENTAÇÃO ---
-  def btn_adicionar_instrumento_click(self, **event_args):
-    from GNR13.ItemInstrumento import ItemInstrumento
-    painel = getattr(self, 'painel_instrumentos', None) or getattr(self, 'fp_instrumentos', None)
-    if painel:
-      painel.add_component(ItemInstrumento())
 
   # --- FUNÇÕES DE VALIDAÇÃO E SALVAMENTO ---
   def _parse_numero(self, texto, tipo='float'):
@@ -269,37 +264,26 @@ class FormAtivoNR13(FormAtivoNR13Template):
         'pdf_plano_insp': getattr(self, 'file_plano_tubo', None).file if hasattr(self, 'file_plano_tubo') else None
       }
 
-    # INSTRUMENTOS SEGURANÇA
-    lista_instrumentos = []
-    painel = getattr(self, 'painel_instrumentos', None) or getattr(self, 'fp_instrumentos', None)
-    if painel:
-      for row in painel.get_components():
-        if isinstance(row, ItemInstrumento):
-          inst_dict = {
-            'tag_instrumento': getattr(row.txt_tag_inst, 'text', None) if hasattr(row, 'txt_tag_inst') else None,
-            'tipo': getattr(row.txt_tipo_manual, 'text', None) if hasattr(row, 'txt_tipo_manual') else None,
-            'data_calibracao': getattr(row.dt_calib_inst, 'date', None) if hasattr(row, 'dt_calib_inst') else None,
-            'prazo_calibracao': getattr(row.dt_prazo_inst, 'date', None) if hasattr(row, 'dt_prazo_inst') else None,
-            'num_serie': getattr(row.txt_serie_inst, 'text', None) if hasattr(row, 'txt_serie_inst') else None,
-            'ano_fabricacao': self._parse_numero(getattr(row.txt_ano_fab_inst, 'text', None) if hasattr(row, 'txt_ano_fab_inst') else None, 'int'),
-            'certificado_pdf': getattr(row.file_cert_inst, 'file', None) if hasattr(row, 'file_cert_inst') else None,
-            'status': "Ativo"
-          }
-          lista_instrumentos.append(inst_dict)
-
+   
     # EXECUÇÃO NO SERVIDOR
     try:
       # Pega a linha real do banco de dados (se estivermos editando)
       row_real = self.item_edicao.get('row_objeto') if self.item_edicao else None
 
-      # Envia a linha real em vez do dicionário inteiro
-      anvil.server.call('salvar_ativo_completo', dados_mestre, especificacoes, lista_instrumentos, row_real)
+      # Envia None no lugar da lista de instrumentos
+      nova_row = anvil.server.call('salvar_ativo_completo', dados_mestre, especificacoes, None, row_real)
+
+      # Atualiza o formulário para o modo "Edição", pois o ativo agora existe no banco
+      self.item_edicao = {'row_objeto': nova_row, 'tag': dados_mestre['tag']}
 
       Notification("Dados do Ativo salvos e sincronizados com o banco de dados!", style="success").show()
-      if not self.item_edicao: 
-        self.limpar_tela() # Se for cadastro novo, só limpa a tela
-      else:
-        self.raise_event("x-close-alert") # Se for edição, fecha a janela modal automaticamente!
+
+      # Verifica quem chamou a função. Se foi o próprio botão "Salvar", ele fecha a tela/limpa
+      if event_args.get('sender'):
+        if not row_real: 
+          self.limpar_tela() 
+        else:
+          self.raise_event("x-close-alert")
 
     except Exception as e:
       alert(f"Ocorreu um erro ao comunicar com o servidor: {e}")
@@ -354,3 +338,30 @@ class FormAtivoNR13(FormAtivoNR13Template):
 
     self.lista_ativos_conectados.remove(ativo_para_remover)
     self.desenhar_chips() # Redesenha a tela
+
+  def btn_gerenciar_instrumentos_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    """Lógica inteligente: Salva o ativo pai antes de abrir os instrumentos"""
+  
+    # 1. Verifica se o Ativo principal já existe no banco
+    if not self.item_edicao or not self.item_edicao.get('row_objeto'):
+      if confirm("O ativo precisa ser salvo no banco de dados primeiro. Deseja salvar e continuar?"):
+  
+        # Chama a função de salvar, passando 'sender=None' para a tela não fechar!
+        self.btn_salvar_click(sender=None) 
+  
+        # Se mesmo após tentar salvar a row não existir, é porque deu erro (ex: faltou Tag)
+        if not self.item_edicao.get('row_objeto'):
+          return 
+      else:
+        return # Usuário não quis salvar, aborta a operação
+  
+      # 2. Agora garantimos que o ativo pai existe. Vamos abrir o Pop-up!
+    from GNR13.GerenciarInstrumentos import GerenciarInstrumentos
+  
+    ativo_ref = self.item_edicao['row_objeto']
+  
+    # Passamos o ativo pai para a nova tela filtrar os instrumentos corretamente
+    form_inst = GerenciarInstrumentos(ativo_pai=ativo_ref)
+  
+    alert(content=form_inst, large=True, title=f"Gerenciar Instrumentos - {self.txt_tag.text}", buttons=[])

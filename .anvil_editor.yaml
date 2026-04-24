@@ -12,10 +12,14 @@ unique_ids:
     Form_BuscaAtivos.RowTemplate1: '1775585655512248424612086.50946'
     GerenciarAtivos: '1775073951420421175650804.3827'
     GerenciarAtivos.LinhaAtivo: '1775074246821269559218212.0189'
+    GerenciarInstrumentos: '1777027195735961003242238.0211'
+    GerenciarInstrumentos.ItemTemplate1: '1777027580805479222747847.1358'
+    GerenciarInstrumentos.RowTemplate2: '1777027404828128966332213.93527'
     GerenciarUnidades: '1774882965925981722500581.0217'
     GerenciarUnidades.LinhaUnidade: '1774883031119532152113715.0811'
     ItemInstrumento: '1774299436698789187953312.1241'
     ItemInstrumento.ItemTemplate2: '1774878778197589332008187.981'
+    LinhaInstrumentoModal: '1777028119325149225444828.5668'
     NavegacaoPrincipal: '1774884738783403553720573.34326'
   modules: {}
   scripts: {}
