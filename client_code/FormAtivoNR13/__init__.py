@@ -346,22 +346,23 @@ class FormAtivoNR13(FormAtivoNR13Template):
     # 1. Verifica se o Ativo principal já existe no banco
     if not self.item_edicao or not self.item_edicao.get('row_objeto'):
       if confirm("O ativo precisa ser salvo no banco de dados primeiro. Deseja salvar e continuar?"):
-  
+
         # Chama a função de salvar, passando 'sender=None' para a tela não fechar!
         self.btn_salvar_click(sender=None) 
-  
-        # Se mesmo após tentar salvar a row não existir, é porque deu erro (ex: faltou Tag)
-        if not self.item_edicao.get('row_objeto'):
+
+        # ---> CORREÇÃO 1: Verificação segura para evitar o erro de NoneType <---
+        if not self.item_edicao or not self.item_edicao.get('row_objeto'):
           return 
       else:
         return # Usuário não quis salvar, aborta a operação
-  
-      # 2. Agora garantimos que o ativo pai existe. Vamos abrir o Pop-up!
+
+    # 2. Agora garantimos que o ativo pai existe. Vamos abrir o Pop-up!
     from GNR13.GerenciarInstrumentos import GerenciarInstrumentos
-  
+
     ativo_ref = self.item_edicao['row_objeto']
-  
+
     # Passamos o ativo pai para a nova tela filtrar os instrumentos corretamente
     form_inst = GerenciarInstrumentos(ativo_pai=ativo_ref)
-  
-    alert(content=form_inst, large=True, title=f"Gerenciar Instrumentos - {self.txt_tag.text}", buttons=[])
+
+    # ---> CORREÇÃO 2: Adicionado o botão [("Fechar", True)] para destravar a tela <---
+    alert(content=form_inst, large=True, title=f"Gerenciar Instrumentos - {self.txt_tag.text}", buttons=[("Fechar", True)])

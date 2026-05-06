@@ -287,3 +287,24 @@ def buscar_instrumentos_por_ativo(ativo_pai):
     ativo=ativo_pai,
     status="Ativo"
   )
+
+# ---> ESTA É A FUNÇÃO NOVA QUE FALTAVA <---
+@anvil.server.callable
+def adicionar_novo_instrumento(ativo_pai, dados_instrumento):
+  """
+    Cadastra um instrumento de segurança totalmente novo 
+    (sem ser substituição) e vincula ao ativo pai.
+    """
+  novo_inst = app_tables.dispositivos_seguranca.add_row(
+    ativo=ativo_pai,
+    status="Ativo",
+    **dados_instrumento
+  )
+  return novo_inst
+
+  @anvil.server.callable
+  def remover_instrumento(item_row):
+    """Apaga a linha do instrumento da base de dados"""
+  # Segurança: verifica se o item existe mesmo antes de apagar
+  if item_row is not None:
+    item_row.delete()

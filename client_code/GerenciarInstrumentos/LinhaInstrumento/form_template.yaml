@@ -1,0 +1,19 @@
+components:
+- layout_properties: {grid_position: 'HIRFNM,UUCOLC'}
+  name: lbl_tag
+  properties: {}
+  type: Label
+- layout_properties: {grid_position: 'HIRFNM,KATLHN'}
+  name: lbl_tipo
+  properties: {}
+  type: Label
+- layout_properties: {grid_position: 'HIRFNM,RKUHFK'}
+  name: lbl_vencimento
+  properties: {}
+  type: Label
+- layout_properties: {grid_position: 'HIRFNM,AFZECW'}
+  name: btn_excluir
+  properties: {icon: 'fa:trash', text: button_1}
+  type: Button
+container: {type: ColumnPanel}
+is_package: true

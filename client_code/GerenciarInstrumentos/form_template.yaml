@@ -3,7 +3,8 @@ components:
   name: chk_historico
   properties: {text: Exibir histórico de peças substituídas}
   type: CheckBox
-- layout_properties: {grid_position: 'OZPPHJ,SBMIKI'}
+- event_bindings: {click: btn_novo_click}
+  layout_properties: {grid_position: 'OZPPHJ,SBMIKI'}
   name: btn_novo
   properties: {role: primary-color, text: Adicionar Novo Instrumento}
   type: Button
@@ -12,8 +13,9 @@ components:
     name: rp_lista
     properties: {item_template: LinhaInstrumentoModal}
     type: RepeatingPanel
-  - name: repeating_panel_1
-    properties: {item_template: GerenciarInstrumentos.RowTemplate2}
+  - layout_properties: {}
+    name: rp_instrumentos
+    properties: {item_template: GerenciarInstrumentos.LinhaInstrumento}
     type: RepeatingPanel
   layout_properties: {grid_position: 'UXDYNG,NJPXEX'}
   name: data_grid_1
