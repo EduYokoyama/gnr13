@@ -281,11 +281,9 @@ def buscar_instrumentos_por_ativo(ativo_pai):
   """
     Busca na base de dados todos os instrumentos que pertencem ao ativo selecionado.
     """
-  # NOTA: Se os seus instrumentos estiverem na tabela genérica 'ativos', 
-  # substitua 'app_tables.instrumentos' por 'app_tables.ativos' e adicione 
-  # o filtro de tipo (ex: tipo='Instrumento') se necessário.
-
-  return app_tables.instrumentos.search(
-    ativo_pai=ativo_pai,
-    removido=q.not_(True) # Garante que não trazemos instrumentos que sofreram "Soft Delete"
+  # Acessando a tabela CORRETA (dispositivos_seguranca) 
+  # e usando a coluna correta 'ativo' e o status 'Ativo' para não puxar os substituídos
+  return app_tables.dispositivos_seguranca.search(
+    ativo=ativo_pai,
+    status="Ativo"
   )
