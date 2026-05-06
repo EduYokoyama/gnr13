@@ -13,7 +13,7 @@ components:
   type: Label
 - layout_properties: {grid_position: 'HIRFNM,AFZECW'}
   name: btn_excluir
-  properties: {icon: 'fa:trash', text: button_1}
+  properties: {icon: 'fa:trash', text: Excluir}
   type: Button
 container: {type: ColumnPanel}
 is_package: true

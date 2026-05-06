@@ -308,3 +308,9 @@ def adicionar_novo_instrumento(ativo_pai, dados_instrumento):
   # Segurança: verifica se o item existe mesmo antes de apagar
   if item_row is not None:
     item_row.delete()
+
+  @anvil.server.callable
+  def remover_instrumento(instrumento_row):
+    # Verifica se a linha foi passada corretamente e a deleta do banco
+    if instrumento_row is not None:
+      instrumento_row.delete()
