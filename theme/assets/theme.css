@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 /**
  This CSS implements the Material Design look and feel for Anvil apps.
  **/
@@ -96,10 +98,15 @@ a>.anvil-component-icon.right_edge-icon,
 
 /* Typography */
 body {
-  font-family: Roboto, Noto, Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
   line-height: 1.4286;
-  background-color: #fafafa;
+  background-color: #f1f5f9; /* sleek modern backdrop for glass cards */
+}
+
+h1, h2, h3, .anvil-role-headline {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 600 !important;
 }
 
 @media print {
@@ -633,6 +640,45 @@ body>div[data-notify="container"].alert-warning>span[data-notify="title"]{
   background-color: white;
   padding: 8px 12px;
   /* 2dp */  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
+.anvil-role-glass-card {
+  overflow: hidden;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(16px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  padding: 20px 24px !important;
+  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.04) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.anvil-role-glass-card:hover {
+  background: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 12px 40px 0 rgba(15, 23, 42, 0.08) !important;
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.anvil-role-glass-card-dark {
+  overflow: hidden;
+  border-radius: 16px !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+  backdrop-filter: blur(20px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(120%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 20px 24px !important;
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.25) !important;
+  color: #f8fafc !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.anvil-role-glass-card-dark:hover {
+  background: rgba(15, 23, 42, 0.94) !important;
+  box-shadow: 0 16px 48px 0 rgba(0, 0, 0, 0.35) !important;
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 /* full_width_row sections go full bleed */

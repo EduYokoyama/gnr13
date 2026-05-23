@@ -165,6 +165,14 @@ roles:
   display_in_toolbox: true
   name: card
   title: Card
+- components: [ColumnPanel, LinearPanel, XYPanel, RepeatingPanel]
+  display_in_toolbox: true
+  name: glass-card
+  title: Glass Card
+- components: [ColumnPanel, LinearPanel, XYPanel, RepeatingPanel]
+  display_in_toolbox: true
+  name: glass-card-dark
+  title: Glass Card Dark
 - components: [Button, FileLoader]
   name: raised
 - components: [Button, FileLoader]

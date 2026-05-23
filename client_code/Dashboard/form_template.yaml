@@ -1,20 +1,71 @@
 components:
-- layout_properties: {grid_position: 'RIMRPN,UYXDRS'}
-  name: label_1
-  properties: {role: headline, text: Indicadores de Conformidade NR-13}
+- layout_properties: {grid_position: 'A,B'}
+  name: label_title
+  properties: {role: headline, text: "Painel de Conformidade Regulatório NR-13", align: left, bold: true}
   type: Label
-- layout_properties: {grid_position: 'LEEFWC,EXFZLV'}
-  name: plot_1
-  properties: {}
-  type: Plot
 - components:
-  - layout_properties: {}
-    name: grafico_status
-    properties: {}
-    type: Plot
-  layout_properties: {grid_position: 'YLZCOX,UMHVWF'}
-  name: flow_panel_1
-  properties: {}
+  - components:
+    - name: lbl_total_val
+      properties: {text: '0', font_size: 32, bold: true, align: center, foreground: '#3b82f6'}
+      type: Label
+    - name: lbl_total_desc
+      properties: {text: 'Ativos Cadastrados', align: center, font_size: 13, foreground: '#64748b', bold: true}
+      type: Label
+    name: card_total
+    properties: {role: glass-card}
+    type: ColumnPanel
+  - components:
+    - name: lbl_vencidos_val
+      properties: {text: '0', font_size: 32, bold: true, align: center, foreground: '#ef4444'}
+      type: Label
+    - name: lbl_vencidos_desc
+      properties: {text: 'Ativos Vencidos', align: center, font_size: 13, foreground: '#64748b', bold: true}
+      type: Label
+    name: card_vencidos
+    properties: {role: glass-card}
+    type: ColumnPanel
+  - components:
+    - name: lbl_unidades_val
+      properties: {text: '0', font_size: 32, bold: true, align: center, foreground: '#10b981'}
+      type: Label
+    - name: lbl_unidades_desc
+      properties: {text: 'Plantas / Unidades', align: center, font_size: 13, foreground: '#64748b', bold: true}
+      type: Label
+    name: card_unidades
+    properties: {role: glass-card}
+    type: ColumnPanel
+  - components:
+    - name: lbl_instrumentos_val
+      properties: {text: '0', font_size: 32, bold: true, align: center, foreground: '#f59e0b'}
+      type: Label
+    - name: lbl_instrumentos_desc
+      properties: {text: 'Instrumentos Vencidos', align: center, font_size: 13, foreground: '#64748b', bold: true}
+      type: Label
+    name: card_instrumentos
+    properties: {role: glass-card}
+    type: ColumnPanel
+  layout_properties: {grid_position: 'C,D'}
+  name: flow_panel_stats
+  properties: {spacing: medium, align: justify}
   type: FlowPanel
+- components:
+  - name: plot_status
+    properties: {height: 380}
+    type: Plot
+  - name: plot_calibrations
+    properties: {height: 380}
+    type: Plot
+  layout_properties: {grid_position: 'E,F'}
+  name: flow_panel_charts_row1
+  properties: {spacing: large, align: justify}
+  type: FlowPanel
+- components:
+  - name: plot_forecast
+    properties: {height: 400}
+    type: Plot
+  layout_properties: {grid_position: 'G,H'}
+  name: card_forecast_container
+  properties: {role: glass-card}
+  type: ColumnPanel
 container: {type: ColumnPanel}
 is_package: true
