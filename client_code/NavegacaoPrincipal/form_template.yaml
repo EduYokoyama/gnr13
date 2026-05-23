@@ -17,7 +17,7 @@ components:
     event_bindings: {click: lnk_cadastro_click}
     layout_properties: {grid_position: 'CFZCRW,GZEHGN'}
     name: lnk_cadastro
-    properties: {align: center, icon: 'fa:plus-circle', icon_align: right, text: Ativos}
+    properties: {align: center, icon: 'fa:plus-circle', icon_align: right, text: Cadastrar Ativos}
     type: Link
   - event_bindings: {}
     layout_properties: {grid_position: 'WLNRUC,BNKVRL'}
