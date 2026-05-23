@@ -40,5 +40,4 @@ class NavegacaoPrincipal(NavegacaoPrincipalTemplate):
     from GNR13.GerenciarAtivos import GerenciarAtivos 
 
     # Limpa o painel principal e injeta a tela de gerenciamento
-    self.content_panel.clear()
-    self.content_panel.add_component(GerenciarAtivos())
+    self.abrir_tela(GerenciarAtivos())
