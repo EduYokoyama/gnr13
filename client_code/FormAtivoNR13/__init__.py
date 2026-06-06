@@ -85,7 +85,8 @@ class FormAtivoNR13(FormAtivoNR13Template):
         self.drp_fluido_tubo_change() # Aciona o evento para atualizar a label do Grupo
 
         if hasattr(self, 'num_extensao'): self.num_extensao.text = specs.get('extensao')
-        if hasattr(self, 'txt_diametro_tubo'): self.txt_diametro_tubo.text = specs.get('diametro_nominal')
+        if hasattr(self, 'num_diametro_tubo'): self.num_diametro_tubo.text = specs.get('diametro_nominal')
+        if hasattr(self, 'drp_unidade_diametro'): self.drp_unidade_diametro.selected_value = specs.get('unidade_diametro', 'Polegadas (")')
         if hasattr(self, 'num_ano_tubo'): self.num_ano_tubo.text = specs.get('ano_fabricacao')
         if hasattr(self, 'txt_cod_tubo'): self.txt_cod_tubo.text = specs.get('codigo_construcao')
         if hasattr(self, 'num_ano_edicao_tubo'): self.num_ano_edicao_tubo.text = specs.get('ano_edicao_codigo')
@@ -247,7 +248,8 @@ class FormAtivoNR13(FormAtivoNR13Template):
         # Salva o grupo do fluido que apareceu na Label
         'grupo_fluido': getattr(self, 'lbl_grupo_tubo', None).text if hasattr(self, 'lbl_grupo_tubo') else None,
 
-        'diametro_nominal': getattr(self, 'txt_diametro_tubo', None).text if hasattr(self, 'txt_diametro_tubo') else None,
+        'diametro_nominal': self._parse_numero(getattr(self, 'num_diametro_tubo', None).text if hasattr(self, 'num_diametro_tubo') else None, 'float'),
+        'unidade_diametro': getattr(self, 'drp_unidade_diametro', None).selected_value if hasattr(self, 'drp_unidade_diametro') else None,
         'extensao': self._parse_numero(getattr(self, 'num_extensao', None).text if hasattr(self, 'num_extensao') else None, 'float'),
         'ano_fabricacao': self._parse_numero(getattr(self, 'num_ano_tubo', None).text if hasattr(self, 'num_ano_tubo') else None, 'int'),
 
