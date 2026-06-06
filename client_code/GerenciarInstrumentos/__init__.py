@@ -16,8 +16,8 @@ class GerenciarInstrumentos(GerenciarInstrumentosTemplate):
     """Busca no servidor apenas os instrumentos vinculados a este ativo"""
     if not self.ativo_pai: return
 
-    # Certifique-se que o nome do seu RepeatingPanel é repeating_panel_1 no Design
-    self.rp_instrumentos.items = anvil.server.call('buscar_instrumentos_por_ativo', self.ativo_pai)
+    exibir_historico = self.chk_historico.checked if hasattr(self, 'chk_historico') else False
+    self.rp_instrumentos.items = anvil.server.call('buscar_instrumentos_por_ativo', self.ativo_pai, exibir_historico)
 
   def chk_historico_change(self, **event_args):
     self.atualizar_lista()

@@ -11,9 +11,25 @@ components:
   name: lbl_vencimento
   properties: {}
   type: Label
-- layout_properties: {grid_position: 'HIRFNM,AFZECW'}
-  name: btn_excluir
-  properties: {icon: 'fa:trash', text: Excluir}
-  type: Button
+- event_bindings: {change: dt_substituicao_change}
+  layout_properties: {grid_position: 'HIRFNM,RKUHFK'}
+  name: dt_substituicao
+  properties: {visible: false}
+  type: DatePicker
+- components:
+  - event_bindings: {click: btn_substituir_click}
+    layout_properties: {}
+    name: btn_substituir
+    properties: {icon: 'fa:refresh', role: secondary-color, text: Substituir}
+    type: Button
+  - event_bindings: {click: btn_excluir_click}
+    layout_properties: {}
+    name: btn_excluir
+    properties: {icon: 'fa:trash', text: Excluir}
+    type: Button
+  layout_properties: {grid_position: 'HIRFNM,AFZECW'}
+  name: flow_panel_acoes
+  properties: {}
+  type: FlowPanel
 container: {type: ColumnPanel}
 is_package: true

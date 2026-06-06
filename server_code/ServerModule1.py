@@ -257,13 +257,15 @@ def buscar_instrumentos_filtrados(tipo="Todos", exibir_historico=False):
   return lista
 
 @anvil.server.callable
-def executar_substituicao_instrumento(row_antigo, dados_novo):
+def executar_substituicao_instrumento(row_antigo, dados_novo, data_desativacao=None):
   """Desativa o antigo (Soft Delete) e cadastra o novo no mesmo equipamento"""
   # 1. Arquiva o antigo
   motivo = dados_novo.pop('motivo_troca', 'Substituição de rotina')
+  if not data_desativacao:
+    data_desativacao = datetime.date.today()
   row_antigo.update(
     status="Substituído",
-    data_substituicao=datetime.date.today(),
+    data_substituicao=data_desativacao,
     motivo_troca=motivo
   )
 
@@ -277,16 +279,32 @@ def executar_substituicao_instrumento(row_antigo, dados_novo):
   return novo_inst
 
 @anvil.server.callable
-def buscar_instrumentos_por_ativo(ativo_pai):
+def buscar_instrumentos_por_ativo(ativo_pai, exibir_historico=False):
   """
     Busca na base de dados todos os instrumentos que pertencem ao ativo selecionado.
     """
-  # Acessando a tabela CORRETA (dispositivos_seguranca) 
-  # e usando a coluna correta 'ativo' e o status 'Ativo' para não puxar os substituídos
-  return app_tables.dispositivos_seguranca.search(
-    ativo=ativo_pai,
-    status="Ativo"
-  )
+  if exibir_historico:
+    instrumentos = app_tables.dispositivos_seguranca.search(ativo=ativo_pai)
+  else:
+    instrumentos = app_tables.dispositivos_seguranca.search(ativo=ativo_pai, status="Ativo")
+  
+  hoje = datetime.date.today()
+  lista = []
+  for inst in instrumentos:
+    st_calib = "Sem Data"
+    if inst['prazo_calibracao']:
+      st_calib = "Vencido" if inst['prazo_calibracao'] < hoje else "No Prazo"
+    if inst['status'] == "Substituído" or inst['status'] == "Inativo":
+      st_calib = "Arquivado"
+    
+    lista.append(dict(inst, status_calibracao=st_calib, row_objeto=inst))
+  return lista
+
+@anvil.server.callable
+def atualizar_data_substituicao(row_instrumento, nova_data):
+  """Atualiza a data de desativação/substituição de um instrumento desativado"""
+  if row_instrumento:
+    row_instrumento.update(data_substituicao=nova_data)
 
 # ---> ESTA É A FUNÇÃO NOVA QUE FALTAVA <---
 @anvil.server.callable

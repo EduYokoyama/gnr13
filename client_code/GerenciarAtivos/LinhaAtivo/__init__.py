@@ -38,6 +38,11 @@ class LinhaAtivo(LinhaAtivoTemplate):
         alert("Erro: Para conformidade NR-13, o Relatório e a ART são obrigatórios!")
         return
 
+      # Validação da data: sem data, as datas de vencimento não são atualizadas
+      if not form_inspeção.dt_data_inspecao.date:
+        alert("Erro: A data da inspeção é obrigatória para calcular o próximo vencimento!")
+        return
+
       dados_relatorio = {
         'data_inspecao': form_inspeção.dt_data_inspecao.date,
         'tipo_inspecao': form_inspeção.drp_tipo_inspecao.selected_value,

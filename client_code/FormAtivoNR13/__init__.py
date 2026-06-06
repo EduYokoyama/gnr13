@@ -70,6 +70,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
         if hasattr(self, 'num_ano_caldeira'): self.num_ano_caldeira.text = specs.get('ano_fabricacao')
         if hasattr(self, 'txt_cod_caldeira'): self.txt_cod_caldeira.text = specs.get('codigo_construcao')
         if hasattr(self, 'num_cap_vapor'): self.num_cap_vapor.text = specs.get('cap_vapor')
+        if hasattr(self, 'num_sup_aquecimento'): self.num_sup_aquecimento.text = specs.get('sup_aquecimento')
         if hasattr(self, 'txt_combustivel'): self.txt_combustivel.text = specs.get('combustivel')
         if hasattr(self, 'num_edicao_caldeira'): self.num_edicao_caldeira.text = specs.get('ano_edicao_codigo')
       elif tipo == "Tanque Metálico":
@@ -227,6 +228,7 @@ class FormAtivoNR13(FormAtivoNR13Template):
         'codigo_construcao': getattr(self, 'txt_cod_caldeira', None).text if hasattr(self, 'txt_cod_caldeira') else None,
         'ano_edicao_codigo': self._parse_numero(getattr(self, 'num_edicao_caldeira', None).text if hasattr(self, 'num_edicao_caldeira') else None, 'int'),
         'cap_vapor': self._parse_numero(getattr(self, 'num_cap_vapor', None).text if hasattr(self, 'num_cap_vapor') else None, 'float'),
+        'sup_aquecimento': self._parse_numero(getattr(self, 'num_sup_aquecimento', None).text if hasattr(self, 'num_sup_aquecimento') else None, 'float'),
         'combustivel': getattr(self, 'txt_combustivel', None).text if hasattr(self, 'txt_combustivel') else ""
       }
     elif tipo_eq == "Tanque Metálico":
@@ -278,11 +280,10 @@ class FormAtivoNR13(FormAtivoNR13Template):
 
       Notification("Dados do Ativo salvos e sincronizados com o banco de dados!", style="success").show()
 
-      # Verifica quem chamou a função. Se foi o próprio botão "Salvar", ele fecha a tela/limpa
+      # Se foi aberto em um Alert (Edição a partir do Gerenciar Ativos), fecha o alert.
+      # Caso contrário (cadastro direto), mantém os campos visíveis.
       if event_args.get('sender'):
-        if not row_real: 
-          self.limpar_tela() 
-        else:
+        if row_real:
           self.raise_event("x-close-alert")
 
     except Exception as e:
