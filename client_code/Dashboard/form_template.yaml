@@ -52,20 +52,35 @@ components:
   - name: plot_status
     properties: {height: 380}
     type: Plot
-  - name: plot_calibrations
+  - layout_properties: {width: 120}
+    name: drp_periodo_ativos
+    properties:
+      items: ['12', '24', '36']
+      placeholder: 'Meses'
+    type: DropDown
+  - name: plot_forecast_ativos
     properties: {height: 380}
     type: Plot
   layout_properties: {grid_position: 'E,F'}
-  name: flow_panel_charts_row1
+  name: flow_panel_assets
   properties: {align: justify, spacing: large}
   type: FlowPanel
 - components:
-  - name: plot_forecast
-    properties: {height: 400}
+  - name: plot_calibrations
+    properties: {height: 380}
+    type: Plot
+  - layout_properties: {width: 120}
+    name: drp_periodo_instrumentos
+    properties:
+      items: ['12', '24', '36']
+      placeholder: 'Meses'
+    type: DropDown
+  - name: plot_forecast_instrumentos
+    properties: {height: 380}
     type: Plot
   layout_properties: {grid_position: 'G,H'}
-  name: card_forecast_container
-  properties: {role: glass-card}
-  type: ColumnPanel
+  name: flow_panel_instrumentos
+  properties: {align: justify, spacing: large}
+  type: FlowPanel
 container: {type: ColumnPanel}
 is_package: true

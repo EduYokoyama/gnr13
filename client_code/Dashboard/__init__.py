@@ -6,173 +6,188 @@ import datetime
 class Dashboard(DashboardTemplate):
   def __init__(self, **properties):
     self.init_components(**properties)
+    # Bind period dropdown events
+    if hasattr(self, 'drp_periodo_ativos'):
+      self.drp_periodo_ativos.change = self.on_periodo_ativos_change
+    if hasattr(self, 'drp_periodo_instrumentos'):
+      self.drp_periodo_instrumentos.change = self.on_periodo_instrumentos_change
     self.renderizar_dashboard()
 
   def renderizar_dashboard(self):
     try:
-      # 1. Busca os resumos gerais do servidor
+      # 1. Busca resumo geral
       resumo = anvil.server.call('obter_resumo_dashboard')
-      
-      # Atualiza os painéis numéricos de estatísticas (Value Boxes)
+
+      # Atualiza value boxes
       self.lbl_total_val.text = str(resumo.get('total', 0))
       self.lbl_vencidos_val.text = str(resumo.get('vencidos', 0))
       self.lbl_unidades_val.text = str(resumo.get('total_unidades', 0))
       self.lbl_instrumentos_val.text = str(resumo.get('inst_vencidos', 0))
-      
-      # 2. Busca lista completa de ativos para o cálculo do cronograma de previsão
+
+      # 2. Busca ativos e instrumentos
       ativos = anvil.server.call('buscar_ativos_filtrados')
-      
-      # 3. Monta Gráfico 1: Status de Conformidade dos Ativos (Donut Chart)
+      instrumentos = anvil.server.call('buscar_instrumentos_filtrados')
+
+      # 3. Gráficos pizza (donut)
       self.configurar_grafico_status(resumo)
-      
-      # 4. Monta Gráfico 2: Status de Calibração dos Instrumentos (Donut Chart)
       self.configurar_grafico_calibracoes(resumo)
-      
-      # 5. Monta Gráfico 3: Cronograma de Previsão de Inspeções (Timeline Forecast Chart)
-      self.configurar_grafico_previsao(ativos)
-      
+
+      # 4. Gráficos de previsão com 12 meses por padrão
+      self.configurar_grafico_previsao(ativos, 12)
+      self.configurar_grafico_previsao_instrumentos(instrumentos, 12)
+
     except Exception as e:
       print(f"Erro ao renderizar dashboard: {e}")
       Notification(f"Erro ao carregar dados do painel: {e}", style="warning").show()
 
+  # ── Donut: Ativos ──────────────────────────────────────────────────────────
   def configurar_grafico_status(self, resumo):
-    # Paleta premium e limpa
     dados = [{
       'type': 'pie',
       'labels': ['Em Dia', 'Vencidos/Pendentes'],
       'values': [resumo['em_dia'], resumo['vencidos']],
       'hole': 0.6,
-      'marker': {'colors': ['#10b981', '#ef4444']}, # Verde esmeralda e vermelho coral
+      'marker': {'colors': ['#10b981', '#ef4444']},
       'textinfo': 'percent+value',
       'hoverinfo': 'label+value',
       'textfont': {'family': 'Inter', 'size': 12, 'color': '#1e293b'}
     }]
-    
     layout = {
-      'title': {
-        'text': '<b>Conformidade de Ativos</b>',
-        'font': {'family': 'Outfit', 'size': 16, 'color': '#0f172a'}
-      },
-      'paper_bgcolor': 'rgba(255, 255, 255, 0.65)',
+      'title': {'text': '<b>Conformidade de Ativos</b>', 'font': {'family': 'Outfit', 'size': 16, 'color': '#0f172a'}},
+      'paper_bgcolor': 'rgba(255,255,255,0.65)',
       'plot_bgcolor': 'rgba(0,0,0,0)',
       'margin': {'t': 60, 'b': 20, 'l': 20, 'r': 20},
       'showlegend': True,
       'legend': {'orientation': 'h', 'y': -0.1, 'x': 0.5, 'xanchor': 'center'}
     }
-    
     self.plot_status.data = dados
     self.plot_status.layout = layout
 
+  # ── Donut: Instrumentos ────────────────────────────────────────────────────
   def configurar_grafico_calibracoes(self, resumo):
     inst_vencidos = resumo.get('inst_vencidos', 0)
     inst_total = resumo.get('inst_total', 0)
     inst_em_dia = resumo.get('inst_em_dia', inst_total - inst_vencidos)
-    
     dados = [{
       'type': 'pie',
       'labels': ['Calibrados', 'Vencidos'],
       'values': [inst_em_dia, inst_vencidos],
       'hole': 0.6,
-      'marker': {'colors': ['#3b82f6', '#f59e0b']}, # Azul moderno e Laranja âmbar
+      'marker': {'colors': ['#3b82f6', '#f59e0b']},
       'textinfo': 'percent+value',
       'hoverinfo': 'label+value',
       'textfont': {'family': 'Inter', 'size': 12, 'color': '#1e293b'}
     }]
-    
     layout = {
-      'title': {
-        'text': '<b>Validação de Instrumentos</b>',
-        'font': {'family': 'Outfit', 'size': 16, 'color': '#0f172a'}
-      },
-      'paper_bgcolor': 'rgba(255, 255, 255, 0.65)',
+      'title': {'text': '<b>Validação de Instrumentos</b>', 'font': {'family': 'Outfit', 'size': 16, 'color': '#0f172a'}},
+      'paper_bgcolor': 'rgba(255,255,255,0.65)',
       'plot_bgcolor': 'rgba(0,0,0,0)',
       'margin': {'t': 60, 'b': 20, 'l': 20, 'r': 20},
       'showlegend': True,
       'legend': {'orientation': 'h', 'y': -0.1, 'x': 0.5, 'xanchor': 'center'}
     }
-    
     self.plot_calibrations.data = dados
     self.plot_calibrations.layout = layout
 
-  def configurar_grafico_previsao(self, ativos):
-    # 1. Gera os próximos 12 meses (incluindo o atual)
+  # ── Helper: gera lista de meses futuros ───────────────────────────────────
+  def _gerar_meses(self, meses):
     hoje = datetime.date.today()
-    meses_nomes = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
-    
-    meses_futuros = []
-    cronograma_counts = []
-    
-    ano_corrente = hoje.year
-    mes_corrente = hoje.month
-    
-    for i in range(12):
-      m = mes_corrente + i
-      a = ano_corrente + (m - 1) // 12
+    nomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"]
+    resultado = []
+    for i in range(meses):
+      m = hoje.month + i
+      a = hoje.year + (m - 1) // 12
       m = (m - 1) % 12 + 1
-      meses_futuros.append((a, m, f"{meses_nomes[m-1]}/{str(a)[2:]}"))
-      cronograma_counts.append(0)
-      
-    # 2. Distribui os ativos no cronograma
-    for a in ativos:
-      dt = a.get('data_proxima_insp')
+      resultado.append((a, m, f"{nomes[m-1]}/{str(a)[2:]}"))
+    return resultado
+
+  def _contar_por_mes(self, itens, campo_data, meses_futuros):
+    counts = [0] * len(meses_futuros)
+    for item in itens:
+      dt = item.get(campo_data)
       if dt:
-        # Se for string (o Anvil às vezes converte em string ISO em transportes remotos), tratamos
         if isinstance(dt, str):
           try:
             dt = datetime.datetime.strptime(dt[:10], "%Y-%m-%d").date()
           except:
             continue
-        
-        # Filtra apenas inspeções futuras (ou dentro do período de 12 meses)
-        for idx, (ano_f, mes_f, label) in enumerate(meses_futuros):
+        for idx, (ano_f, mes_f, _) in enumerate(meses_futuros):
           if dt.year == ano_f and dt.month == mes_f:
-            cronograma_counts[idx] += 1
+            counts[idx] += 1
             break
-            
-    # 3. Plota o gráfico (Timeline Forecast Chart)
-    x_labels = [label for _, _, label in meses_futuros]
-    y_values = cronograma_counts
-    
+    return counts
+
+  # ── Forecast: Ativos ───────────────────────────────────────────────────────
+  def configurar_grafico_previsao(self, ativos, meses=12):
+    meses_futuros = self._gerar_meses(meses)
+    counts = self._contar_por_mes(ativos, 'data_proxima_insp', meses_futuros)
+    x_labels = [l for _, _, l in meses_futuros]
+
     dados = [{
-      'x': x_labels,
-      'y': y_values,
-      'type': 'bar',
+      'x': x_labels, 'y': counts, 'type': 'bar',
       'name': 'Inspeções Agendadas',
-      'marker': {
-        'color': '#3b82f6',
-        'opacity': 0.85,
-        'line': {'color': '#1d4ed8', 'width': 1.5}
-      }
+      'marker': {'color': '#3b82f6', 'opacity': 0.85, 'line': {'color': '#1d4ed8', 'width': 1.5}}
     }, {
-      'x': x_labels,
-      'y': y_values,
-      'type': 'scatter',
-      'mode': 'lines+markers',
-      'name': 'Tendência',
+      'x': x_labels, 'y': counts, 'type': 'scatter',
+      'mode': 'lines+markers', 'name': 'Tendência',
       'line': {'color': '#10b981', 'width': 3, 'shape': 'spline'},
       'marker': {'size': 8, 'color': '#10b981'}
     }]
-    
     layout = {
-      'title': {
-        'text': '<b>Cronograma e Previsão de Próximas Inspeções (12 Meses)</b>',
-        'font': {'family': 'Outfit', 'size': 18, 'color': '#0f172a'}
-      },
-      'paper_bgcolor': 'rgba(0,0,0,0)',
-      'plot_bgcolor': 'rgba(0,0,0,0)',
+      'title': {'text': f'<b>Cronograma de Próximas Inspeções ({meses} Meses)</b>', 'font': {'family': 'Outfit', 'size': 16, 'color': '#0f172a'}},
+      'paper_bgcolor': 'rgba(0,0,0,0)', 'plot_bgcolor': 'rgba(0,0,0,0)',
       'margin': {'t': 70, 'b': 50, 'l': 55, 'r': 35},
-      'xaxis': {
-        'gridcolor': 'rgba(148, 163, 184, 0.1)',
-        'tickfont': {'family': 'Inter', 'size': 11, 'color': '#475569'}
-      },
-      'yaxis': {
-        'gridcolor': 'rgba(148, 163, 184, 0.15)',
-        'tickfont': {'family': 'Inter', 'size': 11, 'color': '#475569'},
-        'title': {'text': 'Qtd. Equipamentos', 'font': {'family': 'Inter', 'size': 12}}
-      },
+      'xaxis': {'gridcolor': 'rgba(148,163,184,0.1)', 'tickfont': {'family': 'Inter', 'size': 11, 'color': '#475569'}},
+      'yaxis': {'gridcolor': 'rgba(148,163,184,0.15)', 'tickfont': {'family': 'Inter', 'size': 11, 'color': '#475569'},
+                'title': {'text': 'Qtd. Equipamentos', 'font': {'family': 'Inter', 'size': 12}}},
       'showlegend': True,
       'legend': {'orientation': 'h', 'y': 1.1, 'x': 0.5, 'xanchor': 'center'}
     }
-    
-    self.plot_forecast.data = dados
-    self.plot_forecast.layout = layout
+    self.plot_forecast_ativos.data = dados
+    self.plot_forecast_ativos.layout = layout
+
+  # ── Forecast: Instrumentos ─────────────────────────────────────────────────
+  def configurar_grafico_previsao_instrumentos(self, instrumentos, meses=12):
+    meses_futuros = self._gerar_meses(meses)
+    counts = self._contar_por_mes(instrumentos, 'prazo_calibracao', meses_futuros)
+    x_labels = [l for _, _, l in meses_futuros]
+
+    dados = [{
+      'x': x_labels, 'y': counts, 'type': 'bar',
+      'name': 'Calibrações Agendadas',
+      'marker': {'color': '#f59e0b', 'opacity': 0.85, 'line': {'color': '#b45309', 'width': 1.5}}
+    }, {
+      'x': x_labels, 'y': counts, 'type': 'scatter',
+      'mode': 'lines+markers', 'name': 'Tendência',
+      'line': {'color': '#3b82f6', 'width': 3, 'shape': 'spline'},
+      'marker': {'size': 8, 'color': '#3b82f6'}
+    }]
+    layout = {
+      'title': {'text': f'<b>Previsão de Calibrações ({meses} Meses)</b>', 'font': {'family': 'Outfit', 'size': 16, 'color': '#0f172a'}},
+      'paper_bgcolor': 'rgba(0,0,0,0)', 'plot_bgcolor': 'rgba(0,0,0,0)',
+      'margin': {'t': 70, 'b': 50, 'l': 55, 'r': 35},
+      'xaxis': {'gridcolor': 'rgba(148,163,184,0.1)', 'tickfont': {'family': 'Inter', 'size': 11, 'color': '#475569'}},
+      'yaxis': {'gridcolor': 'rgba(148,163,184,0.15)', 'tickfont': {'family': 'Inter', 'size': 11, 'color': '#475569'},
+                'title': {'text': 'Qtd. Instrumentos', 'font': {'family': 'Inter', 'size': 12}}},
+      'showlegend': True,
+      'legend': {'orientation': 'h', 'y': 1.1, 'x': 0.5, 'xanchor': 'center'}
+    }
+    self.plot_forecast_instrumentos.data = dados
+    self.plot_forecast_instrumentos.layout = layout
+
+  # ── Dropdown change handlers ───────────────────────────────────────────────
+  def on_periodo_ativos_change(self, **event_args):
+    try:
+      meses = int(self.drp_periodo_ativos.selected_value or 12)
+      ativos = anvil.server.call('buscar_ativos_filtrados')
+      self.configurar_grafico_previsao(ativos, meses)
+    except Exception as e:
+      print(f"Erro ao atualizar período ativos: {e}")
+
+  def on_periodo_instrumentos_change(self, **event_args):
+    try:
+      meses = int(self.drp_periodo_instrumentos.selected_value or 12)
+      instrumentos = anvil.server.call('buscar_instrumentos_filtrados')
+      self.configurar_grafico_previsao_instrumentos(instrumentos, meses)
+    except Exception as e:
+      print(f"Erro ao atualizar período instrumentos: {e}")
