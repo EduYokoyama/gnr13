@@ -344,7 +344,7 @@ components:
       - layout_properties: {width: 130}
         name: drp_unidade_diametro
         properties:
-          items: ['Polegadas (\")', 'DN (mm)']
+          items: [Polegadas ("), DN (mm)]
         type: DropDown
       layout_properties: {grid_position: 'BMQYLX,BFAIIE'}
       name: flow_panel_5

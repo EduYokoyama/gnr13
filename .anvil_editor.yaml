@@ -23,4 +23,5 @@ unique_ids:
   modules: {}
   scripts: {}
   server_modules:
+    SeedData: K7OY6KVGPDHNPJHT5WSCLHC2XZDQF74O
     ServerModule1: '1774278519856212706971137.29575'
