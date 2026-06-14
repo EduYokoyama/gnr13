@@ -33,9 +33,8 @@ class LinhaAtivo(LinhaAtivoTemplate):
     # O alert exibe a tela de gerenciamento de inspeções
     alert(content=form_inspecoes, title=f"Inspeções: {self.item['tag']}", large=True, buttons=[("Fechar", True)])
 
-    # Ao fechar, atualiza a lista pai (re-calculando o status do ativo com a última inspeção adicionada)
-    self.parent.parent.parent.atualizar_ativos()
-      self.parent.parent.parent.atualizar_lista()
+    # Ao fechar, atualiza a lista para refletir o novo status de inspeção
+    self.parent.parent.parent.atualizar_lista()
 
   @handle("btn_editar", "click")
   def btn_editar_click(self, **event_args):
