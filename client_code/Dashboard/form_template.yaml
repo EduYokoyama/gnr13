@@ -52,12 +52,7 @@ components:
   - name: plot_status
     properties: {height: 380}
     type: Plot
-  - layout_properties: {width: 120}
-    name: drp_periodo_ativos
-    properties:
-      items: ['12', '24', '36']
-      placeholder: 'Meses'
-    type: DropDown
+
   - name: plot_forecast_ativos
     properties: {height: 380}
     type: Plot
@@ -69,12 +64,7 @@ components:
   - name: plot_calibrations
     properties: {height: 380}
     type: Plot
-  - layout_properties: {width: 120}
-    name: drp_periodo_instrumentos
-    properties:
-      items: ['12', '24', '36']
-      placeholder: 'Meses'
-    type: DropDown
+
   - name: plot_forecast_instrumentos
     properties: {height: 380}
     type: Plot

@@ -6,11 +6,6 @@ import datetime
 class Dashboard(DashboardTemplate):
   def __init__(self, **properties):
     self.init_components(**properties)
-    # Bind period dropdown events
-    if hasattr(self, 'drp_periodo_ativos'):
-      self.drp_periodo_ativos.change = self.on_periodo_ativos_change
-    if hasattr(self, 'drp_periodo_instrumentos'):
-      self.drp_periodo_instrumentos.change = self.on_periodo_instrumentos_change
     self.renderizar_dashboard()
 
   def renderizar_dashboard(self):
@@ -32,9 +27,9 @@ class Dashboard(DashboardTemplate):
       self.configurar_grafico_status(resumo)
       self.configurar_grafico_calibracoes(resumo)
 
-      # 4. Gráficos de previsão com 12 meses por padrão
-      self.configurar_grafico_previsao(ativos, 12)
-      self.configurar_grafico_previsao_instrumentos(instrumentos, 12)
+      # 4. Gráficos de previsão
+      self.configurar_grafico_previsao(ativos)
+      self.configurar_grafico_previsao_instrumentos(instrumentos)
 
     except Exception as e:
       print(f"Erro ao renderizar dashboard: {e}")
@@ -118,76 +113,119 @@ class Dashboard(DashboardTemplate):
     return counts
 
   # ── Forecast: Ativos ───────────────────────────────────────────────────────
-  def configurar_grafico_previsao(self, ativos, meses=12):
-    meses_futuros = self._gerar_meses(meses)
-    counts = self._contar_por_mes(ativos, 'data_proxima_insp', meses_futuros)
-    x_labels = [l for _, _, l in meses_futuros]
+  def configurar_grafico_previsao(self, ativos):
+    botoes = []
+    meses_opcoes = [12, 24, 36]
+    default_mes = 12
+    
+    meses_12 = self._gerar_meses(12)
+    counts_12 = self._contar_por_mes(ativos, 'data_proxima_insp', meses_12)
+    labels_12 = [l for _, _, l in meses_12]
+
+    for m in meses_opcoes:
+      meses_futuros = self._gerar_meses(m)
+      counts = self._contar_por_mes(ativos, 'data_proxima_insp', meses_futuros)
+      x_labels = [l for _, _, l in meses_futuros]
+      
+      botoes.append({
+        'method': 'update',
+        'label': f'{m} Meses',
+        'args': [
+           {'x': [x_labels, x_labels], 'y': [counts, counts]}, 
+           {'title.text': f'<b>Cronograma de Inspeções ({m} Meses)</b>'}
+        ]
+      })
 
     dados = [{
-      'x': x_labels, 'y': counts, 'type': 'bar',
+      'x': labels_12, 'y': counts_12, 'type': 'bar',
       'name': 'Inspeções Agendadas',
       'marker': {'color': '#3b82f6', 'opacity': 0.85, 'line': {'color': '#1d4ed8', 'width': 1.5}}
     }, {
-      'x': x_labels, 'y': counts, 'type': 'scatter',
+      'x': labels_12, 'y': counts_12, 'type': 'scatter',
       'mode': 'lines+markers', 'name': 'Tendência',
       'line': {'color': '#10b981', 'width': 3, 'shape': 'spline'},
       'marker': {'size': 8, 'color': '#10b981'}
     }]
+    
     layout = {
-      'title': {'text': f'<b>Cronograma de Próximas Inspeções ({meses} Meses)</b>', 'font': {'family': 'Outfit', 'size': 16, 'color': '#0f172a'}},
+      'title': {'text': f'<b>Cronograma de Inspeções ({default_mes} Meses)</b>', 'font': {'family': 'Outfit', 'size': 16, 'color': '#0f172a'}},
       'paper_bgcolor': 'rgba(0,0,0,0)', 'plot_bgcolor': 'rgba(0,0,0,0)',
       'margin': {'t': 70, 'b': 50, 'l': 55, 'r': 35},
       'xaxis': {'gridcolor': 'rgba(148,163,184,0.1)', 'tickfont': {'family': 'Inter', 'size': 11, 'color': '#475569'}},
       'yaxis': {'gridcolor': 'rgba(148,163,184,0.15)', 'tickfont': {'family': 'Inter', 'size': 11, 'color': '#475569'},
                 'title': {'text': 'Qtd. Equipamentos', 'font': {'family': 'Inter', 'size': 12}}},
       'showlegend': True,
-      'legend': {'orientation': 'h', 'y': 1.1, 'x': 0.5, 'xanchor': 'center'}
+      'legend': {'orientation': 'h', 'y': -0.2, 'x': 0.5, 'xanchor': 'center'},
+      'updatemenus': [{
+          'buttons': botoes,
+          'direction': 'down',
+          'showactive': True,
+          'x': 1.0,
+          'xanchor': 'right',
+          'y': 1.15,
+          'yanchor': 'top',
+          'bgcolor': '#f8fafc',
+          'bordercolor': '#cbd5e1'
+      }]
     }
     self.plot_forecast_ativos.data = dados
     self.plot_forecast_ativos.layout = layout
 
   # ── Forecast: Instrumentos ─────────────────────────────────────────────────
-  def configurar_grafico_previsao_instrumentos(self, instrumentos, meses=12):
-    meses_futuros = self._gerar_meses(meses)
-    counts = self._contar_por_mes(instrumentos, 'prazo_calibracao', meses_futuros)
-    x_labels = [l for _, _, l in meses_futuros]
+  def configurar_grafico_previsao_instrumentos(self, instrumentos):
+    botoes = []
+    meses_opcoes = [12, 24, 36]
+    default_mes = 12
+    
+    meses_12 = self._gerar_meses(12)
+    counts_12 = self._contar_por_mes(instrumentos, 'prazo_calibracao', meses_12)
+    labels_12 = [l for _, _, l in meses_12]
+
+    for m in meses_opcoes:
+      meses_futuros = self._gerar_meses(m)
+      counts = self._contar_por_mes(instrumentos, 'prazo_calibracao', meses_futuros)
+      x_labels = [l for _, _, l in meses_futuros]
+      
+      botoes.append({
+        'method': 'update',
+        'label': f'{m} Meses',
+        'args': [
+           {'x': [x_labels, x_labels], 'y': [counts, counts]}, 
+           {'title.text': f'<b>Previsão de Calibrações ({m} Meses)</b>'}
+        ]
+      })
 
     dados = [{
-      'x': x_labels, 'y': counts, 'type': 'bar',
+      'x': labels_12, 'y': counts_12, 'type': 'bar',
       'name': 'Calibrações Agendadas',
       'marker': {'color': '#f59e0b', 'opacity': 0.85, 'line': {'color': '#b45309', 'width': 1.5}}
     }, {
-      'x': x_labels, 'y': counts, 'type': 'scatter',
+      'x': labels_12, 'y': counts_12, 'type': 'scatter',
       'mode': 'lines+markers', 'name': 'Tendência',
       'line': {'color': '#3b82f6', 'width': 3, 'shape': 'spline'},
       'marker': {'size': 8, 'color': '#3b82f6'}
     }]
+    
     layout = {
-      'title': {'text': f'<b>Previsão de Calibrações ({meses} Meses)</b>', 'font': {'family': 'Outfit', 'size': 16, 'color': '#0f172a'}},
+      'title': {'text': f'<b>Previsão de Calibrações ({default_mes} Meses)</b>', 'font': {'family': 'Outfit', 'size': 16, 'color': '#0f172a'}},
       'paper_bgcolor': 'rgba(0,0,0,0)', 'plot_bgcolor': 'rgba(0,0,0,0)',
       'margin': {'t': 70, 'b': 50, 'l': 55, 'r': 35},
       'xaxis': {'gridcolor': 'rgba(148,163,184,0.1)', 'tickfont': {'family': 'Inter', 'size': 11, 'color': '#475569'}},
       'yaxis': {'gridcolor': 'rgba(148,163,184,0.15)', 'tickfont': {'family': 'Inter', 'size': 11, 'color': '#475569'},
                 'title': {'text': 'Qtd. Instrumentos', 'font': {'family': 'Inter', 'size': 12}}},
       'showlegend': True,
-      'legend': {'orientation': 'h', 'y': 1.1, 'x': 0.5, 'xanchor': 'center'}
+      'legend': {'orientation': 'h', 'y': -0.2, 'x': 0.5, 'xanchor': 'center'},
+      'updatemenus': [{
+          'buttons': botoes,
+          'direction': 'down',
+          'showactive': True,
+          'x': 1.0,
+          'xanchor': 'right',
+          'y': 1.15,
+          'yanchor': 'top',
+          'bgcolor': '#f8fafc',
+          'bordercolor': '#cbd5e1'
+      }]
     }
     self.plot_forecast_instrumentos.data = dados
     self.plot_forecast_instrumentos.layout = layout
-
-  # ── Dropdown change handlers ───────────────────────────────────────────────
-  def on_periodo_ativos_change(self, **event_args):
-    try:
-      meses = int(self.drp_periodo_ativos.selected_value or 12)
-      ativos = anvil.server.call('buscar_ativos_filtrados')
-      self.configurar_grafico_previsao(ativos, meses)
-    except Exception as e:
-      print(f"Erro ao atualizar período ativos: {e}")
-
-  def on_periodo_instrumentos_change(self, **event_args):
-    try:
-      meses = int(self.drp_periodo_instrumentos.selected_value or 12)
-      instrumentos = anvil.server.call('buscar_instrumentos_filtrados')
-      self.configurar_grafico_previsao_instrumentos(instrumentos, meses)
-    except Exception as e:
-      print(f"Erro ao atualizar período instrumentos: {e}")
