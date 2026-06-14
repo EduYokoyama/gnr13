@@ -342,6 +342,21 @@ class FormAtivoNR13(FormAtivoNR13Template):
     self.lista_ativos_conectados.remove(ativo_para_remover)
     self.desenhar_chips() # Redesenha a tela
 
+  def btn_gerenciar_inspecoes_click(self, **event_args):
+    """Lógica inteligente: Salva o ativo pai antes de abrir as inspeções"""
+    if not self.item_edicao or not self.item_edicao.get('row_objeto'):
+      if confirm("O ativo precisa ser salvo no banco de dados primeiro. Deseja salvar e continuar?"):
+        self.btn_salvar_click(sender=None) 
+        if not self.item_edicao or not self.item_edicao.get('row_objeto'):
+          return 
+      else:
+        return 
+
+    from GNR13.GerenciarInspecoes import GerenciarInspecoes
+    ativo_ref = self.item_edicao['row_objeto']
+    form_insp = GerenciarInspecoes(ativo_pai=ativo_ref)
+    alert(content=form_insp, large=True, title=f"Gerenciar Inspeções - {self.txt_tag.text}", buttons=[("Fechar", True)])
+
   def btn_gerenciar_instrumentos_click(self, **event_args):
     """This method is called when the button is clicked"""
     """Lógica inteligente: Salva o ativo pai antes de abrir os instrumentos"""

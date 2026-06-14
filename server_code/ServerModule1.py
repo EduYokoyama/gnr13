@@ -191,6 +191,17 @@ def processar_novo_relatorio(row_ativo, dados_relatorio):
     pdf_art=dados_relatorio.get('pdf_art')
   )
 
+@anvil.server.callable
+def buscar_inspecoes_por_ativo(ativo_pai):
+  """
+  Busca o histórico de inspeções na base de dados ordenado pela data mais recente.
+  """
+  inspecoes = app_tables.historico_inspecoes.search(
+      tables.order_by("data_inspecao", ascending=False),
+      ativo=ativo_pai
+  )
+  return list(inspecoes)
+
   # 2. Calcula a PRÓXIMA data de inspeção com base no tipo
   data_insp = dados_relatorio.get('data_inspecao')
 

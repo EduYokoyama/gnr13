@@ -1,5 +1,5 @@
 from ._anvil_designer import LinhaAtivoTemplate
-from GNR13.DialogInspecao import DialogInspecao # Importação absoluta
+from GNR13.GerenciarInspecoes import GerenciarInspecoes
 from anvil import *
 import anvil.server
 
@@ -27,37 +27,14 @@ class LinhaAtivo(LinhaAtivoTemplate):
 
   @handle("btn_registrar_inspecao", "click")
   def btn_registrar_inspecao_click(self, **event_args):
-    """Abre o diálogo para subir novo relatório de inspeção (Gatilho de Regularização)"""
-    form_inspeção = DialogInspecao()
+    """Abre o gerenciador de inspeções mostrando o histórico do ativo"""
+    form_inspecoes = GerenciarInspecoes(ativo_pai=self.item['row_objeto'])
 
-    # O alert gera os botões Virtuais (Salvar/Voltar)
-    if alert(content=form_inspeção, title=f"Nova Inspeção: {self.item['tag']}", large=True, buttons=[("Salvar", True), ("Voltar", False)]):
+    # O alert exibe a tela de gerenciamento de inspeções
+    alert(content=form_inspecoes, title=f"Inspeções: {self.item['tag']}", large=True, buttons=[("Fechar", True)])
 
-      # Validação técnica: Relatório e ART são obrigatórios [7, 8]
-      if not form_inspeção.file_relatorio.file or not form_inspeção.file_art.file:
-        alert("Erro: Para conformidade NR-13, o Relatório e a ART são obrigatórios!")
-        return
-
-      # Validação da data: sem data, as datas de vencimento não são atualizadas
-      if not form_inspeção.dt_data_inspecao.date:
-        alert("Erro: A data da inspeção é obrigatória para calcular o próximo vencimento!")
-        return
-
-      dados_relatorio = {
-        'data_inspecao': form_inspeção.dt_data_inspecao.date,
-        'tipo_inspecao': form_inspeção.drp_tipo_inspecao.selected_value,
-        'escopo': form_inspeção.drp_escopo.selected_value,
-        'parecer_conclusivo': form_inspeção.chk_apto.checked,
-        'num_art': form_inspeção.txt_num_art.text,
-        'pdf_relatorio': form_inspeção.file_relatorio.file,
-        'pdf_art': form_inspeção.file_art.file
-      }
-
-      # Envia ao servidor para calcular a nova data de vencimento
-      anvil.server.call('processar_novo_relatorio', self.item['row_objeto'], dados_relatorio)
-      Notification("Inspeção registrada! O status do ativo foi atualizado.", style="success").show()
-
-      # Atualiza a lista pai para refletir a nova cor/status imediatamente
+    # Ao fechar, atualiza a lista pai (re-calculando o status do ativo com a última inspeção adicionada)
+    self.parent.parent.parent.atualizar_ativos()
       self.parent.parent.parent.atualizar_lista()
 
   @handle("btn_editar", "click")

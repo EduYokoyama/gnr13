@@ -1,0 +1,32 @@
+components:
+- layout_properties: {column: JKSDUP}
+  name: lbl_data
+  properties: {}
+  type: Label
+- layout_properties: {column: VJQQOR}
+  name: lbl_tipo
+  properties: {}
+  type: Label
+- layout_properties: {column: OJLQEN}
+  name: lbl_escopo
+  properties: {}
+  type: Label
+- layout_properties: {column: PARECER}
+  name: lbl_parecer
+  properties: {}
+  type: Label
+- components:
+  - event_bindings: {click: btn_ver_relatorio_click}
+    name: btn_ver_relatorio
+    properties: {icon: 'fa:file-pdf-o', tooltip: 'Ver Relatório'}
+    type: Button
+  - event_bindings: {click: btn_ver_art_click}
+    name: btn_ver_art
+    properties: {icon: 'fa:file-text-o', tooltip: 'Ver ART'}
+    type: Button
+  layout_properties: {column: VLAORF}
+  name: flow_panel_acoes
+  properties: {spacing: small}
+  type: FlowPanel
+container: {type: DataRowPanel}
+is_package: true

@@ -452,10 +452,15 @@ components:
     properties: {visible: true}
     type: ColumnPanel
   - components:
-    - event_bindings: {click: btn_gerenciar_instrumentos_click}
+    - event_bindings: {click: btn_gerenciar_inspecoes_click}
       layout_properties: {grid_position: 'BUXILW,VHUGQR'}
+      name: btn_gerenciar_inspecoes
+      properties: {role: primary-color, text: '📋 Gerenciar Inspeções'}
+      type: Button
+    - event_bindings: {click: btn_gerenciar_instrumentos_click}
+      layout_properties: {grid_position: 'BUXILW,WHXJQR'}
       name: btn_gerenciar_instrumentos
-      properties: {role: primary-color, text: ⚙️ Gerenciar Instrumentos de Segurança}
+      properties: {role: primary-color, text: '⚙️ Gerenciar Instrumentos de Segurança'}
       type: Button
     - event_bindings: {click: btn_salvar_click}
       layout_properties: {grid_position: 'VEMPGJ,NLIWSB'}

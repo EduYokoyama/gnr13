@@ -1,0 +1,23 @@
+components:
+- event_bindings: {click: btn_novo_click}
+  layout_properties: {grid_position: 'OZPPHJ,SBMIKI'}
+  name: btn_novo
+  properties: {role: primary-color, text: Adicionar Nova Inspeção}
+  type: Button
+- components:
+  - layout_properties: {}
+    name: rp_inspecoes
+    properties: {item_template: LinhaInspecaoModal}
+    type: RepeatingPanel
+  layout_properties: {grid_position: 'UXDYNG,NJPXEX'}
+  name: data_grid_1
+  properties:
+    columns:
+    - {data_key: data, id: JKSDUP, title: Data}
+    - {data_key: tipo, id: VJQQOR, title: Tipo}
+    - {data_key: escopo, id: OJLQEN, title: Escopo}
+    - {data_key: parecer, id: PARECER, title: Apto?}
+    - {data_key: acoes, id: VLAORF, title: Ações}
+  type: DataGrid
+container: {type: ColumnPanel}
+is_package: true
