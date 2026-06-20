@@ -1,7 +1,28 @@
 components:
 - components:
+  - name: lbl_busca
+    properties: {text: 'Buscar: '}
+    type: Label
+  - event_bindings: {change: txt_busca_change}
+    name: txt_busca
+    properties: {placeholder: 'Digite a TAG ou Nome...'}
+    type: TextBox
+  - name: lbl_tipo
+    properties: {text: 'Tipo: '}
+    type: Label
+  - event_bindings: {change: drp_filtro_tipo_change}
+    name: drp_filtro_tipo
+    properties: {}
+    type: DropDown
+  - name: lbl_unidade
+    properties: {text: 'Unidade: '}
+    type: Label
+  - event_bindings: {change: drp_filtro_unidade_change}
+    name: drp_filtro_unidade
+    properties: {}
+    type: DropDown
   - name: lbl_selecione_ativo
-    properties: {text: 'Selecione o Ativo: '}
+    properties: {text: 'Selecionar Ativo: '}
     type: Label
   - event_bindings: {change: drp_ativo_change}
     name: drp_ativo

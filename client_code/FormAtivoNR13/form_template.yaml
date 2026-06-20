@@ -458,14 +458,14 @@ components:
       properties: {role: primary-color, text: '📋 Gerenciar Inspeções'}
       type: Button
     - event_bindings: {click: btn_gerenciar_instrumentos_click}
-      layout_properties: {grid_position: 'BUXILW,WHXJQR'}
+      layout_properties: {grid_position: 'INSTRM,VHUGQR'}
       name: btn_gerenciar_instrumentos
       properties: {role: primary-color, text: '⚙️ Gerenciar Instrumentos de Segurança'}
       type: Button
     - event_bindings: {click: btn_salvar_click}
-      layout_properties: {grid_position: 'VEMPGJ,NLIWSB'}
+      layout_properties: {grid_position: 'VEMPGJ,VHUGQR'}
       name: btn_salvar
-      properties: {bold: true, text: SALVAR ATIVO NO BANCO DE DADOS}
+      properties: {bold: true, role: primary-color, text: '💾 Salvar Ativo no Banco de Dados'}
       type: Button
     layout_properties: {grid_position: 'PFGNJU,UEGDEZ'}
     name: card_1

@@ -9,33 +9,95 @@ class GerenciarInspecoes(GerenciarInspecoesTemplate):
     # Guarda a referência do Ativo que foi passado pelo Form principal
     self.ativo_pai = ativo_pai 
 
-    # Carrega todos os ativos do banco para o dropdown
-    ativos = app_tables.ativos.search()
-    self.drp_ativo.items = [(f"{a['tag']} - {a['nome_operacional'] or ''}", a) for a in ativos]
+    # 1. Carrega unidades para o filtro de Unidade
+    unidades = app_tables.unidades.search()
+    self.drp_filtro_unidade.items = [("Todas", None)] + [(u['nome_unidade'], u) for u in unidades]
 
-    # Atualiza a lista assim que a tela abre
+    # 2. Carrega tipos para o filtro de Tipo
+    self.drp_filtro_tipo.items = [
+      ("Todos", "Todos"), 
+      ("Vaso de Pressão", "Vaso de Pressão"), 
+      ("Caldeira", "Caldeira"), 
+      ("Tanque Metálico", "Tanque Metálico"), 
+      ("Tubulação", "Tubulação")
+    ]
+
+    # 3. Carrega todos os ativos do banco para o filtro client-side ultra rápido
+    self.ativos_completos = list(app_tables.ativos.search())
+
+    # Se foi passado um ativo_pai, define filtros iniciais correspondentes a ele
     if self.ativo_pai:
-      # Procura o item correspondente no dropdown
-      for item_text, item_val in self.drp_ativo.items:
-        if item_val.get_id() == self.ativo_pai.get_id():
-          self.drp_ativo.selected_value = item_val
-          break
-      self.atualizar_lista()
+      self.txt_busca.text = self.ativo_pai['tag']
+      self.drp_filtro_tipo.selected_value = self.ativo_pai['tipo']
+      if self.ativo_pai['unidade']:
+        # Procura correspondente de unidade no dropdown
+        for u_text, u_val in self.drp_filtro_unidade.items:
+          if u_val and u_val.get_id() == self.ativo_pai['unidade'].get_id():
+            self.drp_filtro_unidade.selected_value = u_val
+            break
+
+    # Executa a filtragem inicial
+    self.filtrar_ativos()
+
+  def filtrar_ativos(self):
+    """Filtra a lista de ativos com base no texto de busca, tipo e unidade selecionada"""
+    busca = (self.txt_busca.text or "").strip().lower()
+    tipo = self.drp_filtro_tipo.selected_value
+    unidade = self.drp_filtro_unidade.selected_value
+
+    ativos_filtrados = []
+    for a in self.ativos_completos:
+      # Filtro de Busca por TAG ou Nome Operacional
+      if busca and (busca not in a['tag'].lower() and busca not in (a['nome_operacional'] or "").lower()):
+        continue
+      # Filtro de Tipo
+      if tipo != "Todos" and a['tipo'] != tipo:
+        continue
+      # Filtro de Unidade
+      if unidade is not None:
+        if not a['unidade'] or a['unidade'].get_id() != unidade.get_id():
+          continue
+      
+      ativos_filtrados.append(a)
+
+    # Popula o Dropdown final com os ativos filtrados
+    self.drp_ativo.items = [(f"{a['tag']} - {a['nome_operacional'] or ''}", a) for a in ativos_filtrados]
+
+    # Decide qual ativo fica selecionado
+    if self.ativo_pai and self.ativo_pai in ativos_filtrados:
+      self.drp_ativo.selected_value = self.ativo_pai
     else:
-      # Se abriu sem ativo_pai (via menu lateral), seleciona o primeiro ativo por padrão
       if len(self.drp_ativo.items) > 0:
         self.ativo_pai = self.drp_ativo.items[0][1]
         self.drp_ativo.selected_value = self.ativo_pai
-        self.atualizar_lista()
+      else:
+        self.ativo_pai = None
+        self.drp_ativo.selected_value = None
+
+    self.atualizar_lista()
+
+  def txt_busca_change(self, **event_args):
+    """Chamado quando digita no campo de busca"""
+    self.filtrar_ativos()
+
+  def drp_filtro_tipo_change(self, **event_args):
+    """Chamado quando altera o filtro de tipo"""
+    self.filtrar_ativos()
+
+  def drp_filtro_unidade_change(self, **event_args):
+    """Chamado quando altera o filtro de unidade"""
+    self.filtrar_ativos()
 
   def drp_ativo_change(self, **event_args):
-    """Quando o usuário muda o ativo no menu dropdown"""
+    """Quando o usuário muda o ativo no menu dropdown de ativos filtrados"""
     self.ativo_pai = self.drp_ativo.selected_value
     self.atualizar_lista()
 
   def atualizar_lista(self):
     """Busca no servidor o histórico de inspeções deste ativo"""
-    if not self.ativo_pai: return
+    if not self.ativo_pai:
+      self.rp_inspecoes.items = []
+      return
     self.rp_inspecoes.items = anvil.server.call('buscar_inspecoes_por_ativo', self.ativo_pai)
 
   def btn_novo_click(self, **event_args):
