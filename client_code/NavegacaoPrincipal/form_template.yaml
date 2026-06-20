@@ -29,6 +29,11 @@ components:
     name: lnk_unidades
     properties: {align: center, icon: 'fa:industry', icon_align: right, text: Unidades}
     type: Link
+  - event_bindings: {click: lnk_gerenciar_inspecoes_click}
+    layout_properties: {grid_position: 'INSPSC,LNKINS'}
+    name: lnk_gerenciar_inspecoes
+    properties: {align: center, icon: 'fa:clipboard', icon_align: right, text: Gerenciar Inspeções}
+    type: Link
   - event_bindings: {}
     layout_properties: {grid_position: 'SGFYHH,ZTCXDN'}
     name: lnk_sair

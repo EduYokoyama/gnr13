@@ -1,6 +1,7 @@
 from ._anvil_designer import GerenciarInspecoesTemplate
 from anvil import *
 import anvil.server
+from anvil.tables import app_tables
 
 class GerenciarInspecoes(GerenciarInspecoesTemplate):
   def __init__(self, ativo_pai=None, **properties):
@@ -8,9 +9,29 @@ class GerenciarInspecoes(GerenciarInspecoesTemplate):
     # Guarda a referência do Ativo que foi passado pelo Form principal
     self.ativo_pai = ativo_pai 
 
+    # Carrega todos os ativos do banco para o dropdown
+    ativos = app_tables.ativos.search()
+    self.drp_ativo.items = [(f"{a['tag']} - {a['nome_operacional'] or ''}", a) for a in ativos]
+
     # Atualiza a lista assim que a tela abre
     if self.ativo_pai:
+      # Procura o item correspondente no dropdown
+      for item_text, item_val in self.drp_ativo.items:
+        if item_val.get_id() == self.ativo_pai.get_id():
+          self.drp_ativo.selected_value = item_val
+          break
       self.atualizar_lista()
+    else:
+      # Se abriu sem ativo_pai (via menu lateral), seleciona o primeiro ativo por padrão
+      if len(self.drp_ativo.items) > 0:
+        self.ativo_pai = self.drp_ativo.items[0][1]
+        self.drp_ativo.selected_value = self.ativo_pai
+        self.atualizar_lista()
+
+  def drp_ativo_change(self, **event_args):
+    """Quando o usuário muda o ativo no menu dropdown"""
+    self.ativo_pai = self.drp_ativo.selected_value
+    self.atualizar_lista()
 
   def atualizar_lista(self):
     """Busca no servidor o histórico de inspeções deste ativo"""
@@ -19,6 +40,10 @@ class GerenciarInspecoes(GerenciarInspecoesTemplate):
 
   def btn_novo_click(self, **event_args):
     """Abre o formulário para cadastrar uma nova inspeção"""
+    if not self.ativo_pai:
+      alert("Selecione um ativo antes de cadastrar uma nova inspeção.")
+      return
+
     from GNR13.DialogInspecao import DialogInspecao
 
     # Instancia o formulário de Inspeção

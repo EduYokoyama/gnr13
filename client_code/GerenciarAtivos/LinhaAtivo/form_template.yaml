@@ -19,7 +19,7 @@ components:
 - event_bindings: {}
   layout_properties: {column: JONRLZ}
   name: btn_registrar_inspecao
-  properties: {align: center, text: + INSPECIONAR}
+  properties: {align: center, text: GERENCIAR INSPEÇÕES}
   type: Button
 container: {type: DataRowPanel}
 is_package: true

@@ -8,14 +8,14 @@ class LinhaInspecaoModal(LinhaInspecaoModalTemplate):
 
     if self.item:
       # Formata a data se existir
-      dt = self.item.get('data_inspecao')
+      dt = self.item['data_inspecao']
       self.lbl_data.text = dt.strftime("%d/%m/%Y") if dt else "Sem Data"
       
-      self.lbl_tipo.text = self.item.get('tipo_inspecao', '')
-      self.lbl_escopo.text = self.item.get('escopo', '')
+      self.lbl_tipo.text = self.item['tipo_inspecao'] or ""
+      self.lbl_escopo.text = self.item['escopo'] or ""
       
       # Parecer Conclusivo (Apto/Inapto)
-      apto = self.item.get('parecer_conclusivo')
+      apto = self.item['parecer_conclusivo']
       if apto:
         self.lbl_parecer.text = "Apto"
         self.lbl_parecer.foreground = "green"
@@ -27,7 +27,7 @@ class LinhaInspecaoModal(LinhaInspecaoModalTemplate):
 
   def btn_ver_relatorio_click(self, **event_args):
     """Baixa o PDF do relatório"""
-    pdf = self.item.get('pdf_relatorio')
+    pdf = self.item['pdf_relatorio']
     if pdf:
       download(pdf)
     else:
@@ -35,7 +35,7 @@ class LinhaInspecaoModal(LinhaInspecaoModalTemplate):
 
   def btn_ver_art_click(self, **event_args):
     """Baixa o PDF da ART"""
-    pdf = self.item.get('pdf_art')
+    pdf = self.item['pdf_art']
     if pdf:
       download(pdf)
     else:

@@ -25,6 +25,10 @@ class NavegacaoPrincipal(NavegacaoPrincipalTemplate):
     from GNR13.GerenciarUnidades import GerenciarUnidades
     self.abrir_tela(GerenciarUnidades())
 
+  def lnk_gerenciar_inspecoes_click(self, **event_args):
+    from GNR13.GerenciarInspecoes import GerenciarInspecoes
+    self.abrir_tela(GerenciarInspecoes())
+
   def lnk_inventario_click(self, **event_args):
     from GNR13.GerenciarAtivos import GerenciarAtivos
     self.abrir_tela(GerenciarAtivos())

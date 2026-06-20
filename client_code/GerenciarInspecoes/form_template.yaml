@@ -1,4 +1,16 @@
 components:
+- components:
+  - name: lbl_selecione_ativo
+    properties: {text: 'Selecione o Ativo: '}
+    type: Label
+  - event_bindings: {change: drp_ativo_change}
+    name: drp_ativo
+    properties: {}
+    type: Dropdown
+  layout_properties: {grid_position: 'TOPAAA,TOPBBB'}
+  name: flow_panel_selecionar
+  properties: {spacing: medium}
+  type: FlowPanel
 - event_bindings: {click: btn_novo_click}
   layout_properties: {grid_position: 'OZPPHJ,SBMIKI'}
   name: btn_novo
