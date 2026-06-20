@@ -16,7 +16,7 @@ components:
     - {data_key: data, id: JKSDUP, title: Data}
     - {data_key: tipo, id: VJQQOR, title: Tipo}
     - {data_key: escopo, id: OJLQEN, title: Escopo}
-    - {data_key: parecer, id: PARECER, title: Apto?}
+    - {data_key: parecer, id: PARECER, title: "Apto?"}
     - {data_key: acoes, id: VLAORF, title: Ações}
   type: DataGrid
 container: {type: ColumnPanel}
