@@ -15,6 +15,11 @@ components:
     name: drp_filtro_status
     properties: {}
     type: DropDown
+  - event_bindings: {change: drp_filtros_change}
+    layout_properties: {}
+    name: drp_filtro_apto
+    properties: {}
+    type: DropDown
   layout_properties: {grid_position: 'MOWAEO,GMSGGZ'}
   name: flow_panel_1
   properties: {}
@@ -27,10 +32,12 @@ components:
   name: data_grid_1
   properties:
     columns:
-    - {data_key: column_1, expand: false, id: JKSDUP, title: TAG, width: 145}
-    - {data_key: column_2, expand: false, id: VJQQOR, title: Tipo, width: 135}
-    - {data_key: column_3, expand: false, id: OJLQEN, title: 'Status ', width: 104}
-    - {data_key: column_1, id: JONRLZ, title: Ações}
+    - {data_key: tag, expand: false, id: JKSDUP, title: TAG, width: 120}
+    - {data_key: tipo, expand: false, id: VJQQOR, title: Tipo, width: 140}
+    - {data_key: status_inspeção, expand: false, id: OJLQEN, title: Prazo Inspeção, width: 140}
+    - {data_key: data_proxima_insp, expand: false, id: PROXINSP, title: Próxima Inspeção, width: 140}
+    - {data_key: apto_operar, expand: false, id: APTOOPERAR, title: Apto para Operar, width: 120}
+    - {data_key: tag, id: JONRLZ, title: Ações}
   type: DataGrid
 container: {type: ColumnPanel}
 is_package: true

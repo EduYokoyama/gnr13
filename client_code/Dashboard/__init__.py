@@ -18,6 +18,7 @@ class Dashboard(DashboardTemplate):
       self.lbl_vencidos_val.text = str(resumo.get('vencidos', 0))
       self.lbl_unidades_val.text = str(resumo.get('total_unidades', 0))
       self.lbl_instrumentos_val.text = str(resumo.get('inst_vencidos', 0))
+      self.lbl_nao_aptos_val.text = str(resumo.get('nao_aptos', 0))
 
       # 2. Busca ativos e instrumentos
       ativos = anvil.server.call('buscar_ativos_filtrados')
@@ -249,3 +250,8 @@ class Dashboard(DashboardTemplate):
     """Leva para a lista de ativos para que o usuário possa selecionar o ativo e gerenciar seus instrumentos"""
     from GNR13.GerenciarAtivos import GerenciarAtivos
     get_open_form().abrir_tela(GerenciarAtivos())
+
+  def card_nao_aptos_click(self, **event_args):
+    """Leva para a lista de ativos com o filtro de Não Apto pré-aplicado"""
+    from GNR13.GerenciarAtivos import GerenciarAtivos
+    get_open_form().abrir_tela(GerenciarAtivos(filtro_apto="Não"))

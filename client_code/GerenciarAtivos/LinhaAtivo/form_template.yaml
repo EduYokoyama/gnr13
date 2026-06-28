@@ -11,6 +11,14 @@ components:
   name: lbl_status
   properties: {}
   type: Label
+- layout_properties: {column: PROXINSP}
+  name: lbl_proxima_insp
+  properties: {}
+  type: Label
+- layout_properties: {column: APTOOPERAR}
+  name: lbl_apto
+  properties: {}
+  type: Label
 - event_bindings: {}
   layout_properties: {column: JONRLZ}
   name: btn_editar

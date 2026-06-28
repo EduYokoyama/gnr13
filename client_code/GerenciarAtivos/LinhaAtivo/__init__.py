@@ -25,6 +25,16 @@ class LinhaAtivo(LinhaAtivoTemplate):
       self.lbl_status.foreground = cores.get(st, "gray")
       self.lbl_status.bold = True
 
+      # Próxima Inspeção
+      dt_prox = self.item.get('data_proxima_insp')
+      self.lbl_proxima_insp.text = dt_prox.strftime("%d/%m/%Y") if dt_prox else "-"
+
+      # Apto para Operar
+      apto = self.item.get('apto_operar', 'Não')
+      self.lbl_apto.text = apto
+      self.lbl_apto.foreground = "#2ecc71" if apto == "Sim" else "#e74c3c"
+      self.lbl_apto.bold = True
+
   @handle("btn_registrar_inspecao", "click")
   def btn_registrar_inspecao_click(self, **event_args):
     """Abre o gerenciador de inspeções mostrando o histórico do ativo"""

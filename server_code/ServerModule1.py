@@ -40,7 +40,7 @@ def obter_detalhes_fluido(nome):
 
 # --- GESTÃO DE ATIVOS (NR-13) ---
 @anvil.server.callable
-def buscar_ativos_filtrados(unidade=None, tipo=None, status_filtro=None):
+def buscar_ativos_filtrados(unidade=None, tipo=None, status_filtro=None, apto_filtro=None):
   query = {}
   if unidade: query['unidade'] = unidade
   if tipo and tipo != "Todos": query['tipo'] = tipo
@@ -53,7 +53,28 @@ def buscar_ativos_filtrados(unidade=None, tipo=None, status_filtro=None):
     if dt:
       st = "Vencido" if dt < hoje else ("A Vencer (30 dias)" if dt <= hoje + datetime.timedelta(days=30) else "No Prazo")
     if status_filtro and status_filtro != "Todos" and status_filtro != st: continue
-    lista.append(dict(a, status_inspeção=st, row_objeto=a))
+
+    # Busca a inspeção mais recente para verificar se está Apto para Operar
+    inspecoes = app_tables.historico_inspecoes.search(
+      tables.order_by("data_inspecao", ascending=False),
+      ativo=a
+    )
+    lista_insp = list(inspecoes)
+    apto = "Não"
+    if len(lista_insp) > 0:
+      parecer = lista_insp[0]['parecer_conclusivo']
+      # Está apto se o laudo for favorável E a inspeção não estiver vencida
+      if parecer and st != "Vencido":
+        apto = "Sim"
+      else:
+        apto = "Não"
+    else:
+      apto = "Não" # Sem inspeções = Não Apto
+
+    if apto_filtro and apto_filtro != "Todos" and apto_filtro != apto:
+      continue
+
+    lista.append(dict(a, status_inspeção=st, apto_operar=apto, row_objeto=a))
   return lista
 
 @anvil.server.callable
@@ -140,6 +161,24 @@ def obter_resumo_dashboard():
   # Resumo de Equipamentos Principais
   vencidos = sum(1 for a in ativos if a['data_proxima_insp'] is not None and a['data_proxima_insp'] < hoje)
 
+  # Resumo de Não Aptos
+  nao_aptos = 0
+  for a in ativos:
+    dt = a['data_proxima_insp']
+    is_vencido = dt is not None and dt < hoje
+    
+    inspecoes = app_tables.historico_inspecoes.search(
+      tables.order_by("data_inspecao", ascending=False),
+      ativo=a
+    )
+    lista_insp = list(inspecoes)
+    if len(lista_insp) > 0:
+      parecer = lista_insp[0]['parecer_conclusivo']
+      if not parecer or is_vencido:
+        nao_aptos += 1
+    else:
+      nao_aptos += 1 # Sem inspeções = não apto
+
   # Resumo Exclusivo de Instrumentos (Ignora os "Substituídos")
   instrumentos_ativos = app_tables.dispositivos_seguranca.search(status="Ativo")
   inst_vencidos = sum(1 for i in instrumentos_ativos if i['prazo_calibracao'] is not None and i['prazo_calibracao'] < hoje)
@@ -151,7 +190,8 @@ def obter_resumo_dashboard():
     'total_unidades': len(app_tables.unidades.search()),
     'inst_vencidos': inst_vencidos,
     'inst_em_dia': len(instrumentos_ativos) - inst_vencidos,
-    'inst_total': len(instrumentos_ativos)
+    'inst_total': len(instrumentos_ativos),
+    'nao_aptos': nao_aptos
   }
 @anvil.server.callable
 def buscar_ativos_pais():

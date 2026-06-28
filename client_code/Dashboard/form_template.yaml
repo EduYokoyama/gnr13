@@ -48,6 +48,17 @@ components:
     name: card_instrumentos
     properties: {role: glass-card}
     type: Link
+  - components:
+    - name: lbl_nao_aptos_val
+      properties: {align: center, bold: true, font_size: 32, foreground: '#e11d48', text: '0'}
+      type: Label
+    - name: lbl_nao_aptos_desc
+      properties: {align: center, bold: true, font_size: 13, foreground: '#64748b', text: Ativos Não Aptos}
+      type: Label
+    event_bindings: {click: card_nao_aptos_click}
+    name: card_nao_aptos
+    properties: {role: glass-card}
+    type: Link
   layout_properties: {grid_position: 'C,D'}
   name: flow_panel_stats
   properties: {align: justify, spacing: medium}
