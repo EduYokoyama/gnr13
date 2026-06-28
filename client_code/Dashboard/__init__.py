@@ -229,3 +229,23 @@ class Dashboard(DashboardTemplate):
     }
     self.plot_forecast_instrumentos.data = dados
     self.plot_forecast_instrumentos.layout = layout
+
+  def card_total_click(self, **event_args):
+    """Leva para a lista de todos os ativos"""
+    from GNR13.GerenciarAtivos import GerenciarAtivos
+    get_open_form().abrir_tela(GerenciarAtivos())
+
+  def card_vencidos_click(self, **event_args):
+    """Leva para a lista de ativos com o filtro de Vencidos pré-aplicado"""
+    from GNR13.GerenciarAtivos import GerenciarAtivos
+    get_open_form().abrir_tela(GerenciarAtivos(filtro_status="Vencido"))
+
+  def card_unidades_click(self, **event_args):
+    """Leva para a tela de gerenciamento de unidades"""
+    from GNR13.GerenciarUnidades import GerenciarUnidades
+    get_open_form().abrir_tela(GerenciarUnidades())
+
+  def card_instrumentos_click(self, **event_args):
+    """Leva para a lista de ativos para que o usuário possa selecionar o ativo e gerenciar seus instrumentos"""
+    from GNR13.GerenciarAtivos import GerenciarAtivos
+    get_open_form().abrir_tela(GerenciarAtivos())

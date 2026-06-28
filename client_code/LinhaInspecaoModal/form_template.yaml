@@ -24,6 +24,10 @@ components:
     name: btn_ver_art
     properties: {icon: 'fa:file-text-o', tooltip: 'Ver ART'}
     type: Button
+  - event_bindings: {click: btn_editar_click}
+    name: btn_editar_inspecao
+    properties: {icon: 'fa:pencil', tooltip: 'Editar Inspeção'}
+    type: Button
   layout_properties: {column: VLAORF}
   name: flow_panel_acoes
   properties: {spacing: small}

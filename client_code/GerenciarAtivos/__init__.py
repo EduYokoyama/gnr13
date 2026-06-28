@@ -3,7 +3,7 @@ from anvil import *
 import anvil.server
 
 class GerenciarAtivos(GerenciarAtivosTemplate):
-  def __init__(self, **properties):
+  def __init__(self, filtro_status=None, **properties):
     self.init_components(**properties)
 
     # Configuração inicial dos filtros
@@ -15,10 +15,13 @@ class GerenciarAtivos(GerenciarAtivosTemplate):
       # Opções de Tipo e Status conforme a lógica do servidor [1, 4]
       self.drp_filtro_tipo.items = ["Todos", "Vaso de Pressão", "Caldeira", "Tanque Metálico", "Sistemas de Tubulação"]
       self.drp_filtro_status.items = ["Todos", "No Prazo", "A Vencer (30 dias)", "Vencido", "Sem Data"]
+
+      if filtro_status:
+        self.drp_filtro_status.selected_value = filtro_status
     except Exception as e:
       print(f"Erro ao carregar filtros: {e}")
 
-      # Carrega a lista pela primeira vez
+    # Carrega a lista pela primeira vez
     self.atualizar_lista()
 
   def atualizar_lista(self):

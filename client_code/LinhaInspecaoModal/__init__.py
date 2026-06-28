@@ -40,3 +40,32 @@ class LinhaInspecaoModal(LinhaInspecaoModalTemplate):
       download(pdf)
     else:
       alert("Nenhuma ART anexada.")
+
+  def btn_editar_click(self, **event_args):
+    """Abre o formulário de edição de inspeção"""
+    from GNR13.DialogInspecao import DialogInspecao
+
+    form_inspecao = DialogInspecao(inspecao_item=self.item)
+
+    if alert(content=form_inspecao, title="Editar Inspeção", buttons=[("Salvar", True), ("Cancelar", False)], large=True):
+      if not form_inspecao.dt_data_inspecao.date:
+        alert("Erro: A data da inspeção é obrigatória!")
+        return
+
+      dados_relatorio = {
+        'data_inspecao': form_inspecao.dt_data_inspecao.date,
+        'tipo_inspecao': form_inspecao.drp_tipo_inspecao.selected_value,
+        'escopo': form_inspecao.drp_escopo.selected_value,
+        'parecer_conclusivo': form_inspecao.chk_apto.checked,
+        'num_art': form_inspecao.txt_num_art.text,
+        'pdf_relatorio': form_inspecao.file_relatorio.file,
+        'pdf_art': form_inspecao.file_art.file
+      }
+
+      # Atualiza a inspeção no servidor (irá recalcular as datas do ativo se necessário)
+      anvil.server.call('atualizar_inspecao', self.item, dados_relatorio)
+      Notification("Inspeção atualizada com sucesso!", style="success").show()
+
+      # Recarrega a lista de inspeções na tela pai
+      if hasattr(self.parent.parent.parent, 'atualizar_lista'):
+        self.parent.parent.parent.atualizar_lista()
