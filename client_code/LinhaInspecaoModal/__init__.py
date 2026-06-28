@@ -2,6 +2,16 @@ from ._anvil_designer import LinhaInspecaoModalTemplate
 from anvil import *
 import anvil.server
 
+def _abrir_pdf(media_obj):
+  """Abre o PDF em nova aba do navegador."""
+  try:
+    url = media_obj.get_url(False)
+    import anvil.js
+    anvil.js.window.open(url, '_blank')
+  except Exception as e:
+    alert(f"Não foi possível abrir o PDF: {e}")
+
+
 class LinhaInspecaoModal(LinhaInspecaoModalTemplate):
   def __init__(self, **properties):
     self.init_components(**properties)
@@ -25,21 +35,31 @@ class LinhaInspecaoModal(LinhaInspecaoModalTemplate):
         self.lbl_parecer.foreground = "red"
         self.lbl_parecer.bold = True
 
+      # Mostra os botões apenas se houver arquivo anexado
+      try:
+        self.btn_ver_relatorio.visible = bool(self.item['pdf_relatorio'])
+      except:
+        self.btn_ver_relatorio.visible = False
+      try:
+        self.btn_ver_art.visible = bool(self.item['pdf_art'])
+      except:
+        self.btn_ver_art.visible = False
+
   def btn_ver_relatorio_click(self, **event_args):
-    """Baixa o PDF do relatório"""
+    """Abre o PDF do relatório em nova aba"""
     pdf = self.item['pdf_relatorio']
     if pdf:
-      download(pdf)
+      _abrir_pdf(pdf)
     else:
-      alert("Nenhum relatório anexado.")
+      alert("Nenhum relatório PDF anexado a esta inspeção.")
 
   def btn_ver_art_click(self, **event_args):
-    """Baixa o PDF da ART"""
+    """Abre o PDF da ART em nova aba"""
     pdf = self.item['pdf_art']
     if pdf:
-      download(pdf)
+      _abrir_pdf(pdf)
     else:
-      alert("Nenhuma ART anexada.")
+      alert("Nenhuma ART PDF anexada a esta inspeção.")
 
   def btn_editar_click(self, **event_args):
     """Abre o formulário de edição de inspeção"""
@@ -52,14 +72,18 @@ class LinhaInspecaoModal(LinhaInspecaoModalTemplate):
         alert("Erro: A data da inspeção é obrigatória!")
         return
 
+      # Usa o novo arquivo se carregado, senão mantém o que estava salvo
+      novo_relatorio = form_inspecao.file_relatorio.file
+      novo_art = form_inspecao.file_art.file
+
       dados_relatorio = {
         'data_inspecao': form_inspecao.dt_data_inspecao.date,
         'tipo_inspecao': form_inspecao.drp_tipo_inspecao.selected_value,
         'escopo': form_inspecao.drp_escopo.selected_value,
         'parecer_conclusivo': form_inspecao.chk_apto.checked,
         'num_art': form_inspecao.txt_num_art.text,
-        'pdf_relatorio': form_inspecao.file_relatorio.file,
-        'pdf_art': form_inspecao.file_art.file
+        'pdf_relatorio': novo_relatorio if novo_relatorio else self.item['pdf_relatorio'],
+        'pdf_art': novo_art if novo_art else self.item['pdf_art']
       }
 
       # Atualiza a inspeção no servidor (irá recalcular as datas do ativo se necessário)

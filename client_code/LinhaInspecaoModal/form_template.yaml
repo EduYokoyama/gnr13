@@ -18,11 +18,11 @@ components:
 - components:
   - event_bindings: {click: btn_ver_relatorio_click}
     name: btn_ver_relatorio
-    properties: {icon: 'fa:file-pdf-o', tooltip: 'Ver Relatório'}
+    properties: {icon: 'fa:file-pdf-o', text: 'Ver Relatório', visible: false}
     type: Button
   - event_bindings: {click: btn_ver_art_click}
     name: btn_ver_art
-    properties: {icon: 'fa:file-text-o', tooltip: 'Ver ART'}
+    properties: {icon: 'fa:file-text-o', text: 'Ver ART', visible: false}
     type: Button
   - event_bindings: {click: btn_editar_click}
     name: btn_editar_inspecao
