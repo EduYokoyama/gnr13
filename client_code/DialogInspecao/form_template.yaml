@@ -47,12 +47,22 @@ components:
       type: TextBox
     - layout_properties: {}
       name: file_art
-      properties: {text: PDF ART}
+      properties: {text: "\U0001F4CE PDF ART", file_types: '.pdf'}
       type: FileLoader
+    - event_bindings: {click: btn_ver_art_click}
+      layout_properties: {}
+      name: btn_ver_art
+      properties: {icon: 'fa:eye', text: Ver ART, visible: false, role: secondary-color}
+      type: Button
     - layout_properties: {}
       name: file_relatorio
-      properties: {text: 'PDF Relatório '}
+      properties: {text: "\U0001F4CE PDF Relatório", file_types: '.pdf'}
       type: FileLoader
+    - event_bindings: {click: btn_ver_relatorio_click}
+      layout_properties: {}
+      name: btn_ver_relatorio
+      properties: {icon: 'fa:eye', text: Ver Relatório, visible: false, role: secondary-color}
+      type: Button
     layout_properties: {grid_position: 'VKTMDI,FLTQMQ'}
     name: flow_panel_3
     properties: {}

@@ -57,8 +57,13 @@ components:
   - components:
     - layout_properties: {}
       name: file_cert_inst
-      properties: {text: PDF Certificado}
+      properties: {text: "\U0001F4CE PDF Certificado", file_types: '.pdf'}
       type: FileLoader
+    - event_bindings: {click: btn_ver_cert_click}
+      layout_properties: {}
+      name: btn_ver_cert
+      properties: {icon: 'fa:eye', text: Ver Cert., visible: false, role: secondary-color}
+      type: Button
     - event_bindings: {click: btn_remover_click}
       layout_properties: {}
       name: btn_remover

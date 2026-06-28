@@ -6,6 +6,34 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from GNR13.Form_BuscaAtivos import Form_BuscaAtivos
 
+# ── PDF helpers ──────────────────────────────────────────────────────────────
+MAX_PDF_SIZE = 30 * 1024 * 1024  # 30 MB
+
+def _validar_pdf(arquivo, nome_campo):
+  """Retorna True se válido. Mostra alert e retorna False caso contrário."""
+  if arquivo is None:
+    return True
+  nome = getattr(arquivo, 'name', '') or ''
+  if not nome.lower().endswith('.pdf'):
+    alert(f"O campo '{nome_campo}' aceita apenas arquivos PDF (.pdf).")
+    return False
+  tamanho = getattr(arquivo, 'length', 0) or 0
+  if tamanho > MAX_PDF_SIZE:
+    mb = tamanho / (1024 * 1024)
+    alert(f"O arquivo '{nome}' tem {mb:.1f} MB. O limite máximo é de 30 MB.")
+    return False
+  return True
+
+def _abrir_pdf(media_obj):
+  """Abre o PDF em nova aba do navegador."""
+  try:
+    url = media_obj.get_url(False)
+    import anvil.js
+    anvil.js.window.open(url, '_blank')
+  except Exception as e:
+    alert(f"Não foi possível abrir o PDF: {e}")
+# ─────────────────────────────────────────────────────────────────────────────
+
 class FormAtivoNR13(FormAtivoNR13Template):
   def __init__(self, item_edicao=None, **properties):
     self.init_components(**properties)
@@ -113,6 +141,20 @@ class FormAtivoNR13(FormAtivoNR13Template):
             self.multi_ativos_ligados.selected_items = list(ativos_salvos)
 
     self.alternar_campos_equipamento()
+
+    # Mostra botões "Ver PDF" para arquivos já armazenados no banco
+    if it.get('pdf_prontuario') and hasattr(self, 'btn_ver_prontuario'):
+      self.btn_ver_prontuario.visible = True
+    tipo_eq = it.get('tipo', '')
+    if specs:
+      if tipo_eq == "Tanque Metálico" and specs.get('pdf_plano_inspecao') and hasattr(self, 'btn_ver_plano_tanque'):
+        self.btn_ver_plano_tanque.visible = True
+      if ("Tubulação" in tipo_eq or "Sistemas" in tipo_eq):
+        if specs.get('pdf_pid') and hasattr(self, 'btn_ver_pid'):
+          self.btn_ver_pid.visible = True
+        if specs.get('pdf_plano_insp') and hasattr(self, 'btn_ver_plano_tubo'):
+          self.btn_ver_plano_tubo.visible = True
+
 
   def drp_tipo_equipamento_change(self, **event_args):
     self.alternar_campos_equipamento()
@@ -384,3 +426,59 @@ class FormAtivoNR13(FormAtivoNR13Template):
 
     # ---> CORREÇÃO 2: Adicionado o botão [("Fechar", True)] para destravar a tela <---
     alert(content=form_inst, large=True, title=f"Gerenciar Instrumentos - {self.txt_tag.text}", buttons=[("Fechar", True)])
+
+  # ── Validação de Upload (limite PDF + 30 MB) ─────────────────────────────
+  def _handle_file_change(self, file_loader, nome_campo, btn_ver):
+    arquivo = file_loader.file
+    if not _validar_pdf(arquivo, nome_campo):
+      file_loader.clear()
+      btn_ver.visible = False
+    else:
+      btn_ver.visible = arquivo is not None
+
+  def file_prontuario_change(self, **event_args):
+    self._handle_file_change(self.file_prontuario, "PDF Prontuário", self.btn_ver_prontuario)
+
+  def file_plano_tanque_change(self, **event_args):
+    self._handle_file_change(self.file_plano_tanque, "PDF Plano Inspeção", self.btn_ver_plano_tanque)
+
+  def file_pid_tubo_change(self, **event_args):
+    self._handle_file_change(self.file_pid_tubo, "P&ID", self.btn_ver_pid)
+
+  def file_plano_tubo_change(self, **event_args):
+    self._handle_file_change(self.file_plano_tubo, "Plano de Inspeção", self.btn_ver_plano_tubo)
+
+  # ── Visualização de PDF ──────────────────────────────────────────────────
+  def _abrir_ou_avisar(self, file_loader, chave_db=None):
+    """Abre o arquivo recém-carregado no loader; se vazio, busca no banco."""
+    arquivo = file_loader.file if file_loader else None
+    if arquivo:
+      _abrir_pdf(arquivo)
+    elif self.item_edicao and chave_db:
+      media = self.item_edicao.get(chave_db)
+      if media:
+        _abrir_pdf(media)
+      else:
+        # Tenta nas specs
+        row = self.item_edicao.get('row_objeto')
+        if row:
+          specs = anvil.server.call('obter_specs_ativo', row)
+          media_spec = specs.get(chave_db) if specs else None
+          if media_spec:
+            _abrir_pdf(media_spec)
+            return
+        alert("Nenhum arquivo PDF salvo para este campo.")
+    else:
+      alert("Nenhum arquivo PDF disponível para visualização.")
+
+  def btn_ver_prontuario_click(self, **event_args):
+    self._abrir_ou_avisar(self.file_prontuario, 'pdf_prontuario')
+
+  def btn_ver_plano_tanque_click(self, **event_args):
+    self._abrir_ou_avisar(self.file_plano_tanque, 'pdf_plano_inspecao')
+
+  def btn_ver_pid_click(self, **event_args):
+    self._abrir_ou_avisar(self.file_pid_tubo, 'pdf_pid')
+
+  def btn_ver_plano_tubo_click(self, **event_args):
+    self._abrir_ou_avisar(self.file_plano_tubo, 'pdf_plano_insp')

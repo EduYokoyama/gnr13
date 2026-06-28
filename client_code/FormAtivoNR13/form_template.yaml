@@ -66,11 +66,16 @@ components:
         name: num_ano_prontuario
         properties: {placeholder: 'ano Ex: 2016', type: number}
         type: TextBox
-      - event_bindings: {}
+      - event_bindings: {change: file_prontuario_change}
         layout_properties: {}
         name: file_prontuario
-        properties: {text: 'PDF Prontuário '}
+        properties: {text: "\U0001F4CE PDF Prontuário", file_types: '.pdf'}
         type: FileLoader
+      - event_bindings: {click: btn_ver_prontuario_click}
+        layout_properties: {}
+        name: btn_ver_prontuario
+        properties: {icon: 'fa:eye', text: Ver Prontuário, visible: false, role: secondary-color}
+        type: Button
       layout_properties: {grid_position: 'ZLTYEL,FDDXXY'}
       name: flow_panel_6
       properties: {}
@@ -302,10 +307,16 @@ components:
         name: num_edicao_tanque
         properties: {}
         type: TextBox
-      - layout_properties: {}
+      - event_bindings: {change: file_plano_tanque_change}
+        layout_properties: {}
         name: file_plano_tanque
-        properties: {text: 'PDF Plano Inspeção '}
+        properties: {text: "\U0001F4CE PDF Plano Inspeção", file_types: '.pdf'}
         type: FileLoader
+      - event_bindings: {click: btn_ver_plano_tanque_click}
+        layout_properties: {}
+        name: btn_ver_plano_tanque
+        properties: {icon: 'fa:eye', text: Ver Plano, visible: false, role: secondary-color}
+        type: Button
       layout_properties: {grid_position: 'PPWARW,PMGBYI'}
       name: flow_panel_11
       properties: {}
@@ -425,14 +436,26 @@ components:
       properties: {}
       type: FlowPanel
     - components:
-      - layout_properties: {}
+      - event_bindings: {change: file_pid_tubo_change}
+        layout_properties: {}
         name: file_pid_tubo
-        properties: {text: P&ID}
+        properties: {text: "\U0001F4CE P&ID", file_types: '.pdf'}
         type: FileLoader
-      - layout_properties: {}
+      - event_bindings: {click: btn_ver_pid_click}
+        layout_properties: {}
+        name: btn_ver_pid
+        properties: {icon: 'fa:eye', text: Ver P&ID, visible: false, role: secondary-color}
+        type: Button
+      - event_bindings: {change: file_plano_tubo_change}
+        layout_properties: {}
         name: file_plano_tubo
-        properties: {text: Plano de Inspeção}
+        properties: {text: "\U0001F4CE Plano de Inspeção", file_types: '.pdf'}
         type: FileLoader
+      - event_bindings: {click: btn_ver_plano_tubo_click}
+        layout_properties: {}
+        name: btn_ver_plano_tubo
+        properties: {icon: 'fa:eye', text: Ver Plano, visible: false, role: secondary-color}
+        type: Button
       - event_bindings: {click: btn_buscar_ativos_click}
         layout_properties: {}
         name: btn_buscar_ativos
