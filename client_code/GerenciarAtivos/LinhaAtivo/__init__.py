@@ -35,6 +35,17 @@ class LinhaAtivo(LinhaAtivoTemplate):
       self.lbl_apto.foreground = "#2ecc71" if apto == "Sim" else "#e74c3c"
       self.lbl_apto.bold = True
 
+  def _atualizar_lista_pai(self):
+    """Sobe na hierarquia de componentes de forma defensiva para chamar atualizar_lista()"""
+    try:
+      self.parent.parent.parent.atualizar_lista()
+    except AttributeError:
+      # Fallback: tenta via get_open_form() caso o pai já não esteja na árvore
+      try:
+        get_open_form().atualizar_lista()
+      except Exception:
+        pass
+
   @handle("btn_registrar_inspecao", "click")
   def btn_registrar_inspecao_click(self, **event_args):
     """Abre o gerenciador de inspeções mostrando o histórico do ativo"""
@@ -44,7 +55,7 @@ class LinhaAtivo(LinhaAtivoTemplate):
     alert(content=form_inspecoes, title=f"Inspeções: {self.item['tag']}", large=True, buttons=[("Fechar", True)])
 
     # Ao fechar, atualiza a lista para refletir o novo status de inspeção
-    self.parent.parent.parent.atualizar_lista()
+    self._atualizar_lista_pai()
 
   @handle("btn_editar", "click")
   def btn_editar_click(self, **event_args):
@@ -58,4 +69,4 @@ class LinhaAtivo(LinhaAtivoTemplate):
     alert(content=form_edicao, title=f"Editar Ativo: {self.item['tag']}", large=True, buttons=[])
 
     # 2. Assim que fechar, atualiza a lista OBRIGATORIAMENTE
-    self.parent.parent.parent.atualizar_lista()
+    self._atualizar_lista_pai()
