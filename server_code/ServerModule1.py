@@ -40,6 +40,64 @@ def obter_detalhes_fluido(nome):
 
 # --- GESTÃO DE ATIVOS (NR-13) ---
 @anvil.server.callable
+def validar_instrumentos_ativo(row_ativo):
+  """
+  Valida se o ativo possui os instrumentos mínimos necessários e ativos na base de dados.
+  Retorna um dicionário com 'apto' (bool) e 'detalhes' (str).
+  """
+  if not row_ativo:
+    return {'apto': False, 'detalhes': "Ativo inválido"}
+
+  tipo = row_ativo['tipo'] or ''
+  # Busca todos os instrumentos ativos do ativo
+  instrumentos_ativos = app_tables.dispositivos_seguranca.search(ativo=row_ativo, status="Ativo")
+  
+  contagem = {}
+  for inst in instrumentos_ativos:
+    t_inst = inst['tipo'] or ''
+    contagem[t_inst] = contagem.get(t_inst, 0) + 1
+
+  # Facilitador de contagem para grupos
+  psv_srv_count = contagem.get("Válvula de Segurança (PSV)", 0) + contagem.get("Válvula de Alívio e Segurança (SRV)", 0)
+  manometro_pt_count = contagem.get("Manômetro (Indicador de Pressão)", 0) + contagem.get("Transmissor de Pressão (PT)", 0)
+  outros_seguranca = contagem.get("Válvula de Quebra Vácuo", 0) + contagem.get("Disco de Ruptura", 0)
+
+  if tipo == "Caldeira":
+    necessarios = []
+    if psv_srv_count < 2:
+      necessarios.append(f"Mínimo 2 PSVs ativas (possui {psv_srv_count})")
+    if contagem.get("Manômetro (Indicador de Pressão)", 0) < 1:
+      necessarios.append("Mínimo 1 Manômetro ativo")
+    
+    if necessarios:
+      return {'apto': False, 'detalhes': ", ".join(necessarios)}
+    return {'apto': True, 'detalhes': "Conforme (mínimo 2 PSVs e 1 Manômetro)"}
+
+  elif tipo == "Vaso de Pressão":
+    necessarios = []
+    if psv_srv_count < 1:
+      necessarios.append("Mínimo 1 PSV ativa")
+    if contagem.get("Manômetro (Indicador de Pressão)", 0) < 1:
+      necessarios.append("Mínimo 1 Manômetro ativo")
+    
+    if necessarios:
+      return {'apto': False, 'detalhes': ", ".join(necessarios)}
+    return {'apto': True, 'detalhes': "Conforme (mínimo 1 PSV e 1 Manômetro)"}
+
+  elif "Tubulação" in tipo or "Sistemas" in tipo:
+    if manometro_pt_count < 1 and psv_srv_count < 1:
+      return {'apto': False, 'detalhes': "Mínimo 1 Manômetro, Transmissor de Pressão ou PSV ativo"}
+    return {'apto': True, 'detalhes': "Conforme"}
+
+  elif tipo == "Tanque Metálico":
+    total_seg = psv_srv_count + manometro_pt_count + outros_seguranca
+    if total_seg < 1:
+      return {'apto': False, 'detalhes': "Mínimo 1 dispositivo ativo (PSV, Manômetro, Disco ou Válvula Quebra Vácuo)"}
+    return {'apto': True, 'detalhes': "Conforme"}
+
+  return {'apto': True, 'detalhes': "Sem regra específica"}
+
+@anvil.server.callable
 def buscar_ativos_filtrados(unidade=None, tipo=None, status_filtro=None, apto_filtro=None):
   query = {}
   if unidade: query['unidade'] = unidade
@@ -63,8 +121,10 @@ def buscar_ativos_filtrados(unidade=None, tipo=None, status_filtro=None, apto_fi
     apto = "Não"
     if len(lista_insp) > 0:
       parecer = lista_insp[0]['parecer_conclusivo']
-      # Está apto se o laudo for favorável E a inspeção não estiver vencida
-      if parecer and st != "Vencido":
+      # Validação adicional de instrumentos mínimos
+      val_inst = validar_instrumentos_ativo(a)
+      # Está apto se o laudo for favorável E a inspeção não estiver vencida E os instrumentos mínimos estiverem conformes
+      if parecer and st != "Vencido" and val_inst['apto']:
         apto = "Sim"
       else:
         apto = "Não"
@@ -174,7 +234,8 @@ def obter_resumo_dashboard():
     lista_insp = list(inspecoes)
     if len(lista_insp) > 0:
       parecer = lista_insp[0]['parecer_conclusivo']
-      if not parecer or is_vencido:
+      val_inst = validar_instrumentos_ativo(a)
+      if not parecer or is_vencido or not val_inst['apto']:
         nao_aptos += 1
     else:
       nao_aptos += 1 # Sem inspeções = não apto
@@ -246,33 +307,90 @@ def buscar_inspecoes_por_ativo(ativo_pai):
 
 # --- GESTÃO INDEPENDENTE DE INSTRUMENTOS ---
 @anvil.server.callable
-def buscar_instrumentos_filtrados(tipo="Todos", exibir_historico=False):
-  """Busca os instrumentos para a nova tela de gestão separada"""
-  query = {}
-
-  # Se NÃO marcou para exibir histórico, busca apenas os Ativos
-  if not exibir_historico:
-    query['status'] = "Ativo"
-
-  if tipo and tipo != "Todos":
-    query['tipo'] = tipo
-
-  instrumentos = app_tables.dispositivos_seguranca.search(**query)
+def buscar_instrumentos_filtrados(unidade=None, tipo_ativo=None, tipo_instrumento="Todos", status_filtro="Todos"):
+  """Busca os instrumentos para a tela de gestão geral com todos os filtros aplicados"""
+  instrumentos = app_tables.dispositivos_seguranca.search()
   hoje = datetime.date.today()
   lista = []
 
   for inst in instrumentos:
+    ativo_ref = inst['ativo']
+    if not ativo_ref:
+      continue
+
+    # Filtro de Unidade
+    if unidade and ativo_ref['unidade'] != unidade:
+      continue
+
+    # Filtro de Tipo de Ativo
+    if tipo_ativo and tipo_ativo != "Todos" and ativo_ref['tipo'] != tipo_ativo:
+      continue
+
+    # Filtro de Tipo de Instrumento
+    if tipo_instrumento and tipo_instrumento != "Todos" and inst['tipo'] != tipo_instrumento:
+      continue
+
+    # Filtro de Status
+    inst_status = inst['status'] or "Ativo"
+    if status_filtro and status_filtro != "Todos" and inst_status != status_filtro:
+      continue
+
     st_calib = "Sem Data"
     if inst['prazo_calibracao']:
       st_calib = "Vencido" if inst['prazo_calibracao'] < hoje else "No Prazo"
-
-    # Sobrepõe o status visual se a peça já foi trocada
-    if inst['status'] == "Substituído" or inst['status'] == "Inativo":
+    if inst_status == "Substituído" or inst_status == "Inativo":
       st_calib = "Arquivado"
 
-    lista.append(dict(inst, status_calibracao=st_calib, row_objeto=inst))
+    # Validação do Ativo
+    val_inst = validar_instrumentos_ativo(ativo_ref)
+
+    # Info de substituição
+    subst_str = ""
+    if inst_status == "Substituído":
+      subst_str = f"Substituído em {inst['data_substituicao'].strftime('%d/%m/%Y')}" if inst['data_substituicao'] else "Substituído"
+      if inst['motivo_troca']:
+        subst_str += f" ({inst['motivo_troca']})"
+
+    lista.append({
+      'tag_instrumento': inst['tag_instrumento'],
+      'tipo': inst['tipo'],
+      'num_serie': inst['num_serie'],
+      'data_calibracao': inst['data_calibracao'],
+      'prazo_calibracao': inst['prazo_calibracao'],
+      'ano_fabricacao': inst['ano_fabricacao'],
+      'status': inst_status,
+      'motivo_troca': inst['motivo_troca'],
+      'data_substituicao': inst['data_substituicao'],
+      'certificado_pdf': inst['certificado_pdf'],
+      'status_calibracao': st_calib,
+      'substituido_por_info': subst_str,
+      'ativo_tag': ativo_ref['tag'],
+      'ativo_tipo': ativo_ref['tipo'],
+      'unidade_nome': ativo_ref['unidade']['nome_unidade'] if ativo_ref['unidade'] else "S/ Unidade",
+      'ativo_apto_instrumentos': "Apto" if val_inst['apto'] else f"Incompleto: {val_inst['detalhes']}",
+      'ativo_apto_bool': val_inst['apto'],
+      'row_objeto': inst
+    })
 
   return lista
+
+@anvil.server.callable
+def editar_instrumento_geral(row_instrumento, dados):
+  """Edita o cadastro do instrumento na base de dados"""
+  if row_instrumento:
+    row_instrumento.update(**dados)
+
+@anvil.server.callable
+def registrar_calibracao_instrumento(row_instrumento, data_calib, prazo_calib, certificado_pdf=None):
+  """Registra uma calibração para o instrumento"""
+  if row_instrumento:
+    updates = {
+      'data_calibracao': data_calib,
+      'prazo_calibracao': prazo_calib
+    }
+    if certificado_pdf is not None:
+      updates['certificado_pdf'] = certificado_pdf
+    row_instrumento.update(**updates)
 
 @anvil.server.callable
 def executar_substituicao_instrumento(row_antigo, dados_novo, data_desativacao=None):

@@ -1,0 +1,51 @@
+components:
+- layout_properties: {column: TAGINST}
+  name: lbl_tag
+  properties: {}
+  type: Label
+- layout_properties: {column: TIPOINST}
+  name: lbl_tipo
+  properties: {}
+  type: Label
+- layout_properties: {column: ATIVOTAG}
+  name: lbl_ativo
+  properties: {}
+  type: Label
+- layout_properties: {column: UNIDADENOME}
+  name: lbl_unidade
+  properties: {}
+  type: Label
+- layout_properties: {column: STATUSINST}
+  name: lbl_status
+  properties: {}
+  type: Label
+- layout_properties: {column: PRAZOCALIB}
+  name: lbl_prazo
+  properties: {}
+  type: Label
+- layout_properties: {column: ATIVOAPTO}
+  name: lbl_apto
+  properties: {}
+  type: Label
+- event_bindings: {}
+  layout_properties: {column: ACOES}
+  name: btn_editar
+  properties: {icon: 'fa:pencil-square', text: editar}
+  type: Button
+- event_bindings: {}
+  layout_properties: {column: ACOES}
+  name: btn_calibrar
+  properties: {icon: 'fa:refresh', text: calibrar}
+  type: Button
+- event_bindings: {}
+  layout_properties: {column: ACOES}
+  name: btn_substituir
+  properties: {icon: 'fa:exchange', text: substituir}
+  type: Button
+- event_bindings: {}
+  layout_properties: {column: ACOES}
+  name: btn_excluir
+  properties: {icon: 'fa:trash', text: excluir}
+  type: Button
+container: {type: DataRowPanel}
+is_package: true

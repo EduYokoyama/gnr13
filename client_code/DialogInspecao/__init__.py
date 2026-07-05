@@ -50,10 +50,16 @@ class DialogInspecao(DialogInspecaoTemplate):
       self.txt_num_art.text = self.inspecao_item['num_art']
 
       # Mostra os botões de visualização se os arquivos já existem no banco
-      if self.inspecao_item.get('arquivo_art'):
-        self.btn_ver_art.visible = True
-      if self.inspecao_item.get('arquivo_relatorio'):
-        self.btn_ver_relatorio.visible = True
+      try:
+        if self.inspecao_item['pdf_art']:
+          self.btn_ver_art.visible = True
+      except Exception:
+        pass
+      try:
+        if self.inspecao_item['pdf_relatorio']:
+          self.btn_ver_relatorio.visible = True
+      except Exception:
+        pass
     else:
       # Data padrão = hoje (evita que o campo fique vazio e as datas não sejam salvas)
       self.dt_data_inspecao.date = datetime.date.today()
@@ -84,8 +90,12 @@ class DialogInspecao(DialogInspecaoTemplate):
     arquivo = self.file_art.file
     if arquivo:
       _abrir_pdf(arquivo)
-    elif self.inspecao_item and self.inspecao_item.get('arquivo_art'):
-      _abrir_pdf(self.inspecao_item['arquivo_art'])
+    elif self.inspecao_item:
+      try:
+        if self.inspecao_item['pdf_art']:
+          _abrir_pdf(self.inspecao_item['pdf_art'])
+      except Exception:
+        alert("Nenhum arquivo ART disponível para visualização.")
     else:
       alert("Nenhum arquivo ART disponível para visualização.")
 
@@ -93,7 +103,11 @@ class DialogInspecao(DialogInspecaoTemplate):
     arquivo = self.file_relatorio.file
     if arquivo:
       _abrir_pdf(arquivo)
-    elif self.inspecao_item and self.inspecao_item.get('arquivo_relatorio'):
-      _abrir_pdf(self.inspecao_item['arquivo_relatorio'])
+    elif self.inspecao_item:
+      try:
+        if self.inspecao_item['pdf_relatorio']:
+          _abrir_pdf(self.inspecao_item['pdf_relatorio'])
+      except Exception:
+        alert("Nenhum arquivo de Relatório disponível para visualização.")
     else:
       alert("Nenhum arquivo de Relatório disponível para visualização.")
