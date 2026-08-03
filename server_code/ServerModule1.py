@@ -157,6 +157,9 @@ def obter_specs_ativo(row_ativo):
 @anvil.server.callable
 def salvar_ativo_completo(dados_mestre, especificacoes, lista_instrumentos=None, row_existente=None):
   # 1. Atualização Tabela Ativos (Mestre) com proteção
+  if not row_existente and 'tag' in dados_mestre:
+    row_existente = app_tables.ativos.get(tag=dados_mestre['tag'])
+
   try:
     if row_existente:
       row_existente.update(**dados_mestre)
